@@ -460,7 +460,7 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
           </div>
           <div class="fg">
             <label class="fl">Scan / Type Barcode</label>
-            <input id="st-bc" placeholder="Scan barcode here" oninput="bcToStock()"/>
+            <input id="st-bc" placeholder="Quick Code or barcode" oninput="bcToStock()"/>
           </div>
           <div class="fg">
             <label class="fl">Supplier Name</label>
@@ -532,16 +532,16 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
           <div class="ct" style="margin-bottom:12px">Scan / Lookup Barcode (Test TVS Scanner)</div>
           <div class="fg" style="margin-bottom:12px">
             <label class="fl">Type or scan barcode</label>
-            <input id="bc-lookup" placeholder="Scan with TVS gun or type..." autocomplete="off" oninput="lookupBC()"/>
+            <input id="bc-lookup" placeholder="Type Quick Code or scan barcode" autocomplete="off" oninput="lookupBC()"/>
           </div>
           <div id="bc-result" style="font-size:13px;color:var(--text3);padding:16px;background:var(--bg3);border-radius:var(--radius);text-align:center">Scan a product or enter a barcode to look it up.</div>
         </div>
       </div>
       <div class="card">
-        <div class="ct" style="margin-bottom:10px">All Product Barcodes</div>
+        <div class="ct" style="margin-bottom:10px">All Product Codes</div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th style="width:36%">Product</th><th style="width:22%">Barcode</th><th style="width:18%">Category</th><th style="width:12%">Price</th><th style="width:12%">Stock</th></tr></thead>
-          <tbody id="bc-all"><tr class="empty-row"><td colspan="5">Loading...</td></tr></tbody>
+          <thead><tr><th style="width:8%">Code</th><th style="width:32%">Product</th><th style="width:22%">Barcode</th><th style="width:14%">Category</th><th style="width:12%">Price</th><th style="width:12%">Stock</th></tr></thead>
+          <tbody id="bc-all"><tr class="empty-row"><td colspan="6">Loading...</td></tr></tbody>
         </table></div>
       </div>
     </section>
@@ -2358,8 +2358,8 @@ function filterProds(q) {
 }
 
 function exportProductsCSV() {
-  const rows = [['Name','Barcode','Category','Unit','HSN','GST%','Price','Cost','Stock','MinStock']];
-  allProds.forEach(p => rows.push([p.name,p.barcode||'',p.category,p.unit,p.hsn||'',p.gst_rate,p.selling_price,p.cost_price,p.stock,p.min_stock]));
+  const rows = [['Quick Code','Name','Barcode','Category','Unit','HSN','GST%','Price','Cost','Stock','MinStock']];
+  allProds.forEach(p => rows.push([p.quick_code||'',p.name,p.barcode||'',p.category,p.unit,p.hsn||'',p.gst_rate,p.selling_price,p.cost_price,p.stock,p.min_stock]));
   const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
@@ -2609,9 +2609,14 @@ function fillStockInfo() {
 }
 
 function bcToStock() {
-  const bc = document.getElementById('st-bc').value.trim();
-  if (bc.length < 4) return;
-  const p = allProds.find(x => x.barcode === bc);
+  const code = document.getElementById('st-bc').value.trim();
+  if (code.length < 1) return;
+  // Try Quick Code first for short numeric input, then barcode
+  let p = null;
+  if (code.length <= 6 && /^\d+$/.test(code)) {
+    p = allProds.find(x => x.quick_code === code);
+  }
+  if (!p) p = allProds.find(x => x.barcode === code);
   if (p) {
     document.getElementById('st-prod').value = p.id;
     document.getElementById('st-cost').value = p.cost_price || '';
@@ -2643,12 +2648,13 @@ async function loadBarcodes() {
   const t = document.getElementById('bc-all');
   t.innerHTML = allProds.length ? allProds.map(p => `
     <tr>
+      <td style="text-align:center"><span style="background:#C5A572;color:#fff;padding:3px 7px;border-radius:4px;font-weight:900;font-family:monospace;font-size:12px">#${esc(p.quick_code||'-')}</span></td>
       <td>${esc(p.name)}</td>
       <td style="font-family:monospace;font-size:11px;font-weight:700">${esc(p.barcode||'—')}</td>
       <td>${esc(p.category)}</td>
       <td>${fmt(p.selling_price)}</td>
       <td class="${p.stock<p.min_stock?'low':'good'}">${p.stock}</td>
-    </tr>`).join('') : '<tr class="empty-row"><td colspan="5">No products yet</td></tr>';
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="6">No products yet</td></tr>';
 }
 
 function genBarcode() {
@@ -2714,21 +2720,30 @@ function drawBarcode(text, canvasIdOrEl, opts) {
 }
 
 function lookupBC() {
-  const bc = document.getElementById('bc-lookup').value.trim();
+  const code = document.getElementById('bc-lookup').value.trim();
   const el = document.getElementById('bc-result');
-  if (bc.length < 4) { el.innerHTML = 'Enter a barcode to look up its product.'; return; }
-  const p = allProds.find(x => x.barcode === bc);
+  if (code.length < 1) { el.innerHTML = 'Enter a code (Quick Code or barcode) to look up its product.'; return; }
+  // Try Quick Code first if short numeric input
+  let p = null;
+  if (code.length <= 6 && /^\d+$/.test(code)) {
+    p = allProds.find(x => x.quick_code === code);
+  }
+  if (!p) p = allProds.find(x => x.barcode === code);
   if (p) {
     el.innerHTML = `<div style="text-align:left">
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px">${esc(p.name)}</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">
+        ${p.quick_code ? `<span style="background:#C5A572;color:#fff;padding:2px 8px;border-radius:4px;font-family:monospace;margin-right:6px">#${esc(p.quick_code)}</span>` : ''}
+        ${esc(p.name)}
+      </div>
       <div style="color:var(--text2);font-size:11.5px;line-height:1.7">
+        Barcode: <span style="font-family:monospace">${esc(p.barcode||'—')}</span><br/>
         Category: <strong>${esc(p.category)}</strong><br/>
         Price: <strong class="good">${fmt(p.selling_price)}</strong><br/>
         Stock: <strong class="${p.stock<p.min_stock?'low':'good'}">${p.stock} ${esc(p.unit)}(s)</strong><br/>
         GST: <strong>${p.gst_rate}%</strong> · HSN: ${esc(p.hsn||'-')}
       </div></div>`;
   } else {
-    el.innerHTML = '<span style="color:var(--danger)">No product found for this barcode.</span>';
+    el.innerHTML = '<span style="color:var(--danger)">No product found for this code.</span>';
   }
 }
 
