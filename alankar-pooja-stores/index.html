@@ -1,0 +1,3535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Alankar Pooja Stores</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#EEE5D3;--bg2:#ffffff;--bg3:#F4ECD8;--bg4:#E7DDB8;
+  --text:#1A1A1A;--text2:#4A4A48;--text3:#7A7A75;
+  --border:#D4C8A8;--border2:#B8A878;
+
+  /* Premium dark sidebar */
+  --side-bg:#2B1810;--side-bg2:#3D2418;--side-text:#F5E6CA;--side-text2:#C9B589;
+  --gold:#D4AF37;--gold-light:#F4D03F;--gold-dark:#9F7C0B;
+  --maroon:#7B1F1F;--maroon-light:#A82C2C;
+
+  --brand:#7B1F1F;--brand2:#A82C2C;--brand-bg:#FBEAEA;--brand-light:#E8C5C5;
+  --success:#2E5C0F;--success-bg:#E5F1D2;--success2:#4E8A1E;
+  --danger:#8B1A1A;--danger-bg:#FCE4E4;--danger2:#C92E2E;
+  --warning:#8A5A0B;--warning-bg:#FAEFD4;--warning2:#D4942A;
+  --info:#1E2A6E;--info-bg:#E5E8FA;--info2:#3949AB;
+
+  --radius:10px;--radius-lg:14px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.08);
+  --shadow:0 4px 14px rgba(0,0,0,0.10);
+  --shadow-lg:0 8px 28px rgba(0,0,0,0.12);
+}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.55;overflow:hidden}
+.app{display:flex;height:100vh}
+
+/* DARK PREMIUM SIDEBAR */
+.sidebar{width:240px;min-width:240px;background:linear-gradient(180deg,var(--side-bg),var(--side-bg2));border-right:1px solid #1A0E08;display:flex;flex-direction:column;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.15)}
+.logo{padding:22px 18px;border-bottom:1px solid rgba(212,175,55,0.25);background:linear-gradient(135deg,#1F0E07,#3D2418);text-align:center;position:relative}
+.logo::after{content:"";position:absolute;bottom:0;left:18px;right:18px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.logo-icon{font-size:38px;margin-bottom:6px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4))}
+.logo-name{font-size:15px;font-weight:700;color:var(--gold-light);letter-spacing:-0.01em;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
+.logo-tag{font-size:10.5px;color:var(--side-text2);margin-top:4px;letter-spacing:.04em;font-weight:500}
+.nav{padding:14px 0;flex:1}
+.nav-grp{font-size:10.5px;color:var(--gold);padding:14px 18px 6px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;opacity:.85}
+.nv{display:flex;align-items:center;gap:11px;padding:10px 18px;cursor:pointer;font-size:14px;color:var(--side-text);border-left:3px solid transparent;transition:all .15s;user-select:none;font-weight:500}
+.nv:hover{background:rgba(212,175,55,0.08);color:var(--gold-light);border-left-color:rgba(212,175,55,0.4)}
+.nv.active{color:var(--gold-light);background:linear-gradient(90deg,rgba(212,175,55,0.18),rgba(212,175,55,0.04));border-left-color:var(--gold);font-weight:700;box-shadow:inset 0 0 20px rgba(212,175,55,0.08)}
+.nv svg{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* MAIN AREA */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 30px;display:flex;align-items:center;justify-content:space-between;min-height:64px;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.pg-title{font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--text)}
+.pg-sub{font-size:13px;color:var(--text3);margin-top:2px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:18px}
+.date-lbl{font-size:12.5px;color:var(--text);font-weight:600;background:linear-gradient(135deg,var(--bg3),var(--bg4));padding:7px 14px;border-radius:18px;border:1px solid var(--border)}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--maroon),var(--brand2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--gold-light);cursor:pointer;box-shadow:var(--shadow-sm);border:2px solid var(--gold)}
+
+.content{flex:1;overflow-y:auto;padding:24px 30px;background:var(--bg)}
+.sec{display:none;animation:fadeIn .25s ease}
+.sec.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.alert{padding:13px 18px;border-radius:var(--radius);font-size:14px;margin-bottom:18px;display:none;font-weight:600;align-items:center;gap:10px;box-shadow:var(--shadow-sm)}
+.alert.show{display:flex}
+.al-s{background:var(--success-bg);color:var(--success);border:1.5px solid #B8D480}
+.al-e{background:var(--danger-bg);color:var(--danger);border:1.5px solid #EBA8A8}
+.al-i{background:var(--brand-bg);color:var(--brand);border:1.5px solid var(--brand-light)}
+
+/* METRIC CARDS */
+.metrics{display:grid;gap:16px;margin-bottom:20px}
+.m4{grid-template-columns:repeat(4,1fr)}
+.m3{grid-template-columns:repeat(3,1fr)}
+.m2{grid-template-columns:repeat(2,1fr)}
+.mc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:all .2s}
+.mc:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.mc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--brand),var(--brand2))}
+.mc.success::before{background:linear-gradient(180deg,var(--success),var(--success2))}
+.mc.danger::before{background:linear-gradient(180deg,var(--danger),var(--danger2))}
+.mc.warning::before{background:linear-gradient(180deg,var(--warning),var(--warning2))}
+.mc.info::before{background:linear-gradient(180deg,var(--info),var(--info2))}
+.mc-lbl{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.mc-val{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.025em;line-height:1.1}
+.mc-sub{font-size:11.5px;color:var(--text3);margin-top:6px;font-weight:500}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow-sm)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.ct{font-size:16px;font-weight:700;letter-spacing:-0.01em;color:var(--text)}
+.cs{font-size:12.5px;color:var(--text3);font-weight:500}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;margin:-2px;border-radius:var(--radius)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed}
+th{text-align:left;padding:11px 14px;color:var(--text);font-weight:700;border-bottom:2px solid var(--border2);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(180deg,var(--bg3),var(--bg4))}
+td{padding:12px 14px;border-bottom:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);font-weight:500}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#FFF8E8}
+.empty-row td{text-align:center;color:var(--text3);padding:30px;font-style:italic;font-weight:500}
+
+/* BADGES */
+.badge{display:inline-block;padding:3.5px 11px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.bg{background:var(--success-bg);color:var(--success);border:1px solid #B8D480}
+.ba{background:var(--warning-bg);color:var(--warning);border:1px solid #E5C57F}
+.br{background:var(--danger-bg);color:var(--danger);border:1px solid #EBA8A8}
+.bb{background:var(--brand-bg);color:var(--brand);border:1px solid var(--brand-light)}
+.bp{background:var(--info-bg);color:var(--info);border:1px solid #B8BFE5}
+
+/* INPUTS */
+input,select,textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border2);border-radius:var(--radius);font-size:14px;background:var(--bg2);color:var(--text);font-family:inherit;transition:all .15s;font-weight:500}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand2);box-shadow:0 0 0 4px rgba(168,44,44,.12)}
+input[readonly]{background:var(--bg3);color:var(--text2)}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fl{font-size:12.5px;color:var(--text);font-weight:700;letter-spacing:.01em}
+.fl .req{color:var(--danger)}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border-radius:var(--radius);font-size:13.5px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-weight:700;transition:all .15s;white-space:nowrap;box-shadow:var(--shadow-sm)}
+.btn:hover{background:var(--bg3);border-color:var(--text3);transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-p{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;border-color:var(--brand)}
+.btn-p:hover{background:linear-gradient(135deg,var(--brand),#5C1414);border-color:var(--brand)}
+.btn-s{background:linear-gradient(135deg,var(--success2),var(--success));color:#fff;border-color:var(--success)}
+.btn-s:hover{background:linear-gradient(135deg,var(--success),#1F4109);border-color:var(--success)}
+.btn-d{background:linear-gradient(135deg,var(--danger2),var(--danger));color:#fff;border-color:var(--danger)}
+.btn-d:hover{background:linear-gradient(135deg,var(--danger),#5E0F0F);border-color:var(--danger)}
+.btn-o{background:linear-gradient(135deg,var(--warning2),var(--warning));color:#fff;border-color:var(--warning)}
+.btn-o:hover{background:linear-gradient(135deg,var(--warning),#5E3F08);border-color:var(--warning)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff;border-color:var(--gold-dark);text-shadow:0 1px 2px rgba(0,0,0,0.15)}
+.btn-gold:hover{background:linear-gradient(135deg,var(--gold-dark),#7A5E08)}
+.btn-ghost{background:transparent;border-color:transparent;box-shadow:none}.btn-ghost:hover{background:var(--bg3)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-icon{padding:7px 10px}
+.printer-btn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:8px}
+.printer-card{padding:14px;border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--bg2);transition:all .15s;text-align:center;user-select:none}
+.printer-card:hover{border-color:var(--gold);background:#FFF8E1}
+.printer-card.selected{border-color:var(--accent);background:#FFE9DD;box-shadow:0 0 0 3px rgba(124,30,30,0.12)}
+.printer-card .icon{font-size:28px;line-height:1;margin-bottom:6px}
+.printer-card .name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.printer-card .desc{font-size:11px;color:var(--text2);margin-top:3px}
+.printer-card .badge{display:inline-block;font-size:9.5px;background:var(--accent);color:#fff;padding:1.5px 6px;border-radius:8px;margin-top:5px;font-weight:700}
+.qp-card{padding:10px;border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;background:#fff;transition:all .15s;user-select:none;display:flex;flex-direction:column;justify-content:space-between;min-height:74px}
+.qp-card:hover{border-color:var(--gold);background:#FFF8E1;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+.qp-card:active{transform:translateY(0);background:#FAEFD4}
+.qp-card .qp-name{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.qp-card .qp-foot{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.qp-card .qp-price{font-size:13.5px;font-weight:900;color:var(--accent)}
+.qp-card .qp-stock{font-size:10.5px;color:var(--text2);font-weight:600}
+.qp-card .qp-stock.low{color:var(--danger)}
+.qp-card.disabled{opacity:0.5;cursor:not-allowed}
+.qp-card.disabled:hover{border-color:var(--border);background:#fff;transform:none;box-shadow:none}
+.btn-sm.active{background:var(--gold);color:#fff;border-color:var(--gold-dark)}
+.btn-block{width:100%;justify-content:center}
+
+/* PAYMENT BUTTONS */
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.pay-btn{padding:14px 10px;border-radius:var(--radius);font-size:13px;cursor:pointer;border:2px solid var(--border);background:var(--bg2);text-align:center;transition:all .2s;color:var(--text2);font-weight:700;user-select:none;box-shadow:var(--shadow-sm)}
+.pay-btn:hover{background:var(--bg3);border-color:var(--border2);transform:translateY(-1px)}
+.pay-btn.sel{border-color:var(--brand);background:linear-gradient(135deg,var(--brand-bg),#F7DDDD);color:var(--brand);box-shadow:0 4px 12px rgba(123,31,31,.15)}
+.pay-btn .pay-icon{font-size:24px;display:block;margin-bottom:6px}
+
+/* BARCODE BOX */
+.bc-box{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:18px;text-align:center;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.bc-num{font-size:13px;letter-spacing:.18em;color:var(--text);margin-top:6px;font-family:'Courier New',monospace;font-weight:800}
+
+.low{color:var(--danger);font-weight:800}
+.good{color:var(--success);font-weight:700}
+
+/* BILL SUMMARY */
+.bill-sum{background:linear-gradient(135deg,var(--bg3),var(--bg4));border-radius:var(--radius-lg);padding:18px;margin-top:14px;border:1px solid var(--border)}
+.sum-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;font-weight:600}
+.sum-row.grand{font-size:19px;font-weight:800;border-top:2px solid var(--border2);padding-top:12px;margin-top:8px;color:var(--brand)}
+
+/* MIX BARS */
+.mix-row{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.mix-bar-bg{flex:1;height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;border:1px solid var(--border)}
+.mix-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--brand2),var(--brand));transition:width .4s;box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}
+.mix-label{font-size:13px;min-width:60px;font-weight:700}
+.mix-pct{font-size:12px;color:var(--text2);min-width:40px;text-align:right;font-weight:700}
+
+.search{width:280px}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(20,10,5,.55);align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(3px)}
+.overlay.show{display:flex}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);padding:26px;border:1px solid var(--border);max-height:90vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.3);animation:modalIn .25s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid var(--border)}
+.modal-title{font-size:18px;font-weight:800;letter-spacing:-0.015em;color:var(--text)}
+.close-btn{background:none;border:none;cursor:pointer;color:var(--text2);font-size:26px;line-height:1;padding:4px 10px;border-radius:6px;transition:all .15s}
+.close-btn:hover{color:var(--danger);background:var(--danger-bg)}
+
+.bill-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:18px}
+
+.action-bar{display:flex;gap:8px;flex-wrap:wrap}
+
+.row-actions{display:inline-flex;gap:5px}
+
+.demo-banner{background:linear-gradient(90deg,#FAEFD4,#F4D03F);color:#5E3F08;padding:10px 16px;font-size:13px;text-align:center;font-weight:700;border-bottom:2px solid var(--gold-dark);display:none}
+.demo-mode .demo-banner{display:block}
+
+.kbd{display:inline-block;padding:3px 8px;background:var(--side-bg);color:var(--gold-light);border:1px solid var(--side-bg2);border-radius:4px;font-size:11px;font-family:'Courier New',monospace;font-weight:700}
+
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+</style>
+</head>
+<body>
+
+<div id="demo-banner" class="demo-banner">⚠ DEMO MODE — running without database. Data will not persist. Run with <span class="kbd">npm start</span> on shop PC for real usage.</div>
+
+<div class="app">
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">🪔</div>
+    <div class="logo-name" id="store-name-display">Alankar Pooja Stores</div>
+    <div class="logo-tag" id="store-gstin-display">GSTIN: 36AABCA1234Z1Z5</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-grp">Main</div>
+    <div class="nv active" data-sec="dash"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+    <div class="nv" data-sec="bill"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>New Bill</div>
+    <div class="nav-grp">Catalog</div>
+    <div class="nv" data-sec="prod"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Products</div>
+    <div class="nv" data-sec="stock"><svg viewBox="0 0 24 24"><polyline points="3 12 9 12 12 4 18 20 21 12"/></svg>Stock Entry</div>
+    <div class="nv" data-sec="barcode"><svg viewBox="0 0 24 24"><path d="M3 9V5a2 2 0 0 1 2-2h4M15 3h4a2 2 0 0 1 2 2v4M21 15v4a2 2 0 0 1-2 2h-4M9 21H5a2 2 0 0 1-2-2v-4"/><line x1="7" y1="8" x2="7" y2="16"/><line x1="10" y1="8" x2="10" y2="16"/><line x1="13" y1="8" x2="13" y2="16"/><line x1="16" y1="8" x2="16" y2="16"/></svg>Barcodes</div>
+    <div class="nav-grp">Finance</div>
+    <div class="nv" data-sec="credit"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Credit Ledger</div>
+    <div class="nv" data-sec="gst"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M9 13h6M9 17h4"/></svg>GST Reports</div>
+    <div class="nav-grp">Reports</div>
+    <div class="nv" data-sec="sales"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Sales Report</div>
+    <div class="nv" data-sec="monthly"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Monthly Report</div>
+    <div class="nav-grp">People</div>
+    <div class="nv" data-sec="cust"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Customers</div>
+    <div class="nav-grp">System</div>
+    <div class="nv" data-sec="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+  </nav>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="pg-title" id="pg-title">Dashboard</div>
+      <div class="pg-sub" id="pg-sub">Overview of your store today</div>
+    </div>
+    <div class="topbar-right">
+      <span class="date-lbl" id="today-lbl"></span>
+      <div class="avatar" title="Admin">A</div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div id="alert-box" class="alert"></div>
+
+    <section id="sec-dash" class="sec active">
+      <div class="metrics m4">
+        <div class="mc success"><div class="mc-lbl">Today's Sales</div><div class="mc-val" id="d-today">₹0</div><div class="mc-sub" id="d-today-c">0 bills</div></div>
+        <div class="mc"><div class="mc-lbl">This Month</div><div class="mc-val" id="d-month">₹0</div><div class="mc-sub" id="d-month-c">0 orders</div></div>
+        <div class="mc danger"><div class="mc-lbl">Pending Credit</div><div class="mc-val" id="d-credit">₹0</div><div class="mc-sub" id="d-credit-c">0 customers</div></div>
+        <div class="mc warning"><div class="mc-lbl">Low Stock Items</div><div class="mc-val" id="d-low">0</div><div class="mc-sub">need reorder</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.5fr);gap:14px">
+        <div class="card">
+          <div class="ch"><span class="ct">Recent Bills</span><button class="btn btn-sm" onclick="go('bill')">+ New Bill</button></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th style="width:90px">Bill #</th><th>Customer</th><th style="width:90px">Amount</th><th style="width:70px">Pay</th><th style="width:65px">Status</th></tr></thead>
+            <tbody id="d-bills"><tr class="empty-row"><td colspan="5">Loading...</td></tr></tbody>
+          </table></div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="ch"><span class="ct">Payment Mix</span></div>
+            <div id="pay-mix"><p style="color:var(--text3);font-size:12px">Loading...</p></div>
+          </div>
+          <div class="card">
+            <div class="ch"><span class="ct">Low Stock Alert</span></div>
+            <div id="low-stock-list" style="font-size:12px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="ct">Top Products This Month</span></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th style="width:50%">Product</th><th>Qty Sold</th><th>Revenue</th></tr></thead>
+          <tbody id="d-top"><tr class="empty-row"><td colspan="3">Loading...</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-bill" class="sec">
+      <!-- Today's Summary - motivation card at top -->
+      <div id="today-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px">
+        <div class="ts-card" style="background:linear-gradient(135deg,#4CAF50,#2E7D32);color:#fff;padding:14px 16px;border-radius:12px;box-shadow:0 3px 10px rgba(46,125,50,0.25)">
+          <div style="font-size:11px;opacity:0.9;font-weight:600;letter-spacing:0.5px">💰 TODAY'S SALES</div>
+          <div id="ts-sales" style="font-size:24px;font-weight:900;margin-top:4px">₹0</div>
+          <div id="ts-sales-sub" style="font-size:11px;opacity:0.85;margin-top:2px">No bills yet</div>
+        </div>
+        <div class="ts-card" style="background:linear-gradient(135deg,#FF9800,#E65100);color:#fff;padding:14px 16px;border-radius:12px;box-shadow:0 3px 10px rgba(230,81,0,0.25)">
+          <div style="font-size:11px;opacity:0.9;font-weight:600;letter-spacing:0.5px">🧾 BILLS TODAY</div>
+          <div id="ts-bills" style="font-size:24px;font-weight:900;margin-top:4px">0</div>
+          <div id="ts-bills-sub" style="font-size:11px;opacity:0.85;margin-top:2px">Avg ₹0 per bill</div>
+        </div>
+        <div class="ts-card" style="background:linear-gradient(135deg,#7E57C2,#4527A0);color:#fff;padding:14px 16px;border-radius:12px;box-shadow:0 3px 10px rgba(69,39,160,0.25)">
+          <div style="font-size:11px;opacity:0.9;font-weight:600;letter-spacing:0.5px">📊 THIS MONTH</div>
+          <div id="ts-month" style="font-size:24px;font-weight:900;margin-top:4px">₹0</div>
+          <div id="ts-month-sub" style="font-size:11px;opacity:0.85;margin-top:2px">0 bills</div>
+        </div>
+        <div class="ts-card" style="background:linear-gradient(135deg,#EF5350,#C62828);color:#fff;padding:14px 16px;border-radius:12px;box-shadow:0 3px 10px rgba(198,40,40,0.25)">
+          <div style="font-size:11px;opacity:0.9;font-weight:600;letter-spacing:0.5px">⚠ LOW STOCK</div>
+          <div id="ts-lowstock" style="font-size:24px;font-weight:900;margin-top:4px">0</div>
+          <div id="ts-lowstock-sub" style="font-size:11px;opacity:0.85;margin-top:2px">items need restocking</div>
+        </div>
+      </div>
+
+      <div class="bill-layout">
+        <div>
+          <div class="card">
+            <div class="ch">
+              <span class="ct">Customer & Items</span>
+              <div class="action-bar">
+                <button class="btn btn-p" onclick="openAddItem()">+ Add Item</button>
+                <button class="btn" onclick="document.getElementById('bill-scan').focus()">⌶ Focus Scanner</button>
+              </div>
+            </div>
+            <div class="fg2" style="margin-bottom:12px">
+              <div class="fg">
+                <label class="fl">Customer Name</label>
+                <input id="b-cust" placeholder="Walk-in or full name" list="cust-dl"/>
+                <datalist id="cust-dl"></datalist>
+              </div>
+              <div class="fg">
+                <label class="fl">Phone Number</label>
+                <input id="b-phone" placeholder="Mobile (auto-fills customer)" oninput="lookupCust()"/>
+              </div>
+              <div class="fg">
+                <label class="fl">Buyer GSTIN (B2B - optional)</label>
+                <input id="b-gstin" placeholder="GSTIN if customer is registered" maxlength="15"/>
+              </div>
+              <div class="fg">
+                <label class="fl">Cashier</label>
+                <input id="b-cashier" placeholder="Cashier name"/>
+              </div>
+            </div>
+
+            <!-- BARCODE SCAN INPUT (always-on, auto-add items) -->
+            <div style="background:linear-gradient(135deg,#FFF7DC,#FAEFD4);border:2px solid var(--gold);border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow-sm)">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <div style="font-size:24px">🔍</div>
+                <div style="flex:1;min-width:200px">
+                  <label class="fl" style="display:block;margin-bottom:5px">Scan Barcode (TVS Scanner Ready)</label>
+                  <input id="bill-scan" placeholder="Type Quick Code (e.g. 5) OR scan barcode → Enter" autocomplete="off" style="font-family:'Courier New',monospace;font-size:15px;font-weight:700;border-color:var(--gold-dark);background:#fff"/>
+                </div>
+                <div style="font-size:11px;color:var(--text2);font-weight:600;text-align:right">
+                  <div>🔫 Scan with TVS gun</div>
+                  <div>or type code + <span class="kbd">Enter</span></div>
+                </div>
+              </div>
+              <div id="scan-feedback" style="margin-top:8px;font-size:12.5px;font-weight:600;display:none;padding:6px 10px;border-radius:6px"></div>
+              <!-- Fast product search for when scan fails -->
+              <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--gold-dark);position:relative">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <div style="font-size:18px">🔎</div>
+                  <div style="flex:1;min-width:200px">
+                    <label class="fl" style="display:block;margin-bottom:5px;font-size:11.5px">Scan not working? Search by name — type 2+ letters</label>
+                    <input id="bill-search" placeholder="Type product name (e.g. 'kum' for kumkum)..." autocomplete="off" style="font-size:14px;background:#fff" oninput="searchProductOnBill()" onkeydown="onSearchKey(event)"/>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);font-weight:600;text-align:right">
+                    <div>↓ ↑ to navigate</div>
+                    <div><span class="kbd">Enter</span> to add</div>
+                  </div>
+                </div>
+                <div id="bill-search-results" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:2px solid var(--gold-dark);border-top:none;border-radius:0 0 8px 8px;max-height:280px;overflow-y:auto;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,0.15)"></div>
+              </div>
+            </div>
+
+            <!-- Quick Pick: top selling / recent products -->
+            <div id="quick-pick-section" style="margin-bottom:14px;display:none">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                <div style="font-size:12.5px;font-weight:700;color:var(--text2);letter-spacing:0.3px">⚡ QUICK PICK — TOP SELLERS</div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-sm" onclick="toggleQuickPickMode('top')" id="qp-tab-top" style="font-size:11px;padding:4px 9px">🔥 Top Sellers</button>
+                  <button class="btn btn-sm" onclick="toggleQuickPickMode('recent')" id="qp-tab-recent" style="font-size:11px;padding:4px 9px">🕐 Recent</button>
+                </div>
+              </div>
+              <div id="quick-pick-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px"></div>
+            </div>
+            <div class="tbl-wrap"><table id="bill-tbl">
+              <thead><tr>
+                <th style="width:30%">Item</th><th style="width:10%">HSN</th>
+                <th style="width:8%">Qty</th><th style="width:12%">Rate</th>
+                <th style="width:9%">GST%</th><th style="width:14%">Amount</th>
+                <th style="width:7%"></th>
+              </tr></thead>
+              <tbody id="bill-body"><tr class="empty-row"><td colspan="7">No items added. Click "Add Item" or scan a barcode.</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="ct" style="margin-bottom:12px">Payment Mode</div>
+            <div class="pay-grid">
+              <div class="pay-btn sel" data-mode="Cash" onclick="selPay(this)"><span class="pay-icon">💵</span>Cash</div>
+              <div class="pay-btn" data-mode="UPI" onclick="selPay(this)"><span class="pay-icon">📱</span>UPI</div>
+              <div class="pay-btn" data-mode="Card" onclick="selPay(this)"><span class="pay-icon">💳</span>Debit / Credit Card</div>
+              <div class="pay-btn" data-mode="Credit" onclick="selPay(this)"><span class="pay-icon">⏳</span>Credit (Due)</div>
+            </div>
+            <div class="bill-sum">
+              <div class="sum-row"><span style="color:var(--text2)">Subtotal (excl. GST)</span><span id="bs-sub">₹0.00</span></div>
+              <div class="sum-row"><span style="color:var(--text2)">CGST</span><span id="bs-cgst">₹0.00</span></div>
+              <div class="sum-row"><span style="color:var(--text2)">SGST</span><span id="bs-sgst">₹0.00</span></div>
+              <div class="sum-row">
+                <span style="color:var(--text2)">Discount (₹)</span>
+                <input type="number" id="b-disc" value="0" min="0" style="width:80px;text-align:right;padding:3px 8px;font-size:12px" oninput="calcBill()"/>
+              </div>
+              <div class="sum-row grand"><span>Grand Total</span><span id="bs-total">₹0.00</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:12px">
+              <button class="btn btn-s btn-block" onclick="saveBill()">✓ Generate Bill & Print</button>
+              <button class="btn btn-block" onclick="clearBill()">↺ Clear Bill</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-prod" class="sec">
+      <div class="card">
+        <div class="ch">
+          <input class="search" placeholder="Search by name or barcode..." oninput="filterProds(this.value)"/>
+          <div class="action-bar">
+            <button class="btn" onclick="exportProductsCSV()">⬇ Export CSV</button>
+            <button class="btn btn-p" onclick="showProdModal()">+ Add Product</button>
+          </div>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th style="width:6%">Code</th>
+            <th style="width:20%">Name</th><th style="width:12%">Barcode</th>
+            <th style="width:13%">Category</th><th style="width:6%">Unit</th>
+            <th style="width:7%">HSN</th><th style="width:5%">GST</th>
+            <th style="width:9%">Price</th><th style="width:7%">Stock</th>
+            <th style="width:13%">Actions</th>
+          </tr></thead>
+          <tbody id="prod-tbl"><tr class="empty-row"><td colspan="10">Loading...</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-stock" class="sec">
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Add Stock In (Goods Received)</div>
+        <div class="fg3">
+          <div class="fg">
+            <label class="fl">Product <span class="req">*</span></label>
+            <select id="st-prod" onchange="fillStockInfo()"><option value="">-- Select Product --</option></select>
+          </div>
+          <div class="fg">
+            <label class="fl">Scan / Type Barcode</label>
+            <input id="st-bc" placeholder="Scan barcode here" oninput="bcToStock()"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Supplier Name</label>
+            <input id="st-sup" placeholder="Supplier name"/>
+          </div>
+        </div>
+        <div class="fg3">
+          <div class="fg">
+            <label class="fl">Quantity to Add <span class="req">*</span></label>
+            <input id="st-qty" type="number" placeholder="0" min="1"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Cost Price per Unit (₹, excl. GST)</label>
+            <input id="st-cost" type="number" placeholder="0.00" step="0.01"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Supplier Invoice #</label>
+            <input id="st-inv" placeholder="Invoice no."/>
+          </div>
+        </div>
+        <div class="fg2" style="margin-bottom:11px">
+          <div class="fg">
+            <label class="fl">Supplier GSTIN (for ITC tracking)</label>
+            <input id="st-gstin" placeholder="Supplier's GSTIN" maxlength="15"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Notes (optional)</label>
+            <input id="st-notes" placeholder="Any notes about this stock entry"/>
+          </div>
+        </div>
+        <button class="btn btn-p" onclick="saveStock()">+ Save Stock Entry</button>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:12px">Stock In History (last 200)</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th style="width:10%">Date</th><th style="width:26%">Product</th>
+            <th style="width:14%">Supplier</th><th style="width:13%">GSTIN</th>
+            <th style="width:7%">Qty +</th>
+            <th style="width:12%">Cost / Unit</th><th style="width:18%">Invoice #</th>
+          </tr></thead>
+          <tbody id="stock-hist"><tr class="empty-row"><td colspan="7">No entries yet</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-barcode" class="sec">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="ct" style="margin-bottom:12px">Generate & Print Barcode Label</div>
+          <div class="fg" style="margin-bottom:12px">
+            <label class="fl">Select Product</label>
+            <select id="bc-sel" onchange="genBarcode()"><option value="">-- Select Product --</option></select>
+          </div>
+          <div id="bc-display" style="display:none">
+            <div class="bc-box">
+              <canvas id="bc-canvas" width="320" height="100" style="width:100%;max-width:320px;height:100px"></canvas>
+              <div class="bc-num" id="bc-num"></div>
+            </div>
+            <div style="font-size:14px;font-weight:700;text-align:center;margin-bottom:12px" id="bc-pname"></div>
+            <div style="display:flex;gap:7px;margin-bottom:8px">
+              <button class="btn btn-p" style="flex:1;justify-content:center" onclick="printBarcodeLabel()">🖨 Print 1 Label</button>
+              <button class="btn" style="flex:1;justify-content:center" onclick="copyBC()">⎘ Copy Code</button>
+            </div>
+            <button class="btn btn-gold btn-block" onclick="openLabelSheetModal()">🏷️ Print to TSC TE244 (Multiple Labels)</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct" style="margin-bottom:12px">Scan / Lookup Barcode (Test TVS Scanner)</div>
+          <div class="fg" style="margin-bottom:12px">
+            <label class="fl">Type or scan barcode</label>
+            <input id="bc-lookup" placeholder="Scan with TVS gun or type..." autocomplete="off" oninput="lookupBC()"/>
+          </div>
+          <div id="bc-result" style="font-size:13px;color:var(--text3);padding:16px;background:var(--bg3);border-radius:var(--radius);text-align:center">Scan a product or enter a barcode to look it up.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:10px">All Product Barcodes</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th style="width:36%">Product</th><th style="width:22%">Barcode</th><th style="width:18%">Category</th><th style="width:12%">Price</th><th style="width:12%">Stock</th></tr></thead>
+          <tbody id="bc-all"><tr class="empty-row"><td colspan="5">Loading...</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-credit" class="sec">
+      <div class="metrics m3">
+        <div class="mc danger"><div class="mc-lbl">Total Outstanding</div><div class="mc-val" id="cr-total">₹0</div><div class="mc-sub">from credit bills</div></div>
+        <div class="mc warning"><div class="mc-lbl">Customers with Dues</div><div class="mc-val" id="cr-count">0</div><div class="mc-sub">people</div></div>
+        <div class="mc success"><div class="mc-lbl">Collected All-time</div><div class="mc-val" id="cr-coll">₹0</div><div class="mc-sub">recovered</div></div>
+      </div>
+      <div class="card">
+        <div class="ch">
+          <span class="ct">Credit Bills Ledger</span>
+          <button class="btn btn-p" onclick="openCreditPayModal()">+ Record Payment</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th style="width:18%">Customer</th><th style="width:13%">Phone</th>
+            <th style="width:13%">Bill #</th><th style="width:11%">Date</th>
+            <th style="width:12%">Bill Amt</th><th style="width:11%">Paid</th>
+            <th style="width:11%">Due</th><th style="width:11%">Status</th>
+          </tr></thead>
+          <tbody id="cr-tbl"><tr class="empty-row"><td colspan="8">No credit entries</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-gst" class="sec">
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+          <div class="fg" style="flex:1;min-width:160px">
+            <label class="fl">Select Month</label>
+            <input type="month" id="gst-month"/>
+          </div>
+          <button class="btn btn-p" onclick="runGST()">Generate Report</button>
+          <button class="btn btn-o" onclick="printGST()">🖨 Print GST Returns Report</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:12px">GST Liability Summary</div>
+        <div class="metrics m3">
+          <div class="mc success">
+            <div class="mc-lbl">Total Sales GST (Output)</div>
+            <div class="mc-val" id="g-output">₹0</div>
+            <div class="mc-sub">Collected from customers</div>
+          </div>
+          <div class="mc info">
+            <div class="mc-lbl">Total Purchases GST (Input)</div>
+            <div class="mc-val" id="g-input">₹0</div>
+            <div class="mc-sub">Paid to suppliers (ITC)</div>
+          </div>
+          <div class="mc danger">
+            <div class="mc-lbl">Net Position</div>
+            <div class="mc-val" id="g-net">₹0</div>
+            <div class="mc-sub" id="g-net-lbl">Payable</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:10px">Sales GST Summary (Output)</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th>GST Rate</th><th>Sales Amount</th><th>Taxable Amount</th><th>CGST</th><th>SGST</th>
+          </tr></thead>
+          <tbody id="gst-sales-tbl"><tr class="empty-row"><td colspan="5">Select month and click Generate</td></tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:10px">Purchases GST Summary (Input)</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th>GST Rate</th><th>Purchase Amount</th><th>Taxable Amount</th><th>CGST</th><th>SGST</th>
+          </tr></thead>
+          <tbody id="gst-purchases-tbl"><tr class="empty-row"><td colspan="5">No purchases for this month</td></tr></tbody>
+        </table></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="ct" style="margin-bottom:10px">Detailed Sales Items Log</div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Item</th><th>HSN</th><th>Qty</th><th>GST</th><th>Total</th></tr></thead>
+            <tbody id="gst-sitems"><tr class="empty-row"><td colspan="5">No data</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="card">
+          <div class="ct" style="margin-bottom:10px">Detailed Purchase Items Log</div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Item</th><th>HSN</th><th>Qty</th><th>GST</th><th>Total</th></tr></thead>
+            <tbody id="gst-pitems"><tr class="empty-row"><td colspan="5">No data</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-sales" class="sec">
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+          <div class="fg" style="flex:1;min-width:140px"><label class="fl">From Date</label><input type="date" id="sr-from"/></div>
+          <div class="fg" style="flex:1;min-width:140px"><label class="fl">To Date</label><input type="date" id="sr-to"/></div>
+          <div class="fg" style="flex:1;min-width:120px">
+            <label class="fl">Payment Mode</label>
+            <select id="sr-pay"><option value="">All Modes</option><option>Cash</option><option>UPI</option><option>Card</option><option>Credit</option></select>
+          </div>
+          <button class="btn btn-p" onclick="runSales()">Apply Filter</button>
+          <button class="btn btn-o" onclick="printSalesReport()">🖨 Print Report</button>
+        </div>
+      </div>
+      <div class="metrics m4">
+        <div class="mc success"><div class="mc-lbl">Revenue</div><div class="mc-val" id="sr-rev">₹0</div></div>
+        <div class="mc"><div class="mc-lbl">Total Bills</div><div class="mc-val" id="sr-cnt">0</div></div>
+        <div class="mc"><div class="mc-lbl">Avg Bill Value</div><div class="mc-val" id="sr-avg">₹0</div></div>
+        <div class="mc info"><div class="mc-lbl">GST Collected</div><div class="mc-val" id="sr-gst">₹0</div></div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th style="width:11%">Bill #</th><th style="width:11%">Date</th>
+            <th style="width:18%">Customer</th><th style="width:7%">Items</th>
+            <th style="width:9%">Payment</th><th style="width:12%">Taxable</th>
+            <th style="width:10%">GST</th><th style="width:12%">Total</th>
+            <th style="width:10%">Action</th>
+          </tr></thead>
+          <tbody id="sr-tbl"><tr class="empty-row"><td colspan="9">No bills found</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-monthly" class="sec">
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:flex-end">
+          <div class="fg" style="flex:1"><label class="fl">Month</label><input type="month" id="mr-month"/></div>
+          <button class="btn btn-p" onclick="runMonthly()">Generate Report</button>
+          <button class="btn btn-o" onclick="printMonthly()">🖨 Print Full Report</button>
+        </div>
+      </div>
+      <div class="metrics m4">
+        <div class="mc success"><div class="mc-lbl">Gross Sales</div><div class="mc-val" id="mr-gross">₹0</div></div>
+        <div class="mc info"><div class="mc-lbl">GST Collected</div><div class="mc-val" id="mr-gst">₹0</div></div>
+        <div class="mc"><div class="mc-lbl">Net Revenue</div><div class="mc-val" id="mr-net">₹0</div></div>
+        <div class="mc"><div class="mc-lbl">Total Bills</div><div class="mc-val" id="mr-cnt">0</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="ct" style="margin-bottom:10px">Daily Breakdown</div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Date</th><th>Bills</th><th>Revenue</th><th>GST</th></tr></thead>
+            <tbody id="mr-daily"><tr class="empty-row"><td colspan="4">No data</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="card">
+          <div class="ct" style="margin-bottom:10px">Payment Mode Summary</div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Mode</th><th>Count</th><th>Amount</th></tr></thead>
+            <tbody id="mr-pay"><tr class="empty-row"><td colspan="3">No data</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:10px">Top Products</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th style="width:40%">Product</th><th>Qty</th><th>Revenue</th><th>GST</th></tr></thead>
+          <tbody id="mr-prod"><tr class="empty-row"><td colspan="4">No data</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-cust" class="sec">
+      <div class="card">
+        <div class="ch">
+          <input class="search" placeholder="Search by name or phone..." oninput="filterCust(this.value)"/>
+          <button class="btn btn-p" onclick="showCustModal()">+ Add Customer</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th style="width:20%">Name</th><th style="width:13%">Phone</th>
+            <th style="width:19%">Email</th><th style="width:10%">Orders</th>
+            <th style="width:13%">Total Spent</th><th style="width:12%">Credit Due</th>
+            <th style="width:13%">Status</th>
+          </tr></thead>
+          <tbody id="cust-tbl"><tr class="empty-row"><td colspan="7">Loading...</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="sec-settings" class="sec">
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Store Information</div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Store Name</label><input id="s-name"/></div>
+          <div class="fg"><label class="fl">GSTIN</label><input id="s-gstin"/></div>
+          <div class="fg"><label class="fl">Phone</label><input id="s-phone"/></div>
+          <div class="fg"><label class="fl">Email</label><input id="s-email"/></div>
+          <div class="fg"><label class="fl">Default Cashier Name</label><input id="s-cashier" placeholder="Admin"/></div>
+        </div>
+        <div class="fg" style="margin-bottom:12px"><label class="fl">Address</label><input id="s-addr"/></div>
+        <div class="fg" style="margin-bottom:12px"><label class="fl">Bill Footer Message</label><input id="s-footer"/></div>
+        <button class="btn btn-p" onclick="saveSettings()">Save Settings</button>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:12px">💾 Data Management & Auto-Backup</div>
+        <p style="color:var(--text2);font-size:12px;margin-bottom:14px;line-height:1.6">Your data is stored locally in SQLite. With auto-backup enabled, a copy is saved silently each time you close the app — last 14 backups are kept.</p>
+        <div class="fg" style="margin-bottom:12px">
+          <label class="fl"><input type="checkbox" id="s-auto-backup" style="width:auto;margin-right:6px"/> Enable Auto-Backup on App Close (recommended)</label>
+        </div>
+        <div class="fg" style="margin-bottom:12px">
+          <label class="fl">Auto-Backup Folder (leave empty for Documents\AlankarBackups)</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input id="s-backup-folder" placeholder="C:\Users\You\Documents\AlankarBackups" style="flex:1;font-family:monospace;font-size:12px"/>
+            <button class="btn btn-sm" onclick="pickBackupFolder()">📁 Browse...</button>
+          </div>
+        </div>
+        <div id="last-backup-info" style="font-size:11.5px;color:var(--text3);margin-bottom:12px;padding:8px 10px;background:var(--bg3);border-radius:6px;display:none"></div>
+        <div class="action-bar">
+          <button class="btn btn-p" onclick="saveAutoBackupSettings()">💾 Save Auto-Backup Settings</button>
+          <button class="btn" onclick="runManualAutoBackup()">⚡ Run Backup Now</button>
+          <button class="btn" onclick="doBackup()">⬇ Download Backup (.db)</button>
+          <button class="btn" onclick="showDbPath()">📁 Show Database Location</button>
+        </div>
+        <div id="db-path-info" style="margin-top:12px;font-size:11px;color:var(--text3);font-family:'Courier New',monospace;display:none;padding:10px;background:var(--bg3);border-radius:var(--radius);word-break:break-all"></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">💰 GST Pricing Mode</div>
+        <p style="color:var(--text2);font-size:12.5px;margin-bottom:14px;line-height:1.6">
+          Choose how product prices include GST. <b>Inclusive</b> (recommended for retail) — the price you set on a product IS the final MRP that customer pays. GST is reverse-calculated for tax reports. <b>Exclusive</b> — GST is added on top of the price at billing time.
+        </p>
+        <div class="fg">
+          <label class="fl">Pricing Mode</label>
+          <select id="s-gst-mode" style="font-size:14px;padding:9px">
+            <option value="inclusive">Inclusive — price = final MRP (recommended)</option>
+            <option value="exclusive">Exclusive — GST added at bill time</option>
+          </select>
+        </div>
+        <div id="gst-mode-example" style="font-size:12.5px;padding:11px;background:var(--bg3);border-radius:var(--radius);margin-top:10px;line-height:1.7"></div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">🖨 Printer Setup</div>
+        <p style="color:var(--text2);font-size:12.5px;margin-bottom:14px;line-height:1.6">Click "Detect Printers" to load installed printers. Then assign one as Bill Printer (TVS thermal) and one as Label Printer (TSC TE244). After setup, prints will go directly to the correct printer — no popup dialog.</p>
+        <button class="btn btn-p" onclick="loadPrinterList()" style="margin-bottom:14px">🔍 Detect Installed Printers</button>
+        <div id="printer-picker" style="display:none">
+          <div class="fg" style="margin-bottom:18px">
+            <label class="fl" style="font-weight:700;font-size:13px">🧾 Bill Printer (for customer receipts)</label>
+            <div id="bill-printer-buttons" class="printer-btn-grid"></div>
+          </div>
+          <div class="fg" style="margin-bottom:14px">
+            <label class="fl" style="font-weight:700;font-size:13px">🏷️ Label Printer (for product barcodes)</label>
+            <div id="label-printer-buttons" class="printer-btn-grid"></div>
+          </div>
+          <div class="fg" style="margin-top:8px">
+            <label class="fl"><input type="checkbox" id="s-silent-print" style="width:auto;margin-right:6px"/> Print bills directly without showing print dialog</label>
+          </div>
+          <button class="btn btn-p" onclick="savePrinterSettings()" style="margin-top:10px">💾 Save Printer Setup</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">🏷️ TSC Label Printer — Label Size & Quality</div>
+        <p style="color:var(--text2);font-size:12.5px;margin-bottom:14px;line-height:1.6">Configure your label roll dimensions. For TSC TE244 with 2-column rolls, set "Labels per Row = 1" (uses left column only — most reliable). Press "Print Test Label" to verify.</p>
+        <div class="fg3">
+          <div class="fg"><label class="fl">Label Width (mm)</label><input id="s-tsc-w" type="number" step="0.5" placeholder="38"/></div>
+          <div class="fg"><label class="fl">Label Height (mm)</label><input id="s-tsc-h" type="number" step="0.5" placeholder="25"/></div>
+          <div class="fg"><label class="fl">Labels per Row</label>
+            <select id="s-tsc-cols"><option value="1">1 — single column ✅ recommended</option><option value="2">2 — side by side (uses TSPL)</option></select>
+          </div>
+        </div>
+        <div class="fg3">
+          <div class="fg"><label class="fl">Row Gap (mm)</label><input id="s-tsc-rgap" type="number" step="0.5" placeholder="2"/></div>
+          <div class="fg"><label class="fl">Print Darkness (1-15)</label><input id="s-tsc-density" type="number" min="1" max="15" placeholder="8"/></div>
+          <div class="fg"><label class="fl">Print Speed (1-5)</label><input id="s-tsc-speed" type="number" min="1" max="5" placeholder="4"/></div>
+        </div>
+        <div class="fg" style="background:#FFF7DC;padding:12px;border-radius:var(--radius);border:2px solid var(--gold);margin-bottom:10px">
+          <label class="fl" style="font-weight:700;color:#6B4423">⭐ LABEL STYLE</label>
+          <select id="s-tsc-label-mode" style="font-size:14px;font-weight:600">
+            <option value="qc">⭐ Quick Code BIG (recommended) — NAME + #1 + Rs.10</option>
+            <option value="bc">Barcode style (old) — NAME + ||||| + Rs.10</option>
+            <option value="both">Both (smaller) — NAME + ||| + #1 + Rs.10</option>
+          </select>
+          <div style="font-size:11px;color:#6B4423;margin-top:6px;line-height:1.5">
+            <b>Quick Code mode (recommended):</b> Big number on label. Cashier types it → instant add. No scan needed!
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl"><input type="checkbox" id="s-tsc-tspl" style="width:auto;margin-right:6px"/> Use TSPL Direct Printing (recommended — bypasses Windows print dialog)</label>
+        </div>
+        <button class="btn btn-p" onclick="saveTSCSettings()">💾 Save Label Settings</button>
+        <button class="btn btn-gold" onclick="testTSCPrint()" style="margin-left:8px">🖨 Print Test Label (4 labels)</button>
+        <div id="tsc-test-result" style="margin-top:12px;font-size:12.5px;display:none"></div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:10px">About</div>
+        <p style="color:var(--text2);font-size:12px;line-height:1.7">Alankar Pooja Stores Sales Management System<br/>Version 1.0.8 — TSPL Direct Print + GST Inclusive Pricing<br/>Offline-first · Local SQLite storage · Built with Electron.js</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+</div>
+
+<div id="m-additem" class="overlay">
+  <div class="modal" style="width:420px">
+    <div class="modal-hd"><span class="modal-title">Add Item to Bill</span><button class="close-btn" onclick="cm('m-additem')">×</button></div>
+    <div class="fg" style="margin-bottom:11px">
+      <label class="fl">Product <span class="req">*</span></label>
+      <select id="ai-prod" onchange="fillAI()"><option value="">-- Select Product --</option></select>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label class="fl">Quantity <span class="req">*</span></label><input id="ai-qty" type="number" value="1" min="1" oninput="calcAI()"/></div>
+      <div class="fg"><label class="fl">Rate (₹) <span class="req">*</span></label><input id="ai-rate" type="number" step="0.01" oninput="calcAI()"/></div>
+      <div class="fg"><label class="fl">GST %</label><input id="ai-gst" type="number" value="5" oninput="calcAI()"/></div>
+      <div class="fg"><label class="fl">Amount (incl. GST)</label><input id="ai-amt" readonly/></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+      <button class="btn" onclick="cm('m-additem')">Cancel</button>
+      <button class="btn btn-p" onclick="addItem()">Add to Bill</button>
+    </div>
+  </div>
+</div>
+
+<div id="m-prod" class="overlay">
+  <div class="modal" style="width:480px">
+    <div class="modal-hd"><span class="modal-title" id="pm-title">Add Product</span><button class="close-btn" onclick="cm('m-prod')">×</button></div>
+    <input type="hidden" id="p-eid"/>
+    <div class="fg2">
+      <div class="fg"><label class="fl">Product Name <span class="req">*</span></label><input id="p-name" placeholder="e.g. Agarbatti Premium"/></div>
+      <div class="fg"><label class="fl">Category <span class="req">*</span></label>
+        <select id="p-cat">
+          <option>Agarbatti & Dhoop</option><option>Idols & Murtis</option>
+          <option>Flowers & Garlands</option><option>Puja Thali</option>
+          <option>Diyas & Lamps</option><option>Coconut & Fruits</option>
+          <option>Sacred Threads</option><option>Books & Mantras</option>
+          <option>Camphor & Kumkum</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Unit</label>
+        <select id="p-unit"><option>Piece</option><option>Pack</option><option>Box</option><option>Kg</option><option>Dozen</option><option>Bundle</option></select>
+      </div>
+      <div class="fg"><label class="fl">HSN Code</label><input id="p-hsn" placeholder="e.g. 3307"/></div>
+      <div class="fg"><label class="fl">GST Rate</label>
+        <select id="p-gst"><option value="0">0%</option><option value="5" selected>5%</option><option value="12">12%</option><option value="18">18%</option><option value="28">28%</option></select>
+      </div>
+      <div class="fg"><label class="fl">Selling Price (₹) <span class="req">*</span></label><input id="p-price" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="fg"><label class="fl">Cost Price (₹)</label><input id="p-cost" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="fg"><label class="fl">Opening Stock</label><input id="p-stock" type="number" value="0" min="0"/></div>
+      <div class="fg"><label class="fl">Min Stock Alert Level</label><input id="p-minstk" type="number" value="10" min="0"/></div>
+      <div class="fg" style="grid-column:1/-1;background:linear-gradient(135deg,#FFF7DC,#FAEFD4);border:2px solid var(--gold);border-radius:var(--radius);padding:12px">
+        <label class="fl" style="font-weight:700;color:#6B4423">⭐ QUICK CODE (short number for fast billing)</label>
+        <div style="display:flex;gap:7px;align-items:center">
+          <input id="p-qc" placeholder="e.g. 1, 5, 99 — leave empty to auto-assign" autocomplete="off" style="font-size:18px;font-weight:900;text-align:center;font-family:var(--font-mono);background:#fff" maxlength="6"/>
+          <button class="btn btn-gold" onclick="autoQC()" style="white-space:nowrap" title="Auto-assign next available code">⚡ Auto</button>
+        </div>
+        <div style="font-size:11px;color:#6B4423;margin-top:4px;line-height:1.5">
+          This number prints BIG on the label. Cashier types it → product added instantly. 1-6 digits.
+        </div>
+      </div>
+      <div class="fg" style="grid-column:1/-1">
+        <label class="fl">Barcode (optional — scan with TVS gun, or auto-generate, or type manually)</label>
+        <div style="display:flex;gap:7px">
+          <input id="p-bc" placeholder="Scan with TVS scanner or enter manually" autocomplete="off"/>
+          <button class="btn btn-gold" onclick="autoBC()" style="white-space:nowrap" title="Generate a new random barcode (for unbranded items)">⚡ Auto-gen</button>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5">
+          <b>Type A (branded):</b> Scan the product's existing barcode (Patanjali, MTR etc.)<br/>
+          <b>Type B (unbranded):</b> Skip if using Quick Code only (numeric label).
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;flex-wrap:wrap">
+      <button class="btn" onclick="cm('m-prod')">Cancel</button>
+      <button class="btn btn-p" onclick="saveProd()">Save Product</button>
+      <button class="btn btn-gold" onclick="saveAndPrintLabels()">💾 Save & 🏷️ Print Labels</button>
+    </div>
+  </div>
+</div>
+
+<div id="m-quickstock" class="overlay">
+  <div class="modal" style="width:360px">
+    <div class="modal-hd"><span class="modal-title">Quick Add Stock</span><button class="close-btn" onclick="cm('m-quickstock')">×</button></div>
+    <div id="qs-prod-info" style="font-size:13px;padding:11px;background:var(--bg3);border-radius:var(--radius);margin-bottom:12px"></div>
+    <input type="hidden" id="qs-pid"/>
+    <div class="fg2">
+      <div class="fg"><label class="fl">Add Quantity <span class="req">*</span></label><input id="qs-qty" type="number" placeholder="0" min="1"/></div>
+      <div class="fg"><label class="fl">Cost / Unit</label><input id="qs-cost" type="number" step="0.01"/></div>
+    </div>
+    <div class="fg" style="margin-bottom:12px"><label class="fl">Supplier (optional)</label><input id="qs-sup" placeholder="Supplier name"/></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn" onclick="cm('m-quickstock')">Cancel</button>
+      <button class="btn btn-p" onclick="saveQuickStock()">+ Add Stock</button>
+    </div>
+  </div>
+</div>
+
+<div id="m-crpay" class="overlay">
+  <div class="modal" style="width:380px">
+    <div class="modal-hd"><span class="modal-title">Record Credit Payment</span><button class="close-btn" onclick="cm('m-crpay')">×</button></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Customer Phone <span class="req">*</span></label><input id="cr-ph" placeholder="Mobile number" oninput="lookupCrCust()"/></div>
+    <div id="cr-cust-info" style="font-size:12px;color:var(--text2);margin-bottom:11px;padding:9px 11px;background:var(--bg3);border-radius:var(--radius);display:none"></div>
+    <div class="fg2">
+      <div class="fg"><label class="fl">Amount (₹) <span class="req">*</span></label><input id="cr-amt" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="fg"><label class="fl">Payment Mode</label><select id="cr-mode"><option>Cash</option><option>UPI</option><option>Card</option></select></div>
+    </div>
+    <div class="fg" style="margin-bottom:11px"><label class="fl">Notes</label><input id="cr-notes" placeholder="Optional"/></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn" onclick="cm('m-crpay')">Cancel</button>
+      <button class="btn btn-s" onclick="saveCreditPay()">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<div id="m-labelsheet" class="overlay">
+  <div class="modal" style="width:440px">
+    <div class="modal-hd"><span class="modal-title">🏷️ Print TSC Labels</span><button class="close-btn" onclick="cm('m-labelsheet')">×</button></div>
+    <div id="ls-product-info" style="font-size:13.5px;padding:13px;background:var(--bg3);border-radius:var(--radius);margin-bottom:14px"></div>
+    <div id="ls-tsc-info" style="font-size:11.5px;color:var(--text2);padding:10px 12px;background:#FFF7DC;border:1px solid var(--gold);border-radius:var(--radius);margin-bottom:14px"></div>
+    <div class="fg2">
+      <div class="fg">
+        <label class="fl">Number of Labels to Print <span class="req">*</span></label>
+        <input id="ls-qty" type="number" value="10" min="1" max="500"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Output Mode</label>
+        <select id="ls-mode">
+          <option value="tsc" selected>TSC Roll (continuous)</option>
+          <option value="a4">A4 Sheet (fallback)</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg" style="margin-bottom:10px">
+      <label class="fl"><input type="checkbox" id="ls-showprice" checked style="width:auto;margin-right:6px"/> Show price (MRP)</label>
+    </div>
+    <div class="fg" style="margin-bottom:10px">
+      <label class="fl"><input type="checkbox" id="ls-showname" checked style="width:auto;margin-right:6px"/> Show product name</label>
+    </div>
+    <div class="fg" style="margin-bottom:14px">
+      <label class="fl"><input type="checkbox" id="ls-showstore" style="width:auto;margin-right:6px"/> Show store name (extra line — usually off)</label>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+      <button class="btn" onclick="cm('m-labelsheet')">Cancel</button>
+      <button class="btn btn-p" onclick="printTSCLabels()">🖨 Print Labels</button>
+    </div>
+  </div>
+</div>
+
+<div id="m-cust" class="overlay">
+  <div class="modal" style="width:400px">
+    <div class="modal-hd"><span class="modal-title">Add Customer</span><button class="close-btn" onclick="cm('m-cust')">×</button></div>
+    <div class="fg2">
+      <div class="fg"><label class="fl">Full Name <span class="req">*</span></label><input id="c-name" placeholder="Customer name"/></div>
+      <div class="fg"><label class="fl">Phone <span class="req">*</span></label><input id="c-phone" placeholder="Mobile"/></div>
+      <div class="fg"><label class="fl">Email</label><input id="c-email" placeholder="Optional"/></div>
+      <div class="fg"><label class="fl">Address</label><input id="c-addr" placeholder="Locality"/></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn" onclick="cm('m-cust')">Cancel</button>
+      <button class="btn btn-p" onclick="saveCust()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Share Bill Modal -->
+<div id="m-wa-share" class="overlay">
+  <div class="modal" style="width:440px">
+    <div class="modal-hd">
+      <span class="modal-title">📱 Share Bill via WhatsApp</span>
+      <button class="close-btn" onclick="skipWhatsApp()">×</button>
+    </div>
+    <div style="padding:6px 0 12px">
+      <div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border:2px solid #25D366;border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:28px;text-align:center;margin-bottom:6px">📲</div>
+        <div style="text-align:center;font-weight:700;font-size:14px;color:#1B5E20;margin-bottom:4px">
+          Send bill to customer's WhatsApp?
+        </div>
+        <div style="text-align:center;font-size:12.5px;color:#2E7D32">
+          Customer: <b id="wa-customer-name">-</b><br>
+          Phone: <b id="wa-phone-display" style="font-family:monospace">-</b><br>
+          Bill: <b id="wa-bill-num">-</b> · Total: <b>₹<span id="wa-total">0</span></b>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);background:#FFF7DC;border:1px dashed var(--gold-dark);padding:9px 12px;border-radius:6px;margin-bottom:10px">
+        💡 WhatsApp Web will open in your browser with the bill ready to send.<br>
+        Make sure WhatsApp Web is logged in on this PC.
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:8px">
+      <button class="btn" onclick="skipWhatsApp()" style="flex:1">⏭ Skip</button>
+      <button class="btn btn-p" onclick="sendToWhatsApp()" style="flex:1.5;background:#25D366;border-color:#1DA851;color:#fff">📲 Send to WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const IS_DEMO = !window.api;
+if (IS_DEMO) document.body.classList.add('demo-mode');
+
+const demoData = {
+  products: [
+    {id:1,name:'Agarbatti Premium Pack',category:'Agarbatti & Dhoop',unit:'Pack',hsn:'3307',gst_rate:5,selling_price:45,cost_price:28,stock:120,min_stock:20,barcode:'8901234567001',is_active:1},
+    {id:2,name:'Clay Diya Set of 10',category:'Diyas & Lamps',unit:'Pack',hsn:'6914',gst_rate:5,selling_price:30,cost_price:18,stock:8,min_stock:15,barcode:'8901234567002',is_active:1},
+    {id:3,name:'Kumkum Powder 50g',category:'Camphor & Kumkum',unit:'Pack',hsn:'3304',gst_rate:12,selling_price:20,cost_price:10,stock:55,min_stock:10,barcode:'8901234567003',is_active:1},
+    {id:4,name:'Camphor Tablets Box',category:'Camphor & Kumkum',unit:'Box',hsn:'2914',gst_rate:5,selling_price:35,cost_price:20,stock:40,min_stock:10,barcode:'8901234567004',is_active:1},
+    {id:5,name:'Tulsi Garland',category:'Flowers & Garlands',unit:'Piece',hsn:'0604',gst_rate:0,selling_price:25,cost_price:12,stock:6,min_stock:10,barcode:'8901234567005',is_active:1},
+    {id:6,name:'Brass Diya Small',category:'Diyas & Lamps',unit:'Piece',hsn:'8311',gst_rate:12,selling_price:150,cost_price:90,stock:22,min_stock:5,barcode:'8901234567006',is_active:1},
+    {id:7,name:'Puja Thali Set',category:'Puja Thali',unit:'Piece',hsn:'7323',gst_rate:12,selling_price:350,cost_price:200,stock:12,min_stock:3,barcode:'8901234567007',is_active:1},
+  ],
+  customers: [
+    {id:1,name:'Priya Sharma',phone:'9876543210',email:'priya@gmail.com',address:'Banjara Hills',credit_balance:200,total_purchases:850,purchase_count:3,status:'Regular'},
+    {id:2,name:'Ramesh Iyer',phone:'9123456789',email:'',address:'Jubilee Hills',credit_balance:0,total_purchases:2400,purchase_count:8,status:'Loyal'},
+  ],
+  bills: [],
+  billCounter: 1,
+  stockHistory: [],
+  creditPayments: [],
+  settings: {store_name:'Alankar Pooja Stores',store_address:'Hyderabad, Telangana',store_phone:'9000000000',store_email:'',gstin:'36AABCA1234Z1Z5',bill_footer:'Thank you for your purchase! Visit Again. Jai Mata Di',print_size:'80mm'}
+};
+
+const DemoAPI = {
+  products: {
+    list: async () => [...demoData.products],
+    byId: async (id) => demoData.products.find(p=>p.id===id),
+    byBarcode: async (bc) => demoData.products.find(p=>p.barcode===bc) || null,
+    insert: async (p) => { const id = Math.max(0,...demoData.products.map(x=>x.id))+1; demoData.products.push({...p,id,is_active:1}); return {lastInsertRowid:id}; },
+    update: async (p) => { const idx = demoData.products.findIndex(x=>x.id===p.id); if(idx>=0) Object.assign(demoData.products[idx],p); return {changes:1}; },
+    remove: async (id) => { demoData.products = demoData.products.filter(x=>x.id!==id); return {changes:1}; },
+    adjustStock: async (id, delta) => { const p = demoData.products.find(x=>x.id===id); if(p) p.stock = Math.max(0, p.stock+delta); return {}; },
+  },
+  customers: {
+    list: async () => [...demoData.customers],
+    byPhone: async (ph) => demoData.customers.find(c=>c.phone===ph) || null,
+    insert: async (c) => { const id = Math.max(0,...demoData.customers.map(x=>x.id))+1; demoData.customers.push({...c,id,credit_balance:0,total_purchases:0,purchase_count:0,status:'New'}); return {lastInsertRowid:id}; },
+  },
+  bills: {
+    save: async (bill, items) => {
+      const id = ++demoData.billCounter;
+      const billNum = 'INV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
+      const savedBill = {id, bill_number:billNum, ...bill, items:[...items], created_at:new Date().toISOString()};
+      demoData.bills.push(savedBill);
+      items.forEach(it => { if(it.product_id){ const p = demoData.products.find(x=>x.id===it.product_id); if(p) p.stock = Math.max(0, p.stock-it.qty);}});
+      if (bill.customer_phone) {
+        let c = demoData.customers.find(x=>x.phone===bill.customer_phone);
+        if (c) {
+          c.total_purchases += bill.total; c.purchase_count++;
+          if (bill.payment_mode==='Credit') c.credit_balance += bill.total;
+          if (c.purchase_count>=10) c.status='Loyal'; else if (c.purchase_count>=3) c.status='Regular';
+        } else {
+          demoData.customers.push({id:Math.max(0,...demoData.customers.map(x=>x.id))+1,name:bill.customer_name,phone:bill.customer_phone,email:'',address:'',credit_balance:bill.payment_mode==='Credit'?bill.total:0,total_purchases:bill.total,purchase_count:1,status:'New'});
+        }
+      }
+      return {billId:id, billNum};
+    },
+    list: async (from, to, mode) => {
+      let f = demoData.bills.filter(b=>b.bill_date>=from && b.bill_date<=to);
+      if (mode) f = f.filter(b=>b.payment_mode===mode);
+      return f.sort((a,b)=>b.id-a.id);
+    },
+    byId: async (id) => demoData.bills.find(b=>b.id===id),
+    items: async (billId) => { const b = demoData.bills.find(x=>x.id===billId); return b ? b.items : []; },
+  },
+  stock: {
+    add: async (e) => { demoData.stockHistory.unshift({id:Date.now(),...e,entry_date:new Date().toISOString().split('T')[0]}); const p = demoData.products.find(x=>x.id===e.product_id); if(p){p.stock+=e.qty_added; if(e.cost_price>0) p.cost_price=e.cost_price;} return {ok:true}; },
+    history: async () => [...demoData.stockHistory].slice(0,200),
+  },
+  credit: {
+    recordPayment: async (p) => { demoData.creditPayments.unshift({id:Date.now(),...p,payment_date:new Date().toISOString().split('T')[0]}); const c = demoData.customers.find(x=>x.phone===p.customer_phone); if(c) c.credit_balance = Math.max(0, c.credit_balance-p.amount); return {ok:true}; },
+    entries: async () => demoData.bills.filter(b=>b.payment_mode==='Credit').map(b=>{
+      const paid = demoData.creditPayments.filter(p=>p.customer_phone===b.customer_phone).reduce((s,x)=>s+x.amount,0);
+      return {...b, paid_amount:paid, due_amount:Math.max(0,b.total-paid)};
+    }).reverse(),
+    payments: async () => [...demoData.creditPayments],
+    totals: async () => ({outstanding:demoData.customers.reduce((s,c)=>s+c.credit_balance,0),debtors:demoData.customers.filter(c=>c.credit_balance>0).length,collected:demoData.creditPayments.reduce((s,p)=>s+p.amount,0)}),
+  },
+  reports: {
+    dashboard: async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const month = today.slice(0,7);
+      const todayBills = demoData.bills.filter(b=>b.bill_date===today);
+      const monthBills = demoData.bills.filter(b=>b.bill_date.startsWith(month));
+      const lowItems = demoData.products.filter(p=>p.stock<p.min_stock);
+      const payMix = {};
+      monthBills.forEach(b => { if(!payMix[b.payment_mode]) payMix[b.payment_mode]={cnt:0,total:0}; payMix[b.payment_mode].cnt++; payMix[b.payment_mode].total += b.total;});
+      const prodMap = {};
+      monthBills.forEach(b => b.items.forEach(it => {
+        if(!prodMap[it.product_name]) prodMap[it.product_name]={qty_sold:0,revenue:0};
+        prodMap[it.product_name].qty_sold += it.qty;
+        prodMap[it.product_name].revenue += it.total_amount;
+      }));
+      return {
+        todaySales: todayBills.reduce((s,b)=>s+b.total,0), todayCount: todayBills.length,
+        monthSales: monthBills.reduce((s,b)=>s+b.total,0), monthCount: monthBills.length,
+        totalCredit: demoData.customers.reduce((s,c)=>s+c.credit_balance,0),
+        creditCount: demoData.customers.filter(c=>c.credit_balance>0).length,
+        lowStock: lowItems.length,
+        totalProducts: demoData.products.length, totalCustomers: demoData.customers.length,
+        recentBills: [...demoData.bills].reverse().slice(0,8),
+        payMix: Object.entries(payMix).map(([k,v])=>({payment_mode:k,cnt:v.cnt,total:v.total})),
+        topProducts: Object.entries(prodMap).map(([k,v])=>({product_name:k,...v})).sort((a,b)=>b.revenue-a.revenue).slice(0,5),
+        lowStockItems: lowItems.slice(0,6).map(p=>({name:p.name,stock:p.stock,min_stock:p.min_stock})),
+      };
+    },
+    gst: async (month) => {
+      const monBills = demoData.bills.filter(b=>b.bill_date.startsWith(month));
+      const byRate = {};
+      monBills.forEach(b => b.items.forEach(it => {
+        if(!byRate[it.gst_rate]) byRate[it.gst_rate] = {gst_rate:it.gst_rate,taxable:0,cgst:0,sgst:0,total_gst:0,txn_count:0};
+        byRate[it.gst_rate].taxable += it.base_amount;
+        byRate[it.gst_rate].cgst += it.gst_amount/2;
+        byRate[it.gst_rate].sgst += it.gst_amount/2;
+        byRate[it.gst_rate].total_gst += it.gst_amount;
+        byRate[it.gst_rate].txn_count++;
+      }));
+      return Object.values(byRate);
+    },
+    gstFull: async (month) => {
+      const monBills = demoData.bills.filter(b => b.bill_date.startsWith(month));
+      const monStock = demoData.stockHistory.filter(s => (s.entry_date||'').startsWith(month));
+
+      // Sales by rate
+      const sByRate = {};
+      monBills.forEach(b => b.items.forEach(it => {
+        if (!sByRate[it.gst_rate]) sByRate[it.gst_rate] = {gst_rate:it.gst_rate, sales_amount:0, taxable:0, cgst:0, sgst:0, total_gst:0};
+        sByRate[it.gst_rate].sales_amount += it.total_amount;
+        sByRate[it.gst_rate].taxable += it.base_amount;
+        sByRate[it.gst_rate].cgst += it.gst_amount/2;
+        sByRate[it.gst_rate].sgst += it.gst_amount/2;
+        sByRate[it.gst_rate].total_gst += it.gst_amount;
+      }));
+
+      // Purchases by rate (from stock entries, using product's GST rate)
+      const pByRate = {};
+      monStock.forEach(se => {
+        const prod = demoData.products.find(p => p.id === se.product_id);
+        if (!prod) return;
+        const rate = prod.gst_rate;
+        const taxable = se.qty_added * se.cost_price;
+        const gstAmt = taxable * rate / 100;
+        if (!pByRate[rate]) pByRate[rate] = {gst_rate:rate, purchase_amount:0, taxable:0, cgst:0, sgst:0, total_gst:0};
+        pByRate[rate].purchase_amount += taxable + gstAmt;
+        pByRate[rate].taxable += taxable;
+        pByRate[rate].cgst += gstAmt/2;
+        pByRate[rate].sgst += gstAmt/2;
+        pByRate[rate].total_gst += gstAmt;
+      });
+
+      // Sales items
+      const sItemMap = {};
+      monBills.forEach(b => b.items.forEach(it => {
+        const k = it.product_name + '|' + (it.hsn||'') + '|' + it.gst_rate;
+        if (!sItemMap[k]) sItemMap[k] = {product_name:it.product_name, hsn:it.hsn||'', gst_rate:it.gst_rate, qty:0, taxable:0, cgst:0, sgst:0, total:0};
+        sItemMap[k].qty += it.qty;
+        sItemMap[k].taxable += it.base_amount;
+        sItemMap[k].cgst += it.gst_amount/2;
+        sItemMap[k].sgst += it.gst_amount/2;
+        sItemMap[k].total += it.total_amount;
+      }));
+
+      // Purchase items
+      const pItemMap = {};
+      monStock.forEach(se => {
+        const prod = demoData.products.find(p => p.id === se.product_id);
+        if (!prod) return;
+        const k = se.product_name + '|' + (prod.hsn||'') + '|' + prod.gst_rate;
+        const taxable = se.qty_added * se.cost_price;
+        const gstAmt = taxable * prod.gst_rate / 100;
+        if (!pItemMap[k]) pItemMap[k] = {product_name:se.product_name, hsn:prod.hsn||'', gst_rate:prod.gst_rate, qty:0, taxable:0, cgst:0, sgst:0, total:0};
+        pItemMap[k].qty += se.qty_added;
+        pItemMap[k].taxable += taxable;
+        pItemMap[k].cgst += gstAmt/2;
+        pItemMap[k].sgst += gstAmt/2;
+        pItemMap[k].total += taxable + gstAmt;
+      });
+
+      return {
+        salesByRate: Object.values(sByRate).sort((a,b)=>a.gst_rate-b.gst_rate),
+        purchasesByRate: Object.values(pByRate).sort((a,b)=>a.gst_rate-b.gst_rate),
+        salesItems: Object.values(sItemMap).sort((a,b)=>b.total-a.total),
+        purchaseItems: Object.values(pItemMap).sort((a,b)=>b.total-a.total),
+      };
+    },
+    monthly: async (month) => {
+      const monBills = demoData.bills.filter(b=>b.bill_date.startsWith(month));
+      const daily = {};
+      monBills.forEach(b => { if(!daily[b.bill_date]) daily[b.bill_date] = {bill_date:b.bill_date,cnt:0,revenue:0,gst:0}; daily[b.bill_date].cnt++; daily[b.bill_date].revenue += b.total; daily[b.bill_date].gst += (b.cgst+b.sgst);});
+      const payMix = {};
+      monBills.forEach(b => { if(!payMix[b.payment_mode]) payMix[b.payment_mode]={payment_mode:b.payment_mode,cnt:0,amount:0}; payMix[b.payment_mode].cnt++; payMix[b.payment_mode].amount += b.total;});
+      const prodMap = {};
+      monBills.forEach(b => b.items.forEach(it => {
+        if(!prodMap[it.product_name]) prodMap[it.product_name] = {product_name:it.product_name,qty:0,revenue:0,gst:0};
+        prodMap[it.product_name].qty += it.qty;
+        prodMap[it.product_name].revenue += it.total_amount;
+        prodMap[it.product_name].gst += it.gst_amount;
+      }));
+      return {bills:monBills, daily:Object.values(daily).sort((a,b)=>a.bill_date.localeCompare(b.bill_date)), payMix:Object.values(payMix), topProds:Object.values(prodMap).sort((a,b)=>b.revenue-a.revenue).slice(0,15)};
+    }
+  },
+  settings: {
+    getAll: async () => ({...demoData.settings}),
+    set: async (k,v) => { demoData.settings[k] = v; },
+    setMany: async (obj) => { Object.assign(demoData.settings, obj); },
+  },
+  backup: {
+    export: async () => alert('Backup is only available in the real desktop app.'),
+    getDbPath: async () => '(Demo mode - no real database)',
+  },
+  printHTML: async (html, opts) => { const w = window.open('','_blank','width=420,height=700'); if(w){w.document.write(html);w.document.close();} },
+  printerList: async () => ([
+    {name:'Microsoft Print to PDF', isDefault:true, description:'(demo)'},
+    {name:'TSC TE244', isDefault:false, description:'(demo)'},
+    {name:'TVSE RP3200 Lite', isDefault:false, description:'(demo)'},
+  ]),
+  tscPrintRaw: async (printerName, tspl) => { console.log('[DEMO TSPL]', printerName, tspl); return {ok:true, output:'demo mode'}; },
+};
+
+const API = IS_DEMO ? DemoAPI : window.api;
+
+const D = new Date();
+const todayStr = D.toISOString().split('T')[0];
+const monthStr = D.toISOString().slice(0,7);
+document.getElementById('today-lbl').textContent = D.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+document.getElementById('gst-month').value = monthStr;
+document.getElementById('mr-month').value = monthStr;
+document.getElementById('sr-from').value = todayStr;
+document.getElementById('sr-to').value = todayStr;
+
+let allProds = [], allCusts = [], billItems = [], editProdId = null, scanProdId = null;
+let settings = {};
+
+const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtS = n => '₹' + Math.round(n||0).toLocaleString('en-IN');
+const esc = s => String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+
+const pgTitles = {
+  dash:['Dashboard','Overview of your store today'],
+  bill:['New Bill','Create and print customer invoice'],
+  prod:['Products','Manage your product catalog'],
+  stock:['Stock Entry','Receive goods and update inventory'],
+  barcode:['Barcodes','Generate and print product labels'],
+  credit:['Credit Ledger','Track customer dues and payments'],
+  gst:['GST Reports','Monthly GST calculation and filing'],
+  sales:['Sales Report','View bills with filters'],
+  monthly:['Monthly Report','Full month sales analysis'],
+  cust:['Customers','Customer database and history'],
+  settings:['Settings','Configure store and backup data'],
+};
+
+function go(secId, navEl) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nv').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('sec-'+secId);
+  if (sec) sec.classList.add('active');
+  const nav = navEl || document.querySelector(`.nv[data-sec="${secId}"]`);
+  if (nav) nav.classList.add('active');
+  const [title, sub] = pgTitles[secId] || [secId, ''];
+  document.getElementById('pg-title').textContent = title;
+  document.getElementById('pg-sub').textContent = sub;
+  const loaders = {dash:loadDash, prod:loadProds, stock:loadStock, barcode:loadBarcodes, credit:loadCredit, gst:runGST, sales:runSales, monthly:runMonthly, cust:loadCusts, bill:loadBillPage, settings:loadSettings};
+  if (loaders[secId]) loaders[secId]().catch(showError);
+}
+
+document.querySelectorAll('.nv').forEach(el => el.addEventListener('click', () => go(el.dataset.sec, el)));
+
+function cm(id) { document.getElementById(id).classList.remove('show'); }
+function om(id) { document.getElementById(id).classList.add('show'); }
+
+function showAlert(msg, type='s') {
+  const el = document.getElementById('alert-box');
+  el.textContent = msg;
+  el.className = 'alert al-' + type + ' show';
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+function showError(err) {
+  console.error(err);
+  showAlert('Error: ' + (err.message || err), 'e');
+}
+
+async function loadSettings() {
+  settings = await API.settings.getAll();
+  document.getElementById('s-name').value = settings.store_name || '';
+  document.getElementById('s-gstin').value = settings.gstin || '';
+  document.getElementById('s-phone').value = settings.store_phone || '';
+  document.getElementById('s-email').value = settings.store_email || '';
+  document.getElementById('s-cashier').value = settings.cashier_name || 'Admin';
+  document.getElementById('s-addr').value = settings.store_address || '';
+  document.getElementById('s-footer').value = settings.bill_footer || '';
+  // GST mode
+  const gstMode = settings.gst_pricing_mode || 'inclusive';
+  document.getElementById('s-gst-mode').value = gstMode;
+  updateGSTModeExample(gstMode);
+  // TSC settings — defaults shifted to single-column for TE244 reliability
+  document.getElementById('s-tsc-w').value = settings.tsc_label_width || '38';
+  document.getElementById('s-tsc-h').value = settings.tsc_label_height || '25';
+  document.getElementById('s-tsc-cols').value = settings.tsc_columns || '1';
+  document.getElementById('s-tsc-rgap').value = settings.tsc_row_gap || '2';
+  document.getElementById('s-tsc-density').value = settings.tsc_density || '8';
+  document.getElementById('s-tsc-speed').value = settings.tsc_speed || '4';
+  document.getElementById('s-tsc-tspl').checked = (settings.tsc_use_tspl !== '0');
+  document.getElementById('s-tsc-label-mode').value = settings.tsc_label_mode || 'qc';
+  // Silent print
+  document.getElementById('s-silent-print').checked = (settings.bill_silent_print === '1');
+  document.getElementById('store-name-display').textContent = settings.store_name || 'Alankar Pooja Stores';
+  document.getElementById('store-gstin-display').textContent = 'GSTIN: ' + (settings.gstin || '-');
+  const bCashier = document.getElementById('b-cashier');
+  if (bCashier && !bCashier.value) bCashier.value = settings.cashier_name || 'Admin';
+
+  // Hook GST mode change handler
+  document.getElementById('s-gst-mode').addEventListener('change', async (e) => {
+    const v = e.target.value;
+    updateGSTModeExample(v);
+    await API.settings.set('gst_pricing_mode', v);
+    settings.gst_pricing_mode = v;
+    showAlert(`GST mode: ${v === 'inclusive' ? 'Inclusive (price = final MRP)' : 'Exclusive (GST added at bill)'}`);
+  });
+
+  // Auto-populate printer picker if already saved
+  if (settings.bill_printer_name || settings.tsc_printer_name) {
+    // Don't auto-load list (network roundtrip), but show what's saved
+    showSavedPrintersChoice();
+  }
+
+  // Auto-backup settings
+  const autoBackupEl = document.getElementById('s-auto-backup');
+  const backupFolderEl = document.getElementById('s-backup-folder');
+  const lastBackupEl = document.getElementById('last-backup-info');
+  if (autoBackupEl) autoBackupEl.checked = (settings.auto_backup_enabled !== '0');
+  if (backupFolderEl) backupFolderEl.value = settings.auto_backup_folder || '';
+  if (lastBackupEl) {
+    if (settings.last_auto_backup) {
+      try {
+        const d = new Date(settings.last_auto_backup);
+        lastBackupEl.textContent = `✅ Last auto-backup: ${d.toLocaleString('en-IN')}`;
+        lastBackupEl.style.display = 'block';
+      } catch (e) {}
+    } else {
+      lastBackupEl.textContent = '⏳ No auto-backup run yet. Close app to trigger first backup.';
+      lastBackupEl.style.display = 'block';
+    }
+  }
+}
+
+// === AUTO-BACKUP ===
+async function saveAutoBackupSettings() {
+  const enabled = document.getElementById('s-auto-backup').checked;
+  const folder = document.getElementById('s-backup-folder').value.trim();
+  try {
+    await API.settings.setMany({
+      auto_backup_enabled: enabled ? '1' : '0',
+      auto_backup_folder: folder,
+    });
+    settings.auto_backup_enabled = enabled ? '1' : '0';
+    settings.auto_backup_folder = folder;
+    showAlert(`Auto-backup ${enabled ? 'ENABLED' : 'DISABLED'}${enabled && folder ? ` → ${folder}` : ''}`);
+  } catch (e) { showError(e); }
+}
+
+async function pickBackupFolder() {
+  try {
+    const result = await API.backup.pickFolder();
+    if (result && result.ok && result.path) {
+      document.getElementById('s-backup-folder').value = result.path;
+      showAlert('Folder selected. Click Save to apply.');
+    }
+  } catch (e) { showError(e); }
+}
+
+async function runManualAutoBackup() {
+  const folder = document.getElementById('s-backup-folder').value.trim();
+  try {
+    const result = await API.backup.auto(folder);
+    if (result && result.ok) {
+      showAlert(`✅ Backup saved to:\n${result.path}`);
+      // Refresh "last backup" display
+      await API.settings.set('last_auto_backup', new Date().toISOString());
+      settings.last_auto_backup = new Date().toISOString();
+      const lastBackupEl = document.getElementById('last-backup-info');
+      if (lastBackupEl) {
+        lastBackupEl.textContent = `✅ Last backup: ${new Date().toLocaleString('en-IN')}`;
+        lastBackupEl.style.display = 'block';
+      }
+    } else {
+      showAlert(`Backup failed: ${result && result.error ? result.error : 'Unknown error'}`,'e');
+    }
+  } catch (e) { showError(e); }
+}
+
+function updateGSTModeExample(mode) {
+  const div = document.getElementById('gst-mode-example');
+  if (!div) return;
+  if (mode === 'inclusive') {
+    div.innerHTML = `<b>Example:</b> Product MRP = ₹100, GST = 12%<br/>
+      Customer pays: <b>₹100</b> (no extra GST added)<br/>
+      For tax reports: Base = ₹89.29 · GST = ₹10.71 (auto-calculated)`;
+  } else {
+    div.innerHTML = `<b>Example:</b> Product price = ₹100, GST = 12%<br/>
+      Customer pays: <b>₹112</b> (₹100 + ₹12 GST)<br/>
+      For tax reports: Base = ₹100 · GST = ₹12`;
+  }
+}
+
+let detectedPrinters = [];
+let selectedBillPrinter = null;
+let selectedLabelPrinter = null;
+
+async function loadPrinterList() {
+  try {
+    const list = await API.printerList();
+    detectedPrinters = list || [];
+    selectedBillPrinter = settings.bill_printer_name || (list.find(p => /TVS|RP3200|thermal/i.test(p.name)) || {}).name || null;
+    selectedLabelPrinter = settings.tsc_printer_name || (list.find(p => /TSC|TE244|label/i.test(p.name)) || {}).name || null;
+    renderPrinterPicker();
+  } catch (err) {
+    showAlert('Failed to list printers: ' + err.message, 'e');
+  }
+}
+
+function renderPrinterPicker() {
+  const picker = document.getElementById('printer-picker');
+  picker.style.display = 'block';
+
+  function buildCards(targetId, selectedName, roleKey) {
+    const container = document.getElementById(targetId);
+    if (!detectedPrinters.length) {
+      container.innerHTML = '<div style="padding:10px;color:var(--text2);font-size:12.5px">No printers detected. Make sure they are connected and installed in Windows.</div>';
+      return;
+    }
+    container.innerHTML = '';
+    detectedPrinters.forEach(p => {
+      const isSel = (selectedName && p.name === selectedName);
+      const isDefault = p.isDefault;
+      const icon = /TSC|TE244|label/i.test(p.name) ? '🏷️' :
+                   /TVS|RP3200|thermal|POS/i.test(p.name) ? '🧾' :
+                   /PDF/i.test(p.name) ? '📄' :
+                   /AnyDesk|Remote/i.test(p.name) ? '🌐' : '🖨';
+      const card = document.createElement('div');
+      card.className = 'printer-card' + (isSel ? ' selected' : '');
+      card.innerHTML = `<div class="icon">${icon}</div>
+        <div class="name">${esc(p.name)}</div>
+        ${p.description ? `<div class="desc">${esc(p.description)}</div>` : ''}
+        ${isDefault ? '<div class="badge">DEFAULT</div>' : ''}`;
+      card.onclick = () => {
+        if (roleKey === 'bill') selectedBillPrinter = p.name;
+        else selectedLabelPrinter = p.name;
+        renderPrinterPicker();
+      };
+      container.appendChild(card);
+    });
+  }
+  buildCards('bill-printer-buttons', selectedBillPrinter, 'bill');
+  buildCards('label-printer-buttons', selectedLabelPrinter, 'label');
+}
+
+function showSavedPrintersChoice() {
+  const div = document.getElementById('printer-picker');
+  if (!div) return;
+  // Light-show: just hint at what's saved without forcing detection yet
+}
+
+async function savePrinterSettings() {
+  const upd = {
+    bill_printer_name: selectedBillPrinter || '',
+    tsc_printer_name:  selectedLabelPrinter || 'TSC TE244',
+    bill_silent_print: document.getElementById('s-silent-print').checked ? '1' : '0',
+  };
+  await API.settings.setMany(upd);
+  Object.assign(settings, upd);
+  showAlert(`✅ Saved! Bills → ${upd.bill_printer_name || '(none)'} · Labels → ${upd.tsc_printer_name}`);
+}
+
+async function saveTSCSettings() {
+  const newTSC = {
+    tsc_label_width:  document.getElementById('s-tsc-w').value || '38',
+    tsc_label_height: document.getElementById('s-tsc-h').value || '25',
+    tsc_columns:      document.getElementById('s-tsc-cols').value || '1',
+    tsc_row_gap:      document.getElementById('s-tsc-rgap').value || '2',
+    tsc_density:      document.getElementById('s-tsc-density').value || '8',
+    tsc_speed:        document.getElementById('s-tsc-speed').value || '4',
+    tsc_use_tspl:     document.getElementById('s-tsc-tspl').checked ? '1' : '0',
+    tsc_label_mode:   document.getElementById('s-tsc-label-mode').value || 'qc',
+  };
+  await API.settings.setMany(newTSC);
+  Object.assign(settings, newTSC);
+  showAlert(`✅ Label settings saved (${newTSC.tsc_label_width}×${newTSC.tsc_label_height}mm, ${newTSC.tsc_columns}-up, TSPL=${newTSC.tsc_use_tspl === '1' ? 'ON' : 'OFF'})`);
+}
+
+async function testTSCPrint() {
+  const testProduct = {
+    name: 'TEST PRODUCT',
+    barcode: '8901234567890',
+    quick_code: '99',
+    selling_price: 99,
+    hsn: '3307',
+    gst_rate: 5,
+  };
+  const resDiv = document.getElementById('tsc-test-result');
+  resDiv.style.display = 'block';
+  resDiv.innerHTML = '⏳ Sending 4 test labels to printer...';
+  resDiv.style.color = 'var(--text2)';
+  try {
+    await buildAndPrintTSCLabels(testProduct, 4);
+    resDiv.innerHTML = '✅ Print job sent. Check printer for 4 labels.';
+    resDiv.style.color = 'var(--success)';
+  } catch (err) {
+    resDiv.innerHTML = '❌ Failed: ' + err.message;
+    resDiv.style.color = 'var(--danger)';
+  }
+}
+
+async function saveSettings() {
+  const newSettings = {
+    store_name: document.getElementById('s-name').value,
+    gstin: document.getElementById('s-gstin').value,
+    store_phone: document.getElementById('s-phone').value,
+    store_email: document.getElementById('s-email').value,
+    cashier_name: document.getElementById('s-cashier').value || 'Admin',
+    store_address: document.getElementById('s-addr').value,
+    bill_footer: document.getElementById('s-footer').value,
+  };
+  await API.settings.setMany(newSettings);
+  Object.assign(settings, newSettings);
+  document.getElementById('store-name-display').textContent = settings.store_name;
+  document.getElementById('store-gstin-display').textContent = 'GSTIN: ' + settings.gstin;
+  // Force-refresh the cashier field on bill page so new default applies immediately
+  const bCashier = document.getElementById('b-cashier');
+  if (bCashier) bCashier.value = newSettings.cashier_name;
+  showAlert('Settings saved! Cashier updated to: ' + newSettings.cashier_name);
+}
+
+async function doBackup() {
+  if (IS_DEMO) { showAlert('Backup only available in real desktop app','e'); return; }
+  await API.backup.export();
+}
+
+async function showDbPath() {
+  const p = await API.backup.getDbPath();
+  const el = document.getElementById('db-path-info');
+  el.textContent = '📁 ' + p;
+  el.style.display = 'block';
+}
+
+async function loadDash() {
+  const s = await API.reports.dashboard();
+  document.getElementById('d-today').textContent = fmtS(s.todaySales);
+  document.getElementById('d-today-c').textContent = s.todayCount + ' bills today';
+  document.getElementById('d-month').textContent = fmtS(s.monthSales);
+  document.getElementById('d-month-c').textContent = s.monthCount + ' orders this month';
+  document.getElementById('d-credit').textContent = fmtS(s.totalCredit);
+  document.getElementById('d-credit-c').textContent = s.creditCount + ' customers';
+  document.getElementById('d-low').textContent = s.lowStock;
+  const bt = document.getElementById('d-bills');
+  bt.innerHTML = s.recentBills.length ? s.recentBills.map(b => `
+    <tr>
+      <td style="font-family:monospace;font-size:11px">${esc(b.bill_number||'#'+b.id)}</td>
+      <td>${esc(b.customer_name)}</td>
+      <td>${fmtS(b.total)}</td>
+      <td><span class="badge bb">${esc(b.payment_mode)}</span></td>
+      <td><span class="badge ${b.payment_mode==='Credit'?'ba':'bg'}">${b.payment_mode==='Credit'?'Due':'Paid'}</span></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="5">No bills yet — create your first bill</td></tr>';
+  const tot = s.payMix.reduce((a,x) => a + x.total, 0) || 1;
+  document.getElementById('pay-mix').innerHTML = s.payMix.length ? s.payMix.map(x => `
+    <div class="mix-row">
+      <span class="mix-label">${esc(x.payment_mode)}</span>
+      <div class="mix-bar-bg"><div class="mix-bar-fill" style="width:${Math.round(x.total/tot*100)}%"></div></div>
+      <span class="mix-pct">${Math.round(x.total/tot*100)}%</span>
+    </div>`).join('') : '<p style="color:var(--text3);font-size:12px;text-align:center;padding:8px">No data yet</p>';
+  const lsList = document.getElementById('low-stock-list');
+  lsList.innerHTML = s.lowStockItems && s.lowStockItems.length ? s.lowStockItems.map(p => `
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:11.5px">
+      <span style="color:var(--text);font-weight:500">${esc(p.name)}</span>
+      <span class="low">${p.stock} / ${p.min_stock}</span>
+    </div>`).join('') : '<p style="color:var(--text3);font-size:12px;text-align:center;padding:8px">All items in stock</p>';
+  const tp = document.getElementById('d-top');
+  tp.innerHTML = s.topProducts.length ? s.topProducts.map(p => `
+    <tr><td>${esc(p.product_name)}</td><td>${p.qty_sold}</td><td>${fmtS(p.revenue)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="3">No sales this month yet</td></tr>';
+}
+
+async function loadBillPage() {
+  // Always reload settings so any updates (cashier, store info) are picked up
+  settings = await API.settings.getAll();
+  allProds = await API.products.list();
+  allCusts = await API.customers.list();
+  document.getElementById('cust-dl').innerHTML = allCusts.map(c => `<option value="${esc(c.name)}">${esc(c.phone)}</option>`).join('');
+  // Pre-fill cashier from current settings (unless user already typed something for this bill)
+  const bCashier = document.getElementById('b-cashier');
+  if (bCashier && !bCashier.value) bCashier.value = settings.cashier_name || 'Admin';
+  // Auto-focus scanner input
+  setTimeout(() => {
+    const inp = document.getElementById('bill-scan');
+    if (inp) inp.focus();
+  }, 150);
+  // Load Quick Pick (top sellers / recent items)
+  loadQuickPick();
+  // Load Today's Summary cards
+  loadTodaySummary();
+}
+
+// === TODAY'S SUMMARY CARDS ===
+async function loadTodaySummary() {
+  try {
+    const dash = await API.reports.dashboard();
+    if (!dash) return;
+    const todaySales = Number(dash.todaySales || 0);
+    const todayCount = Number(dash.todayCount || 0);
+    const monthSales = Number(dash.monthSales || 0);
+    const monthCount = Number(dash.monthCount || 0);
+    const lowStock = Number(dash.lowStock || 0);
+
+    const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+
+    setText('ts-sales', '₹' + todaySales.toFixed(0));
+    setText('ts-sales-sub', todayCount > 0 ? `${todayCount} bill${todayCount>1?'s':''} today` : 'Be the first sale!');
+    setText('ts-bills', String(todayCount));
+    const avg = todayCount > 0 ? Math.round(todaySales / todayCount) : 0;
+    setText('ts-bills-sub', todayCount > 0 ? `Avg ₹${avg} per bill` : 'No bills yet');
+    setText('ts-month', '₹' + monthSales.toFixed(0));
+    setText('ts-month-sub', `${monthCount} bill${monthCount===1?'':'s'} this month`);
+    setText('ts-lowstock', String(lowStock));
+    setText('ts-lowstock-sub', lowStock === 0 ? 'Stock is healthy 👍' : 'items need restocking');
+  } catch (e) {
+    console.warn('Today summary load error:', e);
+  }
+}
+
+// === QUICK PICK ===
+// Shows top-selling or recently-sold products as one-click buttons
+let quickPickMode = 'top';   // 'top' or 'recent'
+
+async function loadQuickPick() {
+  try {
+    const sec = document.getElementById('quick-pick-section');
+    if (!sec) return;
+    let items = [];
+    if (quickPickMode === 'top') {
+      // Dashboard topProducts returns product_name + qty_sold + revenue
+      const dash = await API.dashboard();
+      const tops = (dash && dash.topProducts) ? dash.topProducts : [];
+      // Match each top-selling name to full product data from allProds
+      items = tops.map(t => {
+        const full = (allProds || []).find(p => p.name === t.product_name);
+        return full ? { ...full, qty_sold: t.qty_sold } : null;
+      }).filter(Boolean).slice(0, 8);
+    } else {
+      // Recent: pull recent bills, get unique products from their items
+      items = await loadRecentSoldProducts(8);
+    }
+
+    // Fallback: if no sales yet, show first 8 in-stock products
+    if (!items.length) {
+      items = (allProds || []).filter(p => (p.stock||0) > 0).slice(0, 8);
+    }
+    if (!items.length) {
+      sec.style.display = 'none';
+      return;
+    }
+    sec.style.display = 'block';
+    renderQuickPick(items);
+    updateQuickPickTabs();
+  } catch (e) {
+    console.warn('Quick pick load failed:', e);
+    const sec = document.getElementById('quick-pick-section');
+    if (sec) sec.style.display = 'none';
+  }
+}
+
+async function loadRecentSoldProducts(limit) {
+  // Fetch recent bills from last 7 days, get unique products from their items
+  try {
+    const today = new Date();
+    const past = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const fmt = d => d.toISOString().split('T')[0];
+    const recent = await API.bills.list(fmt(past), fmt(today));
+    const seen = new Set();
+    const out = [];
+    for (const b of (recent || [])) {
+      try {
+        const items = await API.bills.items(b.id);
+        for (const it of (items || [])) {
+          if (seen.has(it.product_id)) continue;
+          seen.add(it.product_id);
+          const full = (allProds || []).find(p => p.id === it.product_id);
+          if (full) out.push(full);
+          if (out.length >= limit) break;
+        }
+      } catch (e) { /* skip this bill */ }
+      if (out.length >= limit) break;
+    }
+    return out;
+  } catch (e) {
+    return [];
+  }
+}
+
+function renderQuickPick(items) {
+  const grid = document.getElementById('quick-pick-grid');
+  if (!grid) return;
+  grid.innerHTML = items.map(p => {
+    const lowStock = (p.stock || 0) <= 0;
+    const disabled = lowStock ? ' disabled' : '';
+    const cardClick = lowStock ? '' : `onclick="quickPickAdd(${p.id})"`;
+    const qcBadge = p.quick_code ? `<div style="background:#C5A572;color:#fff;padding:2px 6px;border-radius:4px;font-weight:900;font-family:monospace;font-size:12px;display:inline-block;margin-bottom:4px">#${esc(p.quick_code)}</div>` : '';
+    return `<div class="qp-card${disabled}" ${cardClick}>
+      ${qcBadge}
+      <div class="qp-name">${esc(p.name)}</div>
+      <div class="qp-foot">
+        <span class="qp-price">₹${p.selling_price}</span>
+        <span class="qp-stock ${lowStock?'low':''}">${lowStock?'OUT':'Stk: '+(p.stock||0)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleQuickPickMode(mode) {
+  quickPickMode = mode;
+  loadQuickPick();
+}
+
+function updateQuickPickTabs() {
+  const tabTop = document.getElementById('qp-tab-top');
+  const tabRecent = document.getElementById('qp-tab-recent');
+  if (tabTop && tabRecent) {
+    tabTop.classList.toggle('active', quickPickMode === 'top');
+    tabRecent.classList.toggle('active', quickPickMode === 'recent');
+  }
+}
+
+function quickPickAdd(productId) {
+  const p = (allProds || []).find(x => x.id === productId);
+  if (!p) { showAlert('Product not found','e'); return; }
+  if ((p.stock || 0) <= 0) { showAlert(`${p.name} is OUT OF STOCK`,'e'); return; }
+  // Use the same flow as scanning the barcode
+  processScannedBarcode(p.barcode || '');
+}
+
+async function lookupCust() {
+  const ph = document.getElementById('b-phone').value.trim();
+  if (ph.length < 4) return;
+  const c = allCusts.find(x => x.phone === ph) || (await API.customers.byPhone(ph));
+  if (c) document.getElementById('b-cust').value = c.name;
+}
+
+function selPay(el) {
+  document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function getSelectedPay() {
+  const el = document.querySelector('.pay-btn.sel');
+  return el ? el.dataset.mode : 'Cash';
+}
+
+function openAddItem() {
+  if (!allProds.length) { showAlert('No products yet — add products first','e'); return; }
+  const s = document.getElementById('ai-prod');
+  s.innerHTML = '<option value="">-- Select Product --</option>' + allProds.map(p => `<option value="${p.id}">${esc(p.name)} (₹${p.selling_price}) — Stock: ${p.stock}</option>`).join('');
+  document.getElementById('ai-qty').value = 1;
+  document.getElementById('ai-rate').value = '';
+  document.getElementById('ai-gst').value = 5;
+  document.getElementById('ai-amt').value = '';
+  om('m-additem');
+}
+
+function fillAI() {
+  const p = allProds.find(x => x.id === parseInt(document.getElementById('ai-prod').value));
+  if (p) { document.getElementById('ai-rate').value = p.selling_price; document.getElementById('ai-gst').value = p.gst_rate; calcAI(); }
+}
+
+function calcAI() {
+  const q = parseFloat(document.getElementById('ai-qty').value) || 0;
+  const r = parseFloat(document.getElementById('ai-rate').value) || 0;
+  const g = parseFloat(document.getElementById('ai-gst').value) || 0;
+  const c = computeItemAmounts(r, q, g);
+  document.getElementById('ai-amt').value = fmt(c.total_amount);
+}
+
+// Compute base/gst/total based on GST pricing mode
+// - 'inclusive' (default): rate IS the final MRP (already includes GST). Reverse-calc GST.
+// - 'exclusive': rate is base; GST added on top.
+function computeItemAmounts(rate, qty, gstRate) {
+  const mode = (settings && settings.gst_pricing_mode) || 'inclusive';
+  if (mode === 'inclusive') {
+    const total = rate * qty;
+    const base = total / (1 + gstRate/100);
+    const gstAmt = total - base;
+    return {
+      base_amount: round2(base),
+      gst_amount: round2(gstAmt),
+      total_amount: round2(total),
+    };
+  } else {
+    const base = rate * qty;
+    const gstAmt = base * (gstRate/100);
+    return {
+      base_amount: round2(base),
+      gst_amount: round2(gstAmt),
+      total_amount: round2(base + gstAmt),
+    };
+  }
+}
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function addItem() {
+  const pid = parseInt(document.getElementById('ai-prod').value);
+  const qty = parseInt(document.getElementById('ai-qty').value) || 0;
+  const rate = parseFloat(document.getElementById('ai-rate').value) || 0;
+  const gst = parseFloat(document.getElementById('ai-gst').value) || 0;
+  if (!pid || qty < 1 || !rate) { showAlert('Fill all required fields','e'); return; }
+  const p = allProds.find(x => x.id === pid);
+  if (p.stock < qty) { if (!confirm(`Only ${p.stock} ${p.unit}(s) in stock. Continue anyway?`)) return; }
+  const c = computeItemAmounts(rate, qty, gst);
+  billItems.push({
+    product_id: pid, product_name: p.name, hsn: p.hsn||'',
+    qty, rate, gst_rate: gst,
+    base_amount: c.base_amount, gst_amount: c.gst_amount, total_amount: c.total_amount,
+  });
+  cm('m-additem'); renderBill();
+}
+
+// === BILL SCAN INPUT — AUTO-ADD ON ENTER ===
+function setupBillScanner() {
+  const inp = document.getElementById('bill-scan');
+  if (!inp) return;
+  // Listen for Enter (TVS scanner sends Enter at end of barcode)
+  inp.addEventListener('keydown', async (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const code = inp.value.trim();
+    if (!code) return;
+    await processScannedBarcode(code);
+    inp.value = '';
+    inp.focus();
+  });
+}
+
+// === Quick Product Search on Billing Page (when scan fails) ===
+let billSearchHighlight = -1;
+let billSearchMatches = [];
+
+function searchProductOnBill() {
+  const q = (document.getElementById('bill-search').value || '').trim().toLowerCase();
+  const box = document.getElementById('bill-search-results');
+  if (q.length < 2) {
+    box.style.display = 'none';
+    billSearchHighlight = -1;
+    billSearchMatches = [];
+    return;
+  }
+  // Search by name (case-insensitive) OR barcode prefix
+  billSearchMatches = (allProds || [])
+    .filter(p => (p.name||'').toLowerCase().includes(q) || (p.barcode||'').includes(q))
+    .slice(0, 10);
+  if (!billSearchMatches.length) {
+    box.innerHTML = '<div style="padding:14px;color:#666;font-size:13px">No products match. Try fewer letters.</div>';
+    box.style.display = 'block';
+    billSearchHighlight = -1;
+    return;
+  }
+  billSearchHighlight = 0;
+  renderSearchResults();
+  box.style.display = 'block';
+}
+
+function renderSearchResults() {
+  const box = document.getElementById('bill-search-results');
+  box.innerHTML = billSearchMatches.map((p, i) => {
+    const sel = (i === billSearchHighlight);
+    const lowStock = p.stock <= 0;
+    const qcBadge = p.quick_code ? `<span style="background:#C5A572;color:#fff;padding:2px 8px;border-radius:4px;font-weight:900;font-family:monospace;margin-right:6px">#${esc(p.quick_code)}</span>` : '';
+    return `<div style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #eee;${sel?'background:#FFF7DC':''}"
+              onmouseover="billSearchHighlight=${i};renderSearchResults()"
+              onclick="pickSearchResult(${i})">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+                <div style="flex:1">
+                  <div style="font-weight:700;font-size:14px;color:#000">${qcBadge}${esc(p.name)}</div>
+                  <div style="font-size:11px;color:#666;margin-top:2px">
+                    <span style="font-family:monospace">${esc(p.barcode||'')}</span>
+                    ${p.category ? '· '+esc(p.category) : ''}
+                    · Stock: <b style="color:${lowStock?'#c00':'#080'}">${p.stock||0}</b>
+                  </div>
+                </div>
+                <div style="font-weight:900;font-size:15px;color:var(--accent);white-space:nowrap">₹${p.selling_price}</div>
+              </div>
+            </div>`;
+  }).join('');
+}
+
+function onSearchKey(ev) {
+  if (!billSearchMatches.length) return;
+  if (ev.key === 'ArrowDown') {
+    ev.preventDefault();
+    billSearchHighlight = Math.min(billSearchHighlight + 1, billSearchMatches.length - 1);
+    renderSearchResults();
+  } else if (ev.key === 'ArrowUp') {
+    ev.preventDefault();
+    billSearchHighlight = Math.max(billSearchHighlight - 1, 0);
+    renderSearchResults();
+  } else if (ev.key === 'Enter') {
+    ev.preventDefault();
+    if (billSearchHighlight >= 0) pickSearchResult(billSearchHighlight);
+  } else if (ev.key === 'Escape') {
+    document.getElementById('bill-search-results').style.display = 'none';
+    document.getElementById('bill-search').value = '';
+  }
+}
+
+function pickSearchResult(idx) {
+  const p = billSearchMatches[idx];
+  if (!p) return;
+  // Trigger the same flow as if we scanned the barcode
+  processScannedBarcode(p.barcode);
+  // Reset search
+  document.getElementById('bill-search').value = '';
+  document.getElementById('bill-search-results').style.display = 'none';
+  billSearchMatches = [];
+  billSearchHighlight = -1;
+  // Auto-focus back on scan input (so cashier can continue scanning)
+  setTimeout(() => {
+    const inp = document.getElementById('bill-scan');
+    if (inp) inp.focus();
+  }, 100);
+}
+
+// Close search dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const sb = document.getElementById('bill-search');
+  const box = document.getElementById('bill-search-results');
+  if (!sb || !box) return;
+  if (e.target !== sb && !box.contains(e.target)) {
+    box.style.display = 'none';
+  }
+});
+
+async function processScannedBarcode(code) {
+  const fb = document.getElementById('scan-feedback');
+  const inputCode = String(code || '').trim();
+  // Smart lookup: short numeric input checks quick_code first, then barcode
+  let p = null;
+  if (inputCode.length <= 6 && /^\d+$/.test(inputCode)) {
+    // Try quick_code first
+    p = (allProds || []).find(x => x.quick_code === inputCode);
+  }
+  if (!p) {
+    // Fallback to barcode
+    p = (allProds || []).find(x => x.barcode === inputCode) || await API.products.smartLookup(inputCode);
+  }
+  if (!p) {
+    fb.style.display = 'block';
+    fb.style.background = 'var(--danger-bg)';
+    fb.style.color = 'var(--danger)';
+    fb.innerHTML = `❌ <b>Not found:</b> ${esc(inputCode)} — check the code or add this product first.`;
+    setTimeout(() => { fb.style.display = 'none'; }, 4000);
+    return;
+  }
+  if (p.stock <= 0) {
+    fb.style.display = 'block';
+    fb.style.background = 'var(--warning-bg)';
+    fb.style.color = 'var(--warning)';
+    fb.innerHTML = `⚠️ <b>${esc(p.name)}</b> is out of stock!`;
+    setTimeout(() => { fb.style.display = 'none'; }, 3000);
+    return;
+  }
+  // Check if item already in bill — increment qty instead of duplicate
+  const existing = billItems.find(it => it.product_id === p.id);
+  if (existing) {
+    existing.qty += 1;
+    const c = computeItemAmounts(existing.rate, existing.qty, existing.gst_rate);
+    existing.base_amount = c.base_amount;
+    existing.gst_amount = c.gst_amount;
+    existing.total_amount = c.total_amount;
+  } else {
+    const c = computeItemAmounts(p.selling_price, 1, p.gst_rate);
+    billItems.push({
+      product_id: p.id, product_name: p.name, hsn: p.hsn||'',
+      qty: 1, rate: p.selling_price, gst_rate: p.gst_rate,
+      base_amount: c.base_amount, gst_amount: c.gst_amount, total_amount: c.total_amount,
+    });
+  }
+  renderBill();
+  fb.style.display = 'block';
+  fb.style.background = 'var(--success-bg)';
+  fb.style.color = 'var(--success)';
+  fb.innerHTML = `✅ <b>${esc(p.name)}</b> added (₹${p.selling_price}) — Total items: ${billItems.length}`;
+  setTimeout(() => { fb.style.display = 'none'; }, 2200);
+}
+
+function remItem(i) { billItems.splice(i,1); renderBill(); }
+
+function renderBill() {
+  const t = document.getElementById('bill-body');
+  t.innerHTML = billItems.length ? billItems.map((it,i) => `
+    <tr>
+      <td>${esc(it.product_name)}</td>
+      <td>${esc(it.hsn)}</td>
+      <td>${it.qty}</td>
+      <td>${fmt(it.rate)}</td>
+      <td>${it.gst_rate}%</td>
+      <td>${fmt(it.total_amount)}</td>
+      <td><button class="btn btn-d btn-sm btn-icon" onclick="remItem(${i})" title="Remove">×</button></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="7">No items added. Click "Add Item" or scan a barcode.</td></tr>';
+  calcBill();
+}
+
+function calcBill() {
+  let sub=0, gstT=0;
+  billItems.forEach(it => { sub += it.base_amount; gstT += it.gst_amount; });
+  const half = gstT/2;
+  const disc = parseFloat(document.getElementById('b-disc').value) || 0;
+  document.getElementById('bs-sub').textContent = fmt(sub);
+  document.getElementById('bs-cgst').textContent = fmt(half);
+  document.getElementById('bs-sgst').textContent = fmt(half);
+  document.getElementById('bs-total').textContent = fmt(Math.max(0, sub + gstT - disc));
+}
+
+async function saveBill() {
+  if (!billItems.length) { showAlert('Add at least one item to the bill','e'); return; }
+  let sub=0, gstT=0;
+  billItems.forEach(it => { sub += it.base_amount; gstT += it.gst_amount; });
+  const disc = parseFloat(document.getElementById('b-disc').value) || 0;
+  const total = Math.max(0, sub + gstT - disc);
+  const bill = {
+    customer_name: document.getElementById('b-cust').value.trim() || 'Walk-in',
+    customer_phone: document.getElementById('b-phone').value.trim() || '',
+    buyer_gstin: document.getElementById('b-gstin').value.trim().toUpperCase() || '',
+    cashier: document.getElementById('b-cashier').value.trim() || settings.cashier_name || 'Admin',
+    subtotal: sub, cgst: gstT/2, sgst: gstT/2, discount: disc, total,
+    payment_mode: getSelectedPay(),
+    bill_date: todayStr,
+    bill_time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
+  };
+  try {
+    const result = await API.bills.save(bill, billItems);
+    const billHtml = buildBillHTML({...bill, id:result.billId, bill_number:result.billNum}, billItems);
+    const printOpts = {};
+    if (settings.bill_silent_print === '1' && settings.bill_printer_name) {
+      printOpts.silent = true;
+      printOpts.deviceName = settings.bill_printer_name;
+    }
+    await API.printHTML(billHtml, printOpts);
+    showAlert(`Bill ${result.billNum} saved & sent to printer!`);
+    // Offer WhatsApp share if customer phone is provided
+    // IMPORTANT: snapshot items + bill BEFORE clearBill() wipes them
+    const fullBill = {...bill, id:result.billId, bill_number:result.billNum};
+    const itemsSnapshot = billItems.map(it => ({...it}));  // deep copy each item
+    const phoneCheck = (bill.customer_phone || '').replace(/[^0-9]/g, '');
+    if (phoneCheck.length >= 10) {
+      setTimeout(() => offerWhatsAppShare(fullBill, itemsSnapshot), 600);
+    }
+    clearBill();
+    allProds = await API.products.list();
+    // Refresh quick pick — top sellers might have changed
+    loadQuickPick();
+    // Refresh today's summary — sales numbers just changed!
+    loadTodaySummary();
+  } catch (e) { showError(e); }
+}
+
+// === WHATSAPP BILL SHARING ===
+// Shows confirmation modal, then opens WhatsApp Web with customer's number + bill text
+function offerWhatsAppShare(bill, items) {
+  const ov = document.getElementById('m-wa-share');
+  if (!ov) return;
+  document.getElementById('wa-bill-num').textContent = bill.bill_number || bill.id;
+  document.getElementById('wa-customer-name').textContent = bill.customer_name || 'Customer';
+  document.getElementById('wa-phone-display').textContent = bill.customer_phone;
+  document.getElementById('wa-total').textContent = fmt(bill.total || 0);
+  // Store bill for the share button
+  window.__currentWAbill = bill;
+  window.__currentWAitems = items;
+  om('m-wa-share');
+}
+
+function sendToWhatsApp() {
+  const bill = window.__currentWAbill;
+  const items = window.__currentWAitems;
+  if (!bill || !bill.customer_phone) { showAlert('No phone number to share','e'); return; }
+
+  // Shop info
+  const shopName = settings.store_name || 'Alankar Pooja Stores';
+  const shopPhone = settings.store_phone || '';
+  const shopAddr = settings.store_address || '';
+  const gstin = settings.store_gstin || settings.gstin || '';
+
+  // Build clean text message — only safe characters, no decorative emojis that break on WhatsApp
+  let msg = '';
+  msg += `*${shopName}*\n`;
+  if (shopAddr) msg += `${shopAddr}\n`;
+  if (shopPhone) msg += `Phone: ${shopPhone}\n`;
+  if (gstin) msg += `GSTIN: ${gstin}\n`;
+  msg += `--------------------------------\n`;
+  msg += `*TAX INVOICE*\n`;
+  msg += `Bill No: *${bill.bill_number || bill.id}*\n`;
+  msg += `Date: ${bill.bill_date || ''} ${bill.bill_time || ''}\n`.trim() + '\n';
+  msg += `Customer: ${bill.customer_name || 'Walk-in'}\n`;
+  msg += `--------------------------------\n`;
+
+  // Items — always show, even if rate/qty parsing has issues
+  msg += `*ITEMS PURCHASED:*\n`;
+  if (!items || items.length === 0) {
+    msg += `(items details unavailable)\n`;
+  } else {
+    items.forEach((it, i) => {
+      const name = String(it.product_name || it.name || 'Item').substring(0, 30);
+      const qty = Number(it.qty || it.quantity || 1);
+      const rate = Number(it.rate || it.price || it.selling_price || 0);
+      const total = Number(it.total_amount || it.total || (qty * rate) || 0);
+      msg += `${i + 1}. ${name}\n`;
+      msg += `    ${qty} x Rs.${rate.toFixed(2)} = Rs.${total.toFixed(2)}\n`;
+    });
+  }
+
+  msg += `--------------------------------\n`;
+  const subtotal = Number(bill.subtotal || 0);
+  const cgst = Number(bill.cgst || 0);
+  const sgst = Number(bill.sgst || 0);
+  const discount = Number(bill.discount || 0);
+  const total = Number(bill.total || bill.total_amount || 0);
+
+  if (subtotal > 0) msg += `Subtotal: Rs.${subtotal.toFixed(2)}\n`;
+  if (cgst > 0) msg += `CGST: Rs.${cgst.toFixed(2)}\n`;
+  if (sgst > 0) msg += `SGST: Rs.${sgst.toFixed(2)}\n`;
+  if (discount > 0) msg += `Discount: -Rs.${discount.toFixed(2)}\n`;
+  msg += `*TOTAL: Rs.${total.toFixed(2)}*\n`;
+  msg += `Payment: ${bill.payment_mode || 'Cash'}\n`;
+  msg += `--------------------------------\n`;
+  msg += `*NO RETURN, NO EXCHANGE, NO CREDIT*\n`;
+  msg += `--------------------------------\n`;
+  msg += `Thank you for visiting!\n`;
+  msg += `Visit us again.`;
+
+  // Format phone for WhatsApp: must be 91XXXXXXXXXX (no +, no spaces)
+  let phone = String(bill.customer_phone).replace(/[^0-9]/g, '');
+  if (phone.length === 10) phone = '91' + phone;          // add India country code
+  else if (phone.startsWith('0')) phone = '91' + phone.substring(1);
+  else if (phone.length === 12 && phone.startsWith('91')) { /* already correct */ }
+
+  // wa.me URL — opens WhatsApp Web/Desktop/Mobile with message pre-filled
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+
+  // Open in default browser (will trigger WhatsApp Web/Desktop)
+  if (window.api && window.api.openExternal) {
+    window.api.openExternal(url);
+  } else {
+    window.open(url, '_blank');
+  }
+
+  cm('m-wa-share');
+  showAlert('Opening WhatsApp...');
+}
+
+function skipWhatsApp() {
+  cm('m-wa-share');
+  window.__currentWAbill = null;
+  window.__currentWAitems = null;
+}
+
+function clearBill() {
+  billItems = [];
+  document.getElementById('b-cust').value = '';
+  document.getElementById('b-phone').value = '';
+  document.getElementById('b-gstin').value = '';
+  document.getElementById('b-cashier').value = settings.cashier_name || 'Admin';
+  document.getElementById('b-disc').value = 0;
+  document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelector('.pay-btn[data-mode="Cash"]').classList.add('sel');
+  renderBill();
+}
+
+function buildBillHTML(bill, items) {
+  const s = settings;
+  // GST breakup by rate slab
+  const breakupMap = {};
+  items.forEach(it => {
+    const r = it.gst_rate;
+    if (!breakupMap[r]) breakupMap[r] = {rate:r, taxable:0, cgst:0, sgst:0, total:0};
+    breakupMap[r].taxable += it.base_amount;
+    breakupMap[r].cgst += it.gst_amount/2;
+    breakupMap[r].sgst += it.gst_amount/2;
+    breakupMap[r].total += it.gst_amount;
+  });
+  const breakup = Object.values(breakupMap).sort((a,b) => a.rate - b.rate);
+  const totTax = breakup.reduce((s,b) => s + b.taxable, 0);
+  const totCgst = breakup.reduce((s,b) => s + b.cgst, 0);
+  const totSgst = breakup.reduce((s,b) => s + b.sgst, 0);
+
+  const rows = items.map(it => `
+    <tr><td colspan="4" style="padding-top:6px;font-weight:900;font-size:12.5px;color:#000"><b>${esc(it.product_name)}</b></td></tr>
+    <tr>
+      <td style="font-size:10.5px;font-weight:700;color:#000;padding-left:0">HSN:${esc(it.hsn||'-')} GST:${it.gst_rate}%</td>
+      <td class="right" style="font-weight:700;color:#000">${it.qty}</td>
+      <td class="right" style="font-weight:700;color:#000">${Number(it.rate).toFixed(2)}</td>
+      <td class="right" style="font-weight:900;color:#000">${Number(it.total_amount).toFixed(2)}</td>
+    </tr>`).join('');
+
+  const breakupRows = breakup.map(b => `
+    <tr>
+      <td>${b.rate}%</td>
+      <td class="right">${b.taxable.toFixed(2)}</td>
+      <td class="right">${b.cgst.toFixed(2)}</td>
+      <td class="right">${b.sgst.toFixed(2)}</td>
+    </tr>`).join('');
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(bill.bill_number)}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
+    body{font-family:'Courier New','Liberation Mono',monospace;font-size:12px;padding:10px;width:320px;color:#000;background:#fff;line-height:1.45;font-weight:700}
+    .center{text-align:center}.right{text-align:right}.bold{font-weight:900}
+    h1{font-size:17px;margin:3px 0;letter-spacing:.6px;font-weight:900;color:#000}
+    h2{font-size:13px;margin:0;letter-spacing:1px;font-weight:900;color:#000;border:2px solid #000;padding:4px 0;background:#000;color:#fff !important}
+    .solid{border:none;border-top:2.5px solid #000;margin:6px 0}
+    .dashed{border:none;border-top:2px dashed #000;margin:5px 0}
+    .row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;font-weight:700;color:#000}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+    th{border-bottom:2px solid #000;padding:4px 3px;font-weight:900;text-align:left;color:#000}
+    td{padding:3px 3px;vertical-align:top;color:#000;font-weight:700}
+    .grand{font-size:16px;font-weight:900;border-top:2.5px solid #000;border-bottom:2.5px solid #000;padding:6px 0;margin:6px 0;color:#000;background:#f0f0f0}
+    .gst-break{margin-top:8px;border:2px solid #000;padding:6px}
+    .gst-break .title{text-align:center;font-weight:900;border-bottom:2px solid #000;padding:3px 0;margin-bottom:4px;font-size:12px;color:#000;background:#000;color:#fff !important;margin:-6px -6px 4px -6px;padding:5px 0;letter-spacing:1px}
+    .gst-break th{padding:3px 5px;font-size:11px;border-bottom:2px solid #000;font-weight:900;color:#000}
+    .gst-break td{padding:3px 5px;font-size:11px;font-weight:700;color:#000}
+    .gst-break tr:last-child td{font-weight:900;border-top:2px solid #000;background:#e8e8e8}
+    .footer{margin-top:10px;text-align:center;font-size:11px;font-weight:700;color:#000;font-style:italic}
+    .pay-mode{font-weight:900;background:#000;color:#fff !important;padding:3px 8px;display:inline-block;letter-spacing:1px}
+    @media print{
+      body{padding:0;width:auto;font-weight:700}
+      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    }
+  </style></head><body>
+  <div class="center">
+    <h2>TAX INVOICE</h2>
+    <h1>${esc(s.store_name||'Alankar Pooja Stores')}</h1>
+    <p style="font-size:11px;margin:2px 0;font-weight:700;color:#000">${esc(s.store_address||'')}</p>
+    ${s.store_phone?`<p style="font-size:11px;font-weight:700;color:#000">Ph: ${esc(s.store_phone)}</p>`:''}
+    ${s.gstin?`<p style="font-size:12px;font-weight:900;margin-top:3px;color:#000">GSTIN: ${esc(s.gstin)}</p>`:''}
+  </div>
+  <hr class="solid"/>
+  <div class="row"><span>Inv No: <span class="bold">${esc(bill.bill_number)}</span></span><span>${esc(bill.bill_date)}</span></div>
+  <div class="row"><span>Cashier: ${esc(bill.cashier||'Admin')}</span><span>${esc(bill.bill_time||'')}</span></div>
+  <div class="row"><span class="pay-mode">PAYMENT: ${esc((bill.payment_mode||'').toUpperCase())}</span></div>
+  <hr class="solid"/>
+  <div style="font-size:12px;line-height:1.6;font-weight:700;color:#000">
+    <div><span class="bold">Customer:</span> ${esc(bill.customer_name)}</div>
+    ${bill.customer_phone?`<div><span class="bold">Phone:</span> ${esc(bill.customer_phone)}</div>`:''}
+    ${bill.buyer_gstin?`<div><span class="bold">Buyer GSTIN:</span> ${esc(bill.buyer_gstin)}</div>`:''}
+  </div>
+  <hr class="solid"/>
+  <table>
+    <thead><tr>
+      <th style="width:45%">Item Name / HSN</th>
+      <th class="right" style="width:12%">Qty</th>
+      <th class="right" style="width:20%">Rate</th>
+      <th class="right" style="width:23%">Amt</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <hr class="solid"/>
+  <div class="row grand"><span style="padding-left:6px">GRAND TOTAL:</span><span style="padding-right:6px">₹${Number(bill.total).toFixed(2)}</span></div>
+  ${bill.discount>0?`<div class="row" style="font-size:11px;font-weight:700"><span>(Discount applied: -₹${Number(bill.discount).toFixed(2)})</span></div>`:''}
+
+  <div class="gst-break">
+    <div class="title">GST BREAKUP DETAILS</div>
+    <table>
+      <thead><tr>
+        <th style="width:18%">GST%</th>
+        <th class="right" style="width:27%">Taxable</th>
+        <th class="right" style="width:27%">CGST</th>
+        <th class="right" style="width:28%">SGST</th>
+      </tr></thead>
+      <tbody>
+        ${breakupRows}
+        <tr><td>Total</td><td class="right">${totTax.toFixed(2)}</td><td class="right">${totCgst.toFixed(2)}</td><td class="right">${totSgst.toFixed(2)}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <hr class="dashed"/>
+    ${esc(s.bill_footer||'Thank you for your purchase!')}
+    <br/><span style="font-size:14px">🙏</span>
+  </div>
+  <script>window.onload=function(){setTimeout(function(){window.print();},200)};<\/script>
+  </body></html>`;
+}
+
+async function loadProds() {
+  allProds = await API.products.list();
+  renderProds(allProds);
+}
+
+function renderProds(list) {
+  const t = document.getElementById('prod-tbl');
+  t.innerHTML = list.length ? list.map(p => `
+    <tr>
+      <td style="text-align:center"><span style="background:#C5A572;color:#fff;padding:3px 7px;border-radius:4px;font-weight:900;font-family:monospace;font-size:13px">#${esc(p.quick_code||'-')}</span></td>
+      <td title="${esc(p.name)}">${esc(p.name)}</td>
+      <td style="font-family:monospace;font-size:10px">${esc(p.barcode||'-')}</td>
+      <td>${esc(p.category)}</td>
+      <td>${esc(p.unit)}</td>
+      <td>${esc(p.hsn||'-')}</td>
+      <td>${p.gst_rate}%</td>
+      <td>${fmt(p.selling_price)}</td>
+      <td class="${p.stock<p.min_stock?'low':''}">${p.stock}</td>
+      <td><div class="row-actions">
+        <button class="btn btn-sm btn-icon" onclick="quickStockModal(${p.id})" title="Quick add stock">+</button>
+        <button class="btn btn-sm btn-icon btn-gold" onclick="quickTSCLabel(${p.id})" title="Print TSC labels">🏷️</button>
+        <button class="btn btn-sm btn-icon" onclick="editProd(${p.id})" title="Edit">✎</button>
+        <button class="btn btn-d btn-sm btn-icon" onclick="delProd(${p.id})" title="Delete">×</button>
+      </div></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="10">No products found</td></tr>';
+}
+
+function filterProds(q) {
+  const ql = q.toLowerCase();
+  const f = allProds.filter(p => p.name.toLowerCase().includes(ql) || (p.barcode||'').includes(q));
+  renderProds(f);
+}
+
+function exportProductsCSV() {
+  const rows = [['Name','Barcode','Category','Unit','HSN','GST%','Price','Cost','Stock','MinStock']];
+  allProds.forEach(p => rows.push([p.name,p.barcode||'',p.category,p.unit,p.hsn||'',p.gst_rate,p.selling_price,p.cost_price,p.stock,p.min_stock]));
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'products-' + todayStr + '.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showProdModal(id=null) {
+  editProdId = id;
+  document.getElementById('pm-title').textContent = id ? 'Edit Product' : 'Add Product';
+  if (id) {
+    const p = allProds.find(x => x.id === id);
+    document.getElementById('p-name').value = p.name;
+    document.getElementById('p-cat').value = p.category;
+    document.getElementById('p-unit').value = p.unit;
+    document.getElementById('p-hsn').value = p.hsn || '';
+    document.getElementById('p-gst').value = p.gst_rate;
+    document.getElementById('p-price').value = p.selling_price;
+    document.getElementById('p-cost').value = p.cost_price;
+    document.getElementById('p-stock').value = p.stock;
+    document.getElementById('p-minstk').value = p.min_stock;
+    document.getElementById('p-bc').value = p.barcode || '';
+    document.getElementById('p-qc').value = p.quick_code || '';
+  } else {
+    ['p-name','p-hsn','p-price','p-cost','p-bc','p-qc'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('p-stock').value = 0;
+    document.getElementById('p-minstk').value = 10;
+    document.getElementById('p-gst').value = 5;
+    // Auto-suggest next quick code for new products
+    API.products.nextQuickCode().then(code => {
+      if (!document.getElementById('p-qc').value) document.getElementById('p-qc').value = code;
+    }).catch(() => {});
+  }
+  om('m-prod');
+  setTimeout(() => {
+    if (id) document.getElementById('p-bc').focus();
+    else document.getElementById('p-name').focus();
+  }, 200);
+}
+
+function editProd(id) { showProdModal(id); }
+
+async function delProd(id) {
+  const p = allProds.find(x => x.id === id);
+  if (!confirm(`Delete "${p.name}"?\n\nThis will hide it from active use but bill history is preserved.`)) return;
+  await API.products.remove(id);
+  showAlert('Product removed.');
+  loadProds();
+}
+
+function autoBC() { document.getElementById('p-bc').value = '890' + Math.floor(Math.random()*9000000000 + 1000000000); }
+
+async function autoQC() {
+  try {
+    const code = await API.products.nextQuickCode();
+    document.getElementById('p-qc').value = code;
+  } catch (e) { showError(e); }
+}
+
+async function saveProd() {
+  const name = document.getElementById('p-name').value.trim();
+  const price = parseFloat(document.getElementById('p-price').value);
+  if (!name || !price || price <= 0) { showAlert('Name and a valid price are required','e'); return; }
+  const bc = document.getElementById('p-bc').value.trim() || ('890' + Math.floor(Math.random()*9000000000 + 1000000000));
+  const qc = document.getElementById('p-qc').value.trim();
+  // Validate Quick Code: only digits, max 6
+  if (qc && !/^\d{1,6}$/.test(qc)) {
+    showAlert('Quick Code must be 1-6 digits only','e');
+    return;
+  }
+  // Check uniqueness of quick code (in current product list)
+  if (qc) {
+    const conflict = (allProds||[]).find(p => p.quick_code === qc && p.id !== editProdId);
+    if (conflict) {
+      showAlert(`Quick Code "${qc}" is already used by "${conflict.name}". Pick a different one.`,'e');
+      return;
+    }
+  }
+  const payload = {
+    name,
+    category: document.getElementById('p-cat').value,
+    unit: document.getElementById('p-unit').value,
+    hsn: document.getElementById('p-hsn').value,
+    gst_rate: parseInt(document.getElementById('p-gst').value),
+    selling_price: price,
+    cost_price: parseFloat(document.getElementById('p-cost').value) || 0,
+    stock: parseInt(document.getElementById('p-stock').value) || 0,
+    min_stock: parseInt(document.getElementById('p-minstk').value) || 10,
+    barcode: bc,
+    quick_code: qc || null,
+  };
+  try {
+    if (editProdId) { payload.id = editProdId; await API.products.update(payload); showAlert('Product updated!'); }
+    else { await API.products.insert(payload); showAlert('Product added!'); }
+    cm('m-prod'); loadProds(); editProdId = null;
+  } catch (e) {
+    if (String(e.message||e).includes('UNIQUE')) showAlert('A product with this barcode/quick-code already exists','e');
+    else showError(e);
+  }
+}
+
+// Save the product AND immediately print labels for it
+async function saveAndPrintLabels() {
+  const name = document.getElementById('p-name').value.trim();
+  const price = parseFloat(document.getElementById('p-price').value);
+  if (!name || !price || price <= 0) { showAlert('Name and a valid price are required','e'); return; }
+
+  const qtyStr = prompt(`How many labels to print for "${name}"?`, '10');
+  if (qtyStr === null) return;
+  const qty = parseInt(qtyStr);
+  if (!qty || qty < 1 || qty > 500) { showAlert('Enter a valid quantity (1-500)','e'); return; }
+
+  const bc = document.getElementById('p-bc').value.trim() || ('890' + Math.floor(Math.random()*9000000000 + 1000000000));
+  const qc = document.getElementById('p-qc').value.trim();
+  if (qc && !/^\d{1,6}$/.test(qc)) {
+    showAlert('Quick Code must be 1-6 digits only','e');
+    return;
+  }
+  if (qc) {
+    const conflict = (allProds||[]).find(p => p.quick_code === qc && p.id !== editProdId);
+    if (conflict) {
+      showAlert(`Quick Code "${qc}" is already used by "${conflict.name}". Pick a different one.`,'e');
+      return;
+    }
+  }
+  const payload = {
+    name,
+    category: document.getElementById('p-cat').value,
+    unit: document.getElementById('p-unit').value,
+    hsn: document.getElementById('p-hsn').value,
+    gst_rate: parseInt(document.getElementById('p-gst').value),
+    selling_price: price,
+    cost_price: parseFloat(document.getElementById('p-cost').value) || 0,
+    stock: parseInt(document.getElementById('p-stock').value) || 0,
+    min_stock: parseInt(document.getElementById('p-minstk').value) || 10,
+    barcode: bc,
+    quick_code: qc || null,
+  };
+
+  try {
+    let savedProduct;
+    if (editProdId) {
+      payload.id = editProdId;
+      await API.products.update(payload);
+      savedProduct = payload;
+      showAlert('Product updated! Sending labels to printer...');
+    } else {
+      const result = await API.products.insert(payload);
+      savedProduct = { ...payload, id: result && result.id };
+      // If quick_code was auto-assigned by DB, refresh it
+      if (!savedProduct.quick_code) {
+        const refreshed = await API.products.byId(savedProduct.id);
+        if (refreshed) savedProduct = refreshed;
+      }
+      showAlert('Product saved! Sending labels to printer...');
+    }
+
+    cm('m-prod');
+    await loadProds();
+    editProdId = null;
+
+    await buildAndPrintTSCLabels(savedProduct, qty);
+
+  } catch (e) {
+    if (String(e.message||e).includes('UNIQUE')) showAlert('A product with this barcode/quick-code already exists','e');
+    else showError(e);
+  }
+}
+
+function quickTSCLabel(pid) {
+  const p = allProds.find(x => x.id === pid);
+  if (!p) return;
+  // Pre-select the product in the barcode page selector and open modal
+  const sel = document.getElementById('bc-sel');
+  if (sel) {
+    const opt = [...sel.options].find(o => parseInt(o.value) === pid);
+    if (opt) sel.value = String(pid);
+    else {
+      // Add option if it's not loaded yet
+      const newOpt = document.createElement('option');
+      newOpt.value = pid; newOpt.textContent = p.name;
+      sel.appendChild(newOpt); sel.value = String(pid);
+    }
+  }
+  document.getElementById('ls-product-info').innerHTML = `<strong>${esc(p.name)}</strong><br/>Barcode: <code style="background:#fff;padding:2px 6px;border-radius:3px">${esc(p.barcode)}</code> · MRP: ₹${p.selling_price}`;
+  const w = settings.tsc_label_width || '38';
+  const h = settings.tsc_label_height || '25';
+  const cols = settings.tsc_columns || '2';
+  const cgap = settings.tsc_column_gap || '2';
+  const pname = settings.tsc_printer_name || 'TSC TE244';
+  document.getElementById('ls-tsc-info').innerHTML = `📐 <b>Current label config:</b> ${w}mm × ${h}mm, ${cols} per row, ${cgap}mm gap · Printer: <b>${esc(pname)}</b><br/>💡 In Print dialog, select <b>${esc(pname)}</b> as the printer.`;
+  om('m-labelsheet');
+}
+
+function quickStockModal(pid) {
+  const p = allProds.find(x => x.id === pid);
+  if (!p) return;
+  document.getElementById('qs-pid').value = pid;
+  document.getElementById('qs-prod-info').innerHTML = `<strong>${esc(p.name)}</strong><br/>Current stock: <strong class="${p.stock<p.min_stock?'low':'good'}">${p.stock} ${esc(p.unit)}(s)</strong>`;
+  document.getElementById('qs-qty').value = '';
+  document.getElementById('qs-cost').value = p.cost_price || '';
+  document.getElementById('qs-sup').value = '';
+  om('m-quickstock');
+}
+
+async function saveQuickStock() {
+  const pid = parseInt(document.getElementById('qs-pid').value);
+  const qty = parseInt(document.getElementById('qs-qty').value) || 0;
+  if (!pid || qty < 1) { showAlert('Enter a valid quantity','e'); return; }
+  const p = allProds.find(x => x.id === pid);
+  await API.stock.add({
+    product_id: pid, product_name: p.name, qty_added: qty,
+    cost_price: parseFloat(document.getElementById('qs-cost').value) || 0,
+    supplier: document.getElementById('qs-sup').value || '',
+    invoice_no: '', notes: 'Quick add from products page',
+  });
+  showAlert(`+${qty} units added to ${p.name}`);
+  cm('m-quickstock'); loadProds();
+}
+
+async function loadStock() {
+  allProds = await API.products.list();
+  const s = document.getElementById('st-prod');
+  s.innerHTML = '<option value="">-- Select Product --</option>' +
+    allProds.map(p => `<option value="${p.id}">${esc(p.name)} (Current: ${p.stock})</option>`).join('');
+  const h = await API.stock.history();
+  const t = document.getElementById('stock-hist');
+  t.innerHTML = h.length ? h.map(e => `
+    <tr>
+      <td>${esc(e.entry_date)}</td>
+      <td>${esc(e.product_name)}</td>
+      <td>${esc(e.supplier||'-')}</td>
+      <td style="font-family:monospace;font-size:10px">${esc(e.supplier_gstin||'-')}</td>
+      <td class="good">+${e.qty_added}</td>
+      <td>${fmt(e.cost_price)}</td>
+      <td>${esc(e.invoice_no||'-')}</td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="7">No stock entries yet</td></tr>';
+}
+
+function fillStockInfo() {
+  const p = allProds.find(x => x.id === parseInt(document.getElementById('st-prod').value));
+  if (p) {
+    document.getElementById('st-bc').value = p.barcode || '';
+    document.getElementById('st-cost').value = p.cost_price || '';
+  }
+}
+
+function bcToStock() {
+  const bc = document.getElementById('st-bc').value.trim();
+  if (bc.length < 4) return;
+  const p = allProds.find(x => x.barcode === bc);
+  if (p) {
+    document.getElementById('st-prod').value = p.id;
+    document.getElementById('st-cost').value = p.cost_price || '';
+  }
+}
+
+async function saveStock() {
+  const pid = parseInt(document.getElementById('st-prod').value);
+  const qty = parseInt(document.getElementById('st-qty').value) || 0;
+  if (!pid || qty < 1) { showAlert('Select a product and enter quantity','e'); return; }
+  const p = allProds.find(x => x.id === pid);
+  await API.stock.add({
+    product_id: pid, product_name: p.name, qty_added: qty,
+    cost_price: parseFloat(document.getElementById('st-cost').value) || 0,
+    supplier: document.getElementById('st-sup').value || '',
+    supplier_gstin: (document.getElementById('st-gstin').value || '').trim().toUpperCase(),
+    invoice_no: document.getElementById('st-inv').value || '',
+    notes: document.getElementById('st-notes').value || '',
+  });
+  showAlert(`+${qty} units added to ${p.name}`);
+  ['st-qty','st-sup','st-gstin','st-inv','st-notes'].forEach(i => document.getElementById(i).value = '');
+  loadStock();
+}
+
+async function loadBarcodes() {
+  allProds = await API.products.list();
+  const s = document.getElementById('bc-sel');
+  s.innerHTML = '<option value="">-- Select Product --</option>' + allProds.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  const t = document.getElementById('bc-all');
+  t.innerHTML = allProds.length ? allProds.map(p => `
+    <tr>
+      <td>${esc(p.name)}</td>
+      <td style="font-family:monospace;font-size:11px;font-weight:700">${esc(p.barcode||'—')}</td>
+      <td>${esc(p.category)}</td>
+      <td>${fmt(p.selling_price)}</td>
+      <td class="${p.stock<p.min_stock?'low':'good'}">${p.stock}</td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="5">No products yet</td></tr>';
+}
+
+function genBarcode() {
+  const p = allProds.find(x => x.id === parseInt(document.getElementById('bc-sel').value));
+  if (!p) { document.getElementById('bc-display').style.display = 'none'; return; }
+  document.getElementById('bc-display').style.display = 'block';
+  document.getElementById('bc-num').textContent = p.barcode || '';
+  document.getElementById('bc-pname').textContent = p.name + ' — ' + fmt(p.selling_price);
+  drawBarcode(p.barcode || '', 'bc-canvas', {showText:true, margin:14});
+}
+
+// === REAL Code-128 BARCODE ENCODER (scannable by any scanner) ===
+const C128 = ["11011001100","11001101100","11001100110","10010011000","10010001100","10001001100","10011001000","10011000100","10001100100","11001001000","11001000100","11000100100","10110011100","10011011100","10011001110","10111001100","10011101100","10011100110","11001110010","11001011100","11001001110","11011100100","11001110100","11101101110","11101001100","11100101100","11100100110","11101100100","11100110100","11100110010","11011011000","11011000110","11000110110","10100011000","10001011000","10001000110","10110001000","10001101000","10001100010","11010001000","11000101000","11000100010","10110111000","10110001110","10001101110","10111011000","10111000110","10001110110","11101110110","11010001110","11000101110","11011101000","11011100010","11011101110","11101011000","11101000110","11100010110","11101101000","11101100010","11100011010","11101111010","11001000010","11110001010","10100110000","10100001100","10010110000","10010000110","10000101100","10000100110","10110010000","10110000100","10011010000","10011000010","10000110100","10000110010","11000010010","11001010000","11110111010","11000010100","10001111010","10100111100","10010111100","10010011110","10111100100","10011110100","10011110010","11110100100","11110010100","11110010010","11011011110","11011110110","11110110110","10101111000","10100011110","10001011110","10111101000","10111100010","11110101000","11110100010","10111011110","10111101110","11101011110","11110101110","11010000100","11010010000","11010011100","1100011101011"];
+
+function encodeCode128(text) {
+  // Code-128B (standard ASCII alphanumeric)
+  const startB = 104;
+  const stop = 106;
+  let pattern = C128[startB];
+  let checksum = startB;
+  for (let i = 0; i < text.length; i++) {
+    const v = text.charCodeAt(i) - 32;
+    if (v < 0 || v > 94) continue; // skip out-of-range
+    pattern += C128[v];
+    checksum += v * (i + 1);
+  }
+  checksum %= 103;
+  pattern += C128[checksum];
+  pattern += C128[stop];
+  return pattern;
+}
+
+function drawBarcode(text, canvasIdOrEl, opts) {
+  opts = opts || {};
+  const cv = typeof canvasIdOrEl === 'string' ? document.getElementById(canvasIdOrEl) : canvasIdOrEl;
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  if (!text) return;
+  const pattern = encodeCode128(String(text));
+  const showText = opts.showText !== false;
+  const textHeight = showText ? 14 : 0;
+  const margin = opts.margin != null ? opts.margin : 10;
+  const usableW = cv.width - margin * 2;
+  const moduleW = usableW / pattern.length;
+  const barTop = 2;
+  const barH = cv.height - textHeight - 4;
+
+  ctx.fillStyle = '#000';
+  for (let i = 0; i < pattern.length; i++) {
+    if (pattern[i] === '1') {
+      // Draw slightly wider to avoid pixel rounding gaps
+      ctx.fillRect(margin + i * moduleW, barTop, moduleW + 0.5, barH);
+    }
+  }
+  if (showText) {
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 11px "Courier New",monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, cv.width / 2, cv.height - 2);
+  }
+}
+
+function lookupBC() {
+  const bc = document.getElementById('bc-lookup').value.trim();
+  const el = document.getElementById('bc-result');
+  if (bc.length < 4) { el.innerHTML = 'Enter a barcode to look up its product.'; return; }
+  const p = allProds.find(x => x.barcode === bc);
+  if (p) {
+    el.innerHTML = `<div style="text-align:left">
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">${esc(p.name)}</div>
+      <div style="color:var(--text2);font-size:11.5px;line-height:1.7">
+        Category: <strong>${esc(p.category)}</strong><br/>
+        Price: <strong class="good">${fmt(p.selling_price)}</strong><br/>
+        Stock: <strong class="${p.stock<p.min_stock?'low':'good'}">${p.stock} ${esc(p.unit)}(s)</strong><br/>
+        GST: <strong>${p.gst_rate}%</strong> · HSN: ${esc(p.hsn||'-')}
+      </div></div>`;
+  } else {
+    el.innerHTML = '<span style="color:var(--danger)">No product found for this barcode.</span>';
+  }
+}
+
+function copyBC() {
+  const code = document.getElementById('bc-num').textContent;
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => showAlert('Barcode copied!')).catch(() => showAlert('Copy failed','e'));
+}
+
+function printBarcodeLabel() {
+  const p = allProds.find(x => x.id === parseInt(document.getElementById('bc-sel').value));
+  if (!p) return;
+  // Generate barcode as data URL
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = 320; tmpCanvas.height = 100;
+  drawBarcode(p.barcode||'', tmpCanvas, {showText:true,margin:14});
+  const imgData = tmpCanvas.toDataURL();
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Label</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    body{font-family:Arial;text-align:center;padding:14px;width:240px;color:#000}
+    .name{font-size:12px;font-weight:700;margin:2px 0;color:#000}
+    .store{font-size:11px;font-weight:700;color:#000;margin-bottom:3px}
+    img{width:220px;height:70px}
+    .price{font-size:15px;font-weight:900;margin:4px 0;color:#000}
+    @media print{body{padding:0}}
+  </style></head><body>
+    <div class="store">${esc(settings.store_name||'Alankar')}</div>
+    <div class="name">${esc(p.name)}</div>
+    <img src="${imgData}"/>
+    <div class="price">MRP: ₹${p.selling_price}</div>
+    <script>window.onload=function(){setTimeout(function(){window.print();},150);};<\/script>
+  </body></html>`;
+  API.printHTML(html);
+}
+
+function openLabelSheetModal() {
+  const p = allProds.find(x => x.id === parseInt(document.getElementById('bc-sel').value));
+  if (!p) { showAlert('Select a product first','e'); return; }
+  document.getElementById('ls-product-info').innerHTML = `<strong>${esc(p.name)}</strong><br/>Barcode: <code style="background:#fff;padding:2px 6px;border-radius:3px">${esc(p.barcode)}</code> · MRP: ₹${p.selling_price}`;
+  const w = settings.tsc_label_width || '38';
+  const h = settings.tsc_label_height || '25';
+  const cols = settings.tsc_columns || '2';
+  const cgap = settings.tsc_column_gap || '2';
+  const pname = settings.tsc_printer_name || 'TSC TE244';
+  document.getElementById('ls-tsc-info').innerHTML = `📐 <b>Current label config:</b> ${w}mm × ${h}mm, ${cols} per row, ${cgap}mm gap · Printer: <b>${esc(pname)}</b><br/>💡 In Print dialog, select <b>${esc(pname)}</b> as the printer.`;
+  om('m-labelsheet');
+}
+
+function printTSCLabels() {
+  const p = allProds.find(x => x.id === parseInt(document.getElementById('bc-sel').value));
+  if (!p) return;
+  const qty = parseInt(document.getElementById('ls-qty').value) || 1;
+  const mode = document.getElementById('ls-mode').value;
+  const opts = {
+    showPrice: document.getElementById('ls-showprice').checked,
+    showName:  document.getElementById('ls-showname').checked,
+    showStore: document.getElementById('ls-showstore').checked,
+  };
+  cm('m-labelsheet');
+  if (mode === 'a4') buildAndPrintA4Sheet(p, qty, opts);
+  else buildAndPrintTSCLabels(p, qty, opts);  // uses TSPL by default
+}
+
+// TSC LABEL PRINTING — uses native TSPL commands sent directly to printer
+// Handles 2-up labels correctly: prints content on BOTH columns per print cycle
+async function buildAndPrintTSCLabels(product, qty, opts) {
+  opts = opts || {};
+  const s = settings;
+  const printerName = (s.tsc_printer_name || 'TSC TE244').trim();
+  const useTSPL = (s.tsc_use_tspl !== '0');
+
+  if (!useTSPL) {
+    return buildAndPrintTSCLabelsHTML(product, qty, opts);
+  }
+
+  // Single label dimensions
+  const labelW = parseFloat(s.tsc_label_width)  || 38;
+  const labelH = parseFloat(s.tsc_label_height) || 25;
+  const cGap   = parseFloat(s.tsc_column_gap)   || 2;
+  const rGap   = parseFloat(s.tsc_row_gap)      || 2;
+  const cols   = parseInt(s.tsc_columns)        || 2;
+  const density = parseInt(s.tsc_density)       || 8;
+  const speed   = parseInt(s.tsc_speed)         || 4;
+
+  // Full row dimensions (both labels + column gap)
+  const rowW = (labelW * cols) + (cGap * (cols - 1));
+  const rowH = labelH;
+
+  // Calculate number of physical rows needed
+  const rows = Math.ceil(qty / cols);
+
+  // 203 DPI = 8 dots/mm
+  const labelWdots = Math.round(labelW * 8);
+  const rowWdots = Math.round(rowW * 8);
+  const cGapDots = Math.round(cGap * 8);
+  const colOffset = labelWdots + cGapDots;  // offset from left col to right col
+
+  const bc = String(product.barcode || '').replace(/"/g, '');
+  const name = String(product.name || '').replace(/"/g, '').substring(0, 14).toUpperCase();
+  const price = `Rs.${Number(product.selling_price).toFixed(0)}`;
+  // Quick Code is the BIG number on the label — cashier types this to add product to bill
+  const quickCode = String(product.quick_code || '').replace(/"/g, '').trim();
+  // Setting: 'qc' = Quick Code only (default), 'bc' = barcode only, 'both' = both
+  const labelMode = (settings.tsc_label_mode || 'qc');
+
+  // Build TSPL — SIZE matches FULL ROW so the printer treats each row as one page
+  let tspl = '';
+  tspl += `SIZE ${rowW} mm, ${rowH} mm\r\n`;
+  tspl += `GAP ${rGap} mm, 0\r\n`;
+  tspl += `DENSITY ${density}\r\n`;
+  tspl += `SPEED ${speed}\r\n`;
+  tspl += `DIRECTION 1\r\n`;
+  tspl += `REFERENCE 0,0\r\n`;
+  tspl += `CLS\r\n`;
+
+  // Helper to render one label's content at a given x-offset (dots)
+  // Layout when mode=qc (default): NAME (top) → BIG QUICK CODE (middle, x4 size) → Rs.PRICE (bottom)
+  // Layout when mode=bc: NAME → BARCODE → Rs.PRICE (old style)
+  // 200 dots = 25mm label height; safe area 25-180
+  function emitLabel(xOffset) {
+    const cx = xOffset + Math.round(labelWdots / 2);
+    const bcX = xOffset + 12;
+    let out = '';
+
+    if (labelMode === 'bc' && bc) {
+      // Old style: name + barcode + price
+      out += `TEXT ${cx},28,"3",0,1,1,2,"${name}"\r\n`;
+      out += `BARCODE ${bcX},60,"128",60,1,0,3,6,"${bc}"\r\n`;
+      out += `TEXT ${cx},165,"3",0,1,1,2,"${price}"\r\n`;
+    } else if (labelMode === 'both' && bc && quickCode) {
+      // Both: smaller name + tiny barcode + qc + price
+      out += `TEXT ${cx},20,"2",0,1,1,2,"${name}"\r\n`;
+      out += `BARCODE ${bcX},45,"128",40,1,0,2,4,"${bc}"\r\n`;
+      out += `TEXT ${cx},105,"4",0,2,2,2,"#${quickCode}"\r\n`;
+      out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
+    } else {
+      // Default: Quick Code mode — BIG number, no barcode
+      // Name on top
+      out += `TEXT ${cx},25,"3",0,1,1,2,"${name}"\r\n`;
+      // BIG Quick Code in middle (font "4" at 3x size = HUGE, very readable)
+      const codeText = quickCode ? `#${quickCode}` : '#?';
+      out += `TEXT ${cx},75,"4",0,3,3,2,"${codeText}"\r\n`;
+      // Price at bottom
+      out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
+    }
+    return out;
+  }
+
+  if (cols === 1) {
+    // Single column — print one label per row
+    tspl += emitLabel(0);
+    tspl += `PRINT ${qty}, 1\r\n`;
+  } else {
+    // Multi-column — print all columns in one row
+    for (let c = 0; c < cols; c++) {
+      tspl += emitLabel(c * colOffset);
+    }
+    tspl += `PRINT ${rows}, 1\r\n`;
+  }
+
+  // Send to printer
+  try {
+    console.log('[TSC] Sending TSPL:', tspl);
+    const result = await API.tscPrintRaw(printerName, tspl);
+    if (result && result.ok) {
+      const actualCount = cols === 1 ? qty : (rows * cols);
+      showAlert(`✅ Sent ${actualCount} label${actualCount>1?'s':''} (${rows} row${rows>1?'s':''}) to ${printerName}`);
+    } else {
+      const err = (result && result.error) || 'Unknown error';
+      showAlert(`Print failed: ${err}`, 'e');
+      console.error('TSC print error:', result);
+    }
+  } catch (err) {
+    showAlert(`Print error: ${err.message}`, 'e');
+    console.error('TSC print exception:', err);
+  }
+}
+
+// Legacy HTML print (kept as fallback for non-TSC printers)
+function buildAndPrintTSCLabelsHTML(product, qty, opts) {
+  opts = opts || {};
+  const showPrice = opts.showPrice !== false;
+  const showName  = opts.showName  !== false;
+  const showStore = opts.showStore === true;
+  const s = settings;
+
+  const labelW = parseFloat(s.tsc_label_width)  || 38;
+  const labelH = parseFloat(s.tsc_label_height) || 25;
+  const cols   = parseInt(s.tsc_columns)        || 1;
+  const cGap   = parseFloat(s.tsc_column_gap)   || 0;
+
+  const pageW = (labelW * cols) + (cGap * (cols - 1));
+  const pageH = labelH;
+  const rows = Math.ceil(qty / cols);
+
+  const bcCanvas = document.createElement('canvas');
+  bcCanvas.width = 400;
+  bcCanvas.height = 90;
+  drawBarcode(product.barcode || '', bcCanvas, {showText:false, margin:14});
+  const bcImg = bcCanvas.toDataURL();
+
+  function makeLabel() {
+    return `<div class="lbl">
+      <img src="${bcImg}" class="lbl-bc" alt="bc"/>
+      <div class="lbl-num">${esc(product.barcode||'')}</div>
+      ${showName  ? `<div class="lbl-name">${esc(truncate(product.name, 22))}</div>` : ''}
+      ${showPrice ? `<div class="lbl-price">MRP: ₹${Number(product.selling_price).toFixed(2)}</div>` : ''}
+      ${showStore ? `<div class="lbl-store">${esc((s.store_name||'STORE').toUpperCase())}</div>` : ''}
+    </div>`;
+  }
+
+  let pagesHTML = '';
+  let printedCount = 0;
+  for (let r = 0; r < rows; r++) {
+    let rowHTML = '<div class="page"><div class="row">';
+    for (let c = 0; c < cols; c++) {
+      if (printedCount < qty) { rowHTML += makeLabel(); printedCount++; }
+      else { rowHTML += '<div class="lbl lbl-blank"></div>'; }
+    }
+    rowHTML += '</div></div>';
+    pagesHTML += rowHTML;
+  }
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labels</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    @page{size:${pageW}mm ${pageH}mm;margin:0}
+    html,body{background:#fff;color:#000;font-family:Arial,sans-serif;width:${pageW}mm;margin:0;padding:0}
+    .page{width:${pageW}mm;height:${pageH}mm;page-break-after:always;page-break-inside:avoid;overflow:hidden;margin:0;padding:0}
+    .page:last-child{page-break-after:auto}
+    .row{display:flex;gap:${cGap}mm;width:${pageW}mm;height:${labelH}mm;margin:0;padding:0}
+    .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.4mm 1mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;text-align:center;background:#fff;color:#000;line-height:1}
+    .lbl-blank{visibility:hidden}
+    .lbl-bc{width:${Math.min(labelW-3,35)}mm;height:9mm;display:block;margin-bottom:0.3mm;image-rendering:crisp-edges}
+    .lbl-num{font-size:5.5pt;font-family:'Courier New',monospace;font-weight:700;color:#000;line-height:1;margin-bottom:0.5mm}
+    .lbl-name{font-size:7pt;font-weight:700;line-height:1;color:#000;margin-bottom:0.3mm;max-height:2.8mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+    .lbl-price{font-size:8.5pt;font-weight:900;color:#000;line-height:1}
+    .lbl-store{font-size:5pt;font-weight:700;color:#000;line-height:1;margin-top:0.3mm}
+  </style></head><body>${pagesHTML}
+  <script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>
+  </body></html>`;
+  API.printHTML(html);
+}
+
+// A4 Fallback (for testing without TSC)
+function buildAndPrintA4Sheet(product, qty, opts) {
+  opts = opts || {};
+  const showPrice = opts.showPrice !== false;
+  const showName  = opts.showName  !== false;
+  const showStore = opts.showStore !== false;
+  const s = settings;
+
+  const labelW = parseFloat(s.tsc_label_width)  || 38;
+  const labelH = parseFloat(s.tsc_label_height) || 25;
+  const cGap   = parseFloat(s.tsc_column_gap)   || 2;
+  const rGap   = parseFloat(s.tsc_row_gap)      || 2;
+
+  // Fit as many labels as possible on A4 (210×297mm) with 10mm margins
+  const usableW = 190;
+  const usableH = 277;
+  const labelsPerRow = Math.floor((usableW + cGap) / (labelW + cGap));
+  const rowsPerPage  = Math.floor((usableH + rGap) / (labelH + rGap));
+  const perPage = labelsPerRow * rowsPerPage;
+
+  const bcCanvas = document.createElement('canvas');
+  bcCanvas.width = 400; bcCanvas.height = 90;
+  drawBarcode(product.barcode || '', bcCanvas, {showText:false, margin:16});
+  const bcImg = bcCanvas.toDataURL();
+
+  function makeLabel() {
+    return `<div class="lbl">
+      ${showStore ? `<div class="lbl-store">${esc((s.store_name||'STORE').toUpperCase())}</div>` : ''}
+      ${showName  ? `<div class="lbl-name">${esc(truncate(product.name, 24))}</div>` : ''}
+      <img src="${bcImg}" class="lbl-bc"/>
+      <div class="lbl-num">${esc(product.barcode||'')}</div>
+      ${showPrice ? `<div class="lbl-price">Rs.${Number(product.selling_price).toFixed(2)}</div>` : ''}
+    </div>`;
+  }
+
+  let pagesHTML = '';
+  let printed = 0;
+  while (printed < qty) {
+    let pg = '<div class="a4page"><div class="grid">';
+    for (let i = 0; i < perPage && printed < qty; i++) { pg += makeLabel(); printed++; }
+    pg += '</div></div>';
+    pagesHTML += pg;
+  }
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labels - ${esc(product.name)}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    @page{size:A4;margin:10mm}
+    body{font-family:Arial;color:#000;background:#fff}
+    .a4page{width:${usableW}mm;page-break-after:always}
+    .a4page:last-child{page-break-after:auto}
+    .grid{display:grid;grid-template-columns:repeat(${labelsPerRow},${labelW}mm);column-gap:${cGap}mm;row-gap:${rGap}mm}
+    .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.8mm 1.2mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;text-align:center;border:0.3pt dashed #888}
+    .lbl-store{font-size:6pt;font-weight:900;line-height:1;color:#000;margin-bottom:0.3mm}
+    .lbl-name{font-size:6.5pt;font-weight:700;line-height:1.05;color:#000;margin-bottom:0.4mm;max-height:3mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+    .lbl-bc{width:${Math.min(labelW-4,34)}mm;height:${Math.min(labelH*0.4,9)}mm;display:block;image-rendering:crisp-edges}
+    .lbl-num{font-size:5.5pt;font-family:'Courier New',monospace;font-weight:700;color:#000;margin-top:0.3mm}
+    .lbl-price{font-size:8pt;font-weight:900;color:#000;margin-top:0.3mm}
+    @media print{.lbl{border:none}}
+  </style></head><body>
+    ${pagesHTML}
+    <script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>
+  </body></html>`;
+  API.printHTML(html);
+}
+
+function truncate(str, n) {
+  if (!str) return '';
+  return str.length > n ? str.slice(0, n - 1) + '…' : str;
+}
+
+async function loadCredit() {
+  const entries = await API.credit.entries();
+  const totals = await API.credit.totals();
+  document.getElementById('cr-total').textContent = fmtS(totals.outstanding);
+  document.getElementById('cr-count').textContent = totals.debtors;
+  document.getElementById('cr-coll').textContent = fmtS(totals.collected);
+  const t = document.getElementById('cr-tbl');
+  t.innerHTML = entries.length ? entries.map(b => `
+    <tr>
+      <td>${esc(b.customer_name)}</td>
+      <td>${esc(b.customer_phone)}</td>
+      <td style="font-family:monospace;font-size:11px">${esc(b.bill_number)}</td>
+      <td>${esc(b.bill_date)}</td>
+      <td>${fmt(b.total)}</td>
+      <td class="good">${fmt(b.paid_amount||0)}</td>
+      <td class="${b.due_amount>0?'low':''}">${fmt(b.due_amount||0)}</td>
+      <td><span class="badge ${b.due_amount<=0?'bg':'br'}">${b.due_amount<=0?'Cleared':'Due'}</span></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="8">No credit entries yet</td></tr>';
+}
+
+function openCreditPayModal() {
+  document.getElementById('cr-ph').value = '';
+  document.getElementById('cr-amt').value = '';
+  document.getElementById('cr-notes').value = '';
+  document.getElementById('cr-cust-info').style.display = 'none';
+  om('m-crpay');
+}
+
+async function lookupCrCust() {
+  const ph = document.getElementById('cr-ph').value.trim();
+  if (ph.length < 4) return;
+  const c = await API.customers.byPhone(ph);
+  const el = document.getElementById('cr-cust-info');
+  if (c) {
+    el.innerHTML = `<strong>${esc(c.name)}</strong><br/>Outstanding: <strong class="low">${fmt(c.credit_balance)}</strong>`;
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+async function saveCreditPay() {
+  const ph = document.getElementById('cr-ph').value.trim();
+  const amt = parseFloat(document.getElementById('cr-amt').value) || 0;
+  if (!ph || amt <= 0) { showAlert('Enter phone and a valid amount','e'); return; }
+  const c = await API.customers.byPhone(ph);
+  if (!c) { showAlert('Customer not found with this phone number','e'); return; }
+  await API.credit.recordPayment({
+    customer_phone: ph, customer_name: c.name, amount: amt,
+    payment_mode: document.getElementById('cr-mode').value,
+    notes: document.getElementById('cr-notes').value || '',
+    bill_id: null,
+  });
+  showAlert(`₹${Math.round(amt).toLocaleString('en-IN')} recorded from ${c.name}`);
+  cm('m-crpay'); loadCredit();
+}
+
+async function runGST() {
+  const month = document.getElementById('gst-month').value;
+  if (!month) { showAlert('Please select a month','e'); return; }
+  const d = await API.reports.gstFull(month);
+
+  // Totals
+  const totalOutputGST = d.salesByRate.reduce((s,r) => s + r.total_gst, 0);
+  const totalInputGST = d.purchasesByRate.reduce((s,r) => s + r.total_gst, 0);
+  const netPosition = totalOutputGST - totalInputGST;
+
+  document.getElementById('g-output').textContent = fmt(totalOutputGST);
+  document.getElementById('g-input').textContent = fmt(totalInputGST);
+  document.getElementById('g-net').textContent = fmt(Math.abs(netPosition));
+  document.getElementById('g-net-lbl').textContent = netPosition >= 0 ? 'Payable' : 'Refundable';
+
+  // Sales table — show all standard slabs even if 0
+  const slabs = [0, 5, 12, 18, 28];
+  const salesMap = Object.fromEntries(d.salesByRate.map(r => [r.gst_rate, r]));
+  const purMap = Object.fromEntries(d.purchasesByRate.map(r => [r.gst_rate, r]));
+
+  let totSalesAmt = 0, totSalesTax = 0, totSalesCgst = 0, totSalesSgst = 0;
+  const salesRows = slabs.map(rate => {
+    const r = salesMap[rate] || {sales_amount:0, taxable:0, cgst:0, sgst:0};
+    totSalesAmt += r.sales_amount; totSalesTax += r.taxable; totSalesCgst += r.cgst; totSalesSgst += r.sgst;
+    return `<tr>
+      <td><b>${rate}% GST</b></td>
+      <td>${fmt(r.sales_amount)}</td>
+      <td>${fmt(r.taxable)}</td>
+      <td>${fmt(r.cgst)}</td>
+      <td>${fmt(r.sgst)}</td>
+    </tr>`;
+  }).join('') + `<tr style="font-weight:bold;background:var(--bg3)">
+    <td>Total</td>
+    <td>${fmt(totSalesAmt)}</td>
+    <td>${fmt(totSalesTax)}</td>
+    <td>${fmt(totSalesCgst)}</td>
+    <td>${fmt(totSalesSgst)}</td>
+  </tr>`;
+  document.getElementById('gst-sales-tbl').innerHTML = salesRows;
+
+  let totPurAmt = 0, totPurTax = 0, totPurCgst = 0, totPurSgst = 0;
+  const purRows = slabs.map(rate => {
+    const r = purMap[rate] || {purchase_amount:0, taxable:0, cgst:0, sgst:0};
+    totPurAmt += r.purchase_amount; totPurTax += r.taxable; totPurCgst += r.cgst; totPurSgst += r.sgst;
+    return `<tr>
+      <td><b>${rate}% GST</b></td>
+      <td>${fmt(r.purchase_amount)}</td>
+      <td>${fmt(r.taxable)}</td>
+      <td>${fmt(r.cgst)}</td>
+      <td>${fmt(r.sgst)}</td>
+    </tr>`;
+  }).join('') + `<tr style="font-weight:bold;background:var(--bg3)">
+    <td>Total</td>
+    <td>${fmt(totPurAmt)}</td>
+    <td>${fmt(totPurTax)}</td>
+    <td>${fmt(totPurCgst)}</td>
+    <td>${fmt(totPurSgst)}</td>
+  </tr>`;
+  document.getElementById('gst-purchases-tbl').innerHTML = purRows;
+
+  // Items logs
+  document.getElementById('gst-sitems').innerHTML = d.salesItems.length ? d.salesItems.map(it => `
+    <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td>${it.qty}</td><td>${it.gst_rate}%</td><td>${fmt(it.total)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="5">No sales this month</td></tr>';
+
+  document.getElementById('gst-pitems').innerHTML = d.purchaseItems.length ? d.purchaseItems.map(it => `
+    <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td>${it.qty}</td><td>${it.gst_rate}%</td><td>${fmt(it.total)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="5">No purchases this month</td></tr>';
+}
+
+async function printGST() {
+  const month = document.getElementById('gst-month').value;
+  if (!month) { showAlert('Generate report first','e'); return; }
+  const d = await API.reports.gstFull(month);
+  const s = settings;
+
+  const totalOutputGST = d.salesByRate.reduce((sum,r) => sum + r.total_gst, 0);
+  const totalInputGST = d.purchasesByRate.reduce((sum,r) => sum + r.total_gst, 0);
+  const netPosition = totalOutputGST - totalInputGST;
+  const slabs = [0, 5, 12, 18, 28];
+  const salesMap = Object.fromEntries(d.salesByRate.map(r => [r.gst_rate, r]));
+  const purMap = Object.fromEntries(d.purchasesByRate.map(r => [r.gst_rate, r]));
+
+  // Period start/end
+  const [yr, mo] = month.split('-');
+  const firstDay = `01-${mo}-${yr}`;
+  const lastDayNum = new Date(parseInt(yr), parseInt(mo), 0).getDate();
+  const lastDay = `${lastDayNum}-${mo}-${yr}`;
+
+  let totSAmt=0,totSTax=0,totSCgst=0,totSSgst=0;
+  slabs.forEach(rate => { const r = salesMap[rate]||{}; totSAmt+=r.sales_amount||0; totSTax+=r.taxable||0; totSCgst+=r.cgst||0; totSSgst+=r.sgst||0; });
+  let totPAmt=0,totPTax=0,totPCgst=0,totPSgst=0;
+  slabs.forEach(rate => { const r = purMap[rate]||{}; totPAmt+=r.purchase_amount||0; totPTax+=r.taxable||0; totPCgst+=r.cgst||0; totPSgst+=r.sgst||0; });
+
+  const F = n => 'Rs.' + Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GST Returns Report ${month}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
+    body{font-family:Arial,sans-serif;font-size:12px;padding:28px;color:#000;background:#fff;line-height:1.55;font-weight:600}
+    .pg-head{text-align:center;margin-bottom:18px;border-bottom:3px solid #000;padding-bottom:14px}
+    .pg-head h1{font-size:22px;margin:0;letter-spacing:.5px;font-weight:900;color:#000}
+    .pg-head .sub{font-size:12px;color:#000;margin-top:5px;font-weight:600}
+    h2{font-size:15px;margin:22px 0 10px;padding:8px 14px;background:#000;color:#fff !important;font-weight:900;letter-spacing:.5px}
+    h3{font-size:13px;margin:18px 0 8px;color:#000;border-bottom:2px solid #000;padding-bottom:4px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .meta{margin:10px 0 18px;font-size:12px;line-height:1.9;font-weight:600;color:#000}
+    .meta b{display:inline-block;min-width:140px;font-weight:900}
+    table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:12px}
+    th,td{padding:8px 11px;border:1.5px solid #000;text-align:left;color:#000}
+    th{background:#000;color:#fff !important;font-weight:900;text-transform:uppercase;letter-spacing:.04em;font-size:11px}
+    td{font-weight:600}
+    .right{text-align:right}
+    .total-row{font-weight:900;background:#d9d9d9}
+    .total-row td{font-weight:900;background:#d9d9d9}
+    .summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0 24px;font-size:12px}
+    .summary .box{border:2.5px solid #000;padding:14px;background:#fff}
+    .summary .box .lbl{font-size:11px;color:#000;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:900}
+    .summary .box .val{font-size:22px;font-weight:900;color:#000}
+    .summary .box .tag{font-size:11px;margin-top:5px;font-weight:600;color:#000;font-style:italic}
+    .net-payable{background:#ffe0b2 !important;border-color:#000}
+    .net-refund{background:#c8e6c9 !important;border-color:#000}
+    .disclaimer{margin-top:28px;padding:14px;background:#fff8d6 !important;border:2px solid #000;font-size:10.5px;color:#000;line-height:1.7;font-weight:600}
+    .disclaimer b{font-weight:900}
+    @media print{
+      body{padding:16px}
+      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    }
+  </style></head><body>
+
+  <div class="pg-head">
+    <h1>${esc(s.store_name||'Alankar Pooja Stores')}</h1>
+    <div class="sub">${esc(s.store_address||'')}${s.store_phone?' | Phone: '+esc(s.store_phone):''}</div>
+    <div class="sub"><b>GSTIN:</b> ${esc(s.gstin||'-')}</div>
+  </div>
+
+  <h2>GST RETURNS REPORT</h2>
+  <div class="meta">
+    <div><b>Reporting Period:</b> ${firstDay} to ${lastDay}</div>
+    <div><b>Generated:</b> ${new Date().toLocaleString('en-IN')}</div>
+    <div><b>Document Type:</b> GSTR-1 / GSTR-3B Summary</div>
+  </div>
+
+  <h3>GST Liability Summary</h3>
+  <div class="summary">
+    <div class="box">
+      <div class="lbl">Total Sales GST (Output)</div>
+      <div class="val">${F(totalOutputGST)}</div>
+      <div class="tag">Collected from customers</div>
+    </div>
+    <div class="box">
+      <div class="lbl">Total Purchases GST (Input)</div>
+      <div class="val">${F(totalInputGST)}</div>
+      <div class="tag">Paid to suppliers (ITC)</div>
+    </div>
+    <div class="box ${netPosition>=0?'net-payable':'net-refund'}">
+      <div class="lbl">Net Position</div>
+      <div class="val">${F(Math.abs(netPosition))} ${netPosition>=0?'Payable':'Refundable'}</div>
+      <div class="tag">Output − Input</div>
+    </div>
+  </div>
+
+  <h3>Sales GST summaries (Output)</h3>
+  <table>
+    <thead><tr><th>GST Rate</th><th class="right">Sales Amount</th><th class="right">Taxable Amount</th><th class="right">CGST</th><th class="right">SGST</th></tr></thead>
+    <tbody>
+      ${slabs.map(rate => { const r = salesMap[rate] || {sales_amount:0,taxable:0,cgst:0,sgst:0};
+        return `<tr><td><b>${rate}% GST</b></td><td class="right">${F(r.sales_amount)}</td><td class="right">${F(r.taxable)}</td><td class="right">${F(r.cgst)}</td><td class="right">${F(r.sgst)}</td></tr>`;
+      }).join('')}
+      <tr class="total-row"><td>Total</td><td class="right">${F(totSAmt)}</td><td class="right">${F(totSTax)}</td><td class="right">${F(totSCgst)}</td><td class="right">${F(totSSgst)}</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Purchases GST summaries (Input)</h3>
+  <table>
+    <thead><tr><th>GST Rate</th><th class="right">Purchase Amount</th><th class="right">Taxable Amount</th><th class="right">CGST</th><th class="right">SGST</th></tr></thead>
+    <tbody>
+      ${slabs.map(rate => { const r = purMap[rate] || {purchase_amount:0,taxable:0,cgst:0,sgst:0};
+        return `<tr><td><b>${rate}% GST</b></td><td class="right">${F(r.purchase_amount)}</td><td class="right">${F(r.taxable)}</td><td class="right">${F(r.cgst)}</td><td class="right">${F(r.sgst)}</td></tr>`;
+      }).join('')}
+      <tr class="total-row"><td>Total</td><td class="right">${F(totPAmt)}</td><td class="right">${F(totPTax)}</td><td class="right">${F(totPCgst)}</td><td class="right">${F(totPSgst)}</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Detailed Sales Items Log</h3>
+  <table>
+    <thead><tr><th>Item Name</th><th>HSN</th><th class="right">Qty</th><th class="right">GST</th><th class="right">Taxable</th><th class="right">CGST</th><th class="right">SGST</th><th class="right">Total</th></tr></thead>
+    <tbody>
+      ${d.salesItems.length ? d.salesItems.map(it => `
+        <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td class="right">${it.qty}</td><td class="right">${it.gst_rate}%</td><td class="right">${F(it.taxable)}</td><td class="right">${F(it.cgst)}</td><td class="right">${F(it.sgst)}</td><td class="right">${F(it.total)}</td></tr>
+      `).join('') : '<tr><td colspan="8" style="text-align:center;color:#888;padding:14px;font-style:italic">No sales this period</td></tr>'}
+    </tbody>
+  </table>
+
+  <h3>Detailed Purchase Items Log</h3>
+  <table>
+    <thead><tr><th>Item Name</th><th>HSN</th><th class="right">Qty</th><th class="right">GST</th><th class="right">Taxable</th><th class="right">CGST</th><th class="right">SGST</th><th class="right">Total</th></tr></thead>
+    <tbody>
+      ${d.purchaseItems.length ? d.purchaseItems.map(it => `
+        <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td class="right">${it.qty}</td><td class="right">${it.gst_rate}%</td><td class="right">${F(it.taxable)}</td><td class="right">${F(it.cgst)}</td><td class="right">${F(it.sgst)}</td><td class="right">${F(it.total)}</td></tr>
+      `).join('') : '<tr><td colspan="8" style="text-align:center;color:#888;padding:14px;font-style:italic">No purchases this period</td></tr>'}
+    </tbody>
+  </table>
+
+  <div class="disclaimer">
+    <b>Disclaimer:</b> This report is generated from POS billing data for internal GST compliance review. Verify all figures before filing GSTR-1/GSTR-3B on the GST portal.<br/>
+    Amounts are in Indian Rupees (INR). CGST and SGST are calculated at half the applicable GST rate each.
+  </div>
+
+  <script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
+  </body></html>`;
+  await API.printHTML(html);
+}
+
+async function runSales() {
+  const from = document.getElementById('sr-from').value;
+  const to = document.getElementById('sr-to').value;
+  const mode = document.getElementById('sr-pay').value;
+  const bills = await API.bills.list(from, to, mode || null);
+  const rev = bills.reduce((s,b) => s + b.total, 0);
+  const gst = bills.reduce((s,b) => s + (b.cgst||0) + (b.sgst||0), 0);
+  document.getElementById('sr-rev').textContent = fmtS(rev);
+  document.getElementById('sr-cnt').textContent = bills.length;
+  document.getElementById('sr-avg').textContent = fmtS(bills.length ? rev/bills.length : 0);
+  document.getElementById('sr-gst').textContent = fmtS(gst);
+  const itemCount = async (b) => {
+    if (b.items) return b.items.length;
+    if (IS_DEMO) return 0;
+    const items = await API.bills.items(b.id);
+    return items.length;
+  };
+  const rowsHTML = await Promise.all(bills.map(async b => {
+    const ic = await itemCount(b);
+    return `<tr>
+      <td style="font-family:monospace;font-size:11px">${esc(b.bill_number)}</td>
+      <td>${esc(b.bill_date)}</td>
+      <td>${esc(b.customer_name)}</td>
+      <td>${ic}</td>
+      <td><span class="badge bb">${esc(b.payment_mode)}</span></td>
+      <td>${fmt(b.subtotal)}</td>
+      <td>${fmt((b.cgst||0)+(b.sgst||0))}</td>
+      <td><strong>${fmt(b.total)}</strong></td>
+      <td>
+        <button class="btn btn-sm btn-icon" onclick="reprintBill(${b.id})" title="Reprint">🖨</button>
+        ${b.customer_phone ? `<button class="btn btn-sm btn-icon" onclick="resendWhatsAppBill(${b.id})" title="Resend on WhatsApp" style="margin-left:4px;background:#25D366;border-color:#1DA851;color:#fff">📱</button>` : ''}
+      </td>
+    </tr>`;
+  }));
+  const t = document.getElementById('sr-tbl');
+  t.innerHTML = bills.length ? rowsHTML.join('') : '<tr class="empty-row"><td colspan="9">No bills found in this date range</td></tr>';
+}
+
+async function reprintBill(billId) {
+  const bill = await API.bills.byId(billId);
+  const items = await API.bills.items(billId);
+  if (!bill || !items) return;
+  const printOpts = {};
+  if (settings.bill_silent_print === '1' && settings.bill_printer_name) {
+    printOpts.silent = true;
+    printOpts.deviceName = settings.bill_printer_name;
+  }
+  await API.printHTML(buildBillHTML(bill, items), printOpts);
+}
+
+// Resend an existing bill via WhatsApp from Bills/Reports page
+async function resendWhatsAppBill(billId) {
+  try {
+    const bill = await API.bills.byId(billId);
+    const items = await API.bills.items(billId);
+    if (!bill || !items) { showAlert('Bill not found','e'); return; }
+    if (!bill.customer_phone || bill.customer_phone.length < 10) {
+      showAlert('No phone number on this bill','e');
+      return;
+    }
+    offerWhatsAppShare(bill, items);
+  } catch (e) { showError(e); }
+}
+
+async function printSalesReport() {
+  const s = settings;
+  const rowsHTML = document.getElementById('sr-tbl').innerHTML;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Sales Report</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11px;padding:24px;color:#000;margin:0}
+    h1{font-size:17px;margin:0 0 4px}
+    .head{border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:14px}
+    .meta{margin:10px 0;line-height:1.6;font-size:11px}
+    table{width:100%;border-collapse:collapse;font-size:10px}
+    th,td{padding:5px 7px;border:1px solid #999}
+    th{background:#f0f0f0;font-weight:bold}
+    .summary{margin:14px 0;padding:10px;background:#f5f5f5;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    @media print{body{padding:14px}}
+  </style></head><body>
+  <div class="head">
+    <h1>${esc(s.store_name||'Alankar Pooja Stores')}</h1>
+    <div style="color:#555">${esc(s.store_address||'')}</div>
+    <div style="margin-top:4px"><strong>GSTIN:</strong> ${esc(s.gstin||'-')}</div>
+  </div>
+  <h2 style="font-size:13px;margin:10px 0">Sales Report</h2>
+  <div class="meta">
+    <strong>From:</strong> ${document.getElementById('sr-from').value} &nbsp; <strong>To:</strong> ${document.getElementById('sr-to').value}<br/>
+    <strong>Payment Filter:</strong> ${document.getElementById('sr-pay').value || 'All'}<br/>
+    <strong>Generated:</strong> ${new Date().toLocaleString('en-IN')}
+  </div>
+  <div class="summary">
+    <div><strong>Revenue:</strong> ${document.getElementById('sr-rev').textContent}</div>
+    <div><strong>Bills:</strong> ${document.getElementById('sr-cnt').textContent}</div>
+    <div><strong>Avg Bill:</strong> ${document.getElementById('sr-avg').textContent}</div>
+    <div><strong>GST:</strong> ${document.getElementById('sr-gst').textContent}</div>
+  </div>
+  <table>
+    <thead><tr><th>Bill #</th><th>Date</th><th>Customer</th><th>Items</th><th>Pay</th><th>Taxable</th><th>GST</th><th>Total</th><th></th></tr></thead>
+    <tbody>${rowsHTML}</tbody>
+  </table>
+  <script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
+  </body></html>`;
+  await API.printHTML(html);
+}
+
+async function runMonthly() {
+  const month = document.getElementById('mr-month').value;
+  const d = await API.reports.monthly(month);
+  const gross = d.bills.reduce((s,b) => s + b.total, 0);
+  const gst = d.bills.reduce((s,b) => s + (b.cgst||0) + (b.sgst||0), 0);
+  document.getElementById('mr-gross').textContent = fmtS(gross);
+  document.getElementById('mr-gst').textContent = fmtS(gst);
+  document.getElementById('mr-net').textContent = fmtS(gross-gst);
+  document.getElementById('mr-cnt').textContent = d.bills.length;
+  document.getElementById('mr-daily').innerHTML = d.daily.length ? d.daily.map(r => `
+    <tr><td>${esc(r.bill_date)}</td><td>${r.cnt}</td><td>${fmtS(r.revenue)}</td><td>${fmtS(r.gst)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="4">No data</td></tr>';
+  document.getElementById('mr-pay').innerHTML = d.payMix.length ? d.payMix.map(r => `
+    <tr><td>${esc(r.payment_mode)}</td><td>${r.cnt}</td><td>${fmtS(r.amount)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="3">No data</td></tr>';
+  document.getElementById('mr-prod').innerHTML = d.topProds.length ? d.topProds.map(r => `
+    <tr><td>${esc(r.product_name)}</td><td>${r.qty}</td><td>${fmtS(r.revenue)}</td><td>${fmtS(r.gst)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="4">No data</td></tr>';
+}
+
+async function printMonthly() {
+  const month = document.getElementById('mr-month').value;
+  const s = settings;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Monthly Report ${month}</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11px;padding:24px;color:#000;margin:0}
+    h1{font-size:18px;margin:0 0 4px}
+    h3{font-size:13px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #999}
+    .head{border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:14px}
+    .meta{margin:10px 0;line-height:1.7;font-size:11px}
+    .summary{margin:12px 0;padding:12px;background:#f5f5f5;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;border:1px solid #ccc}
+    table{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:14px}
+    th,td{padding:6px 9px;border:1px solid #999}
+    th{background:#f0f0f0;font-weight:bold}
+    @media print{body{padding:14px}}
+  </style></head><body>
+  <div class="head">
+    <h1>${esc(s.store_name||'Alankar Pooja Stores')}</h1>
+    <div style="color:#555">${esc(s.store_address||'')}</div>
+    <div style="margin-top:4px"><strong>GSTIN:</strong> ${esc(s.gstin||'-')}</div>
+  </div>
+  <h2 style="font-size:14px;margin:10px 0">Monthly Sales Report</h2>
+  <div class="meta">
+    <strong>Period:</strong> ${esc(month)}<br/>
+    <strong>Generated:</strong> ${new Date().toLocaleString('en-IN')}
+  </div>
+  <div class="summary">
+    <div><strong>Gross Sales:</strong><br/>${document.getElementById('mr-gross').textContent}</div>
+    <div><strong>GST Collected:</strong><br/>${document.getElementById('mr-gst').textContent}</div>
+    <div><strong>Net Revenue:</strong><br/>${document.getElementById('mr-net').textContent}</div>
+    <div><strong>Total Bills:</strong><br/>${document.getElementById('mr-cnt').textContent}</div>
+  </div>
+  <h3>Daily Breakdown</h3>
+  <table><thead><tr><th>Date</th><th>Bills</th><th>Revenue</th><th>GST</th></tr></thead><tbody>${document.getElementById('mr-daily').innerHTML}</tbody></table>
+  <h3>Payment Mode Summary</h3>
+  <table><thead><tr><th>Mode</th><th>Count</th><th>Amount</th></tr></thead><tbody>${document.getElementById('mr-pay').innerHTML}</tbody></table>
+  <h3>Top Products</h3>
+  <table><thead><tr><th>Product</th><th>Qty</th><th>Revenue</th><th>GST</th></tr></thead><tbody>${document.getElementById('mr-prod').innerHTML}</tbody></table>
+  <script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
+  </body></html>`;
+  await API.printHTML(html);
+}
+
+async function loadCusts() {
+  allCusts = await API.customers.list();
+  renderCusts(allCusts);
+}
+
+function renderCusts(list) {
+  const t = document.getElementById('cust-tbl');
+  t.innerHTML = list.length ? list.map(c => `
+    <tr>
+      <td>${esc(c.name)}</td>
+      <td>${esc(c.phone||'-')}</td>
+      <td>${esc(c.email||'-')}</td>
+      <td>${c.purchase_count||0}</td>
+      <td>${fmtS(c.total_purchases)}</td>
+      <td class="${c.credit_balance>0?'low':''}">${fmtS(c.credit_balance)}</td>
+      <td><span class="badge ${c.status==='Loyal'?'bb':c.status==='Regular'?'bg':'ba'}">${esc(c.status)}</span></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="7">No customers yet</td></tr>';
+}
+
+function filterCust(q) {
+  const ql = q.toLowerCase();
+  const f = allCusts.filter(c => c.name.toLowerCase().includes(ql) || (c.phone||'').includes(q));
+  renderCusts(f);
+}
+
+function showCustModal() {
+  ['c-name','c-phone','c-email','c-addr'].forEach(i => document.getElementById(i).value = '');
+  om('m-cust');
+}
+
+async function saveCust() {
+  const name = document.getElementById('c-name').value.trim();
+  const phone = document.getElementById('c-phone').value.trim();
+  if (!name || !phone) { showAlert('Name and phone are required','e'); return; }
+  await API.customers.insert({name, phone, email: document.getElementById('c-email').value, address: document.getElementById('c-addr').value});
+  showAlert('Customer added!');
+  cm('m-cust'); loadCusts();
+}
+
+(async () => {
+  try {
+    await loadSettings();
+    await loadBillPage();
+    await loadDash();
+    setupBillScanner();
+  } catch (e) { showError(e); }
+})();
+</script>
+</body>
+</html>
