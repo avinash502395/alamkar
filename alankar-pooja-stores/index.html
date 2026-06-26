@@ -2893,25 +2893,40 @@ async function buildAndPrintTSCLabels(product, qty, opts) {
     const bcX = xOffset + 12;
     let out = '';
 
-    if (labelMode === 'bc' && bc) {
-      // Old style: name + barcode + price
+    // SMART FALLBACK: if Quick Code mode selected but product has no Quick Code,
+    // auto-fall-back to barcode style (if barcode exists) so we never print "#?" labels.
+    let actualMode = labelMode;
+    if (actualMode === 'qc' && !quickCode && bc) {
+      actualMode = 'bc';  // use barcode instead
+    } else if (actualMode === 'both' && !quickCode && bc) {
+      actualMode = 'bc';  // use barcode only
+    }
+
+    if (actualMode === 'bc' && bc) {
+      // Barcode style: name + barcode + price
       out += `TEXT ${cx},28,"3",0,1,1,2,"${name}"\r\n`;
       out += `BARCODE ${bcX},60,"128",60,1,0,3,6,"${bc}"\r\n`;
       out += `TEXT ${cx},165,"3",0,1,1,2,"${price}"\r\n`;
-    } else if (labelMode === 'both' && bc && quickCode) {
+    } else if (actualMode === 'both' && bc && quickCode) {
       // Both: smaller name + tiny barcode + qc + price
       out += `TEXT ${cx},20,"2",0,1,1,2,"${name}"\r\n`;
       out += `BARCODE ${bcX},45,"128",40,1,0,2,4,"${bc}"\r\n`;
       out += `TEXT ${cx},105,"4",0,2,2,2,"#${quickCode}"\r\n`;
       out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
-    } else {
-      // Default: Quick Code mode — BIG number, no barcode
-      // Name on top
+    } else if (quickCode) {
+      // Quick Code mode: BIG number, no barcode
       out += `TEXT ${cx},25,"3",0,1,1,2,"${name}"\r\n`;
-      // BIG Quick Code in middle (font "4" at 3x size = HUGE, very readable)
-      const codeText = quickCode ? `#${quickCode}` : '#?';
-      out += `TEXT ${cx},75,"4",0,3,3,2,"${codeText}"\r\n`;
-      // Price at bottom
+      out += `TEXT ${cx},75,"4",0,3,3,2,"#${quickCode}"\r\n`;
+      out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
+    } else if (bc) {
+      // No Quick Code and Quick Code mode requested but no barcode either — final fallback
+      out += `TEXT ${cx},28,"3",0,1,1,2,"${name}"\r\n`;
+      out += `BARCODE ${bcX},60,"128",60,1,0,3,6,"${bc}"\r\n`;
+      out += `TEXT ${cx},165,"3",0,1,1,2,"${price}"\r\n`;
+    } else {
+      // Last resort: no code, no barcode — print name + price only with warning
+      out += `TEXT ${cx},25,"3",0,1,1,2,"${name}"\r\n`;
+      out += `TEXT ${cx},90,"3",0,1,1,2,"NO CODE"\r\n`;
       out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
     }
     return out;
