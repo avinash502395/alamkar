@@ -1066,7 +1066,31 @@ const DemoAPI = {
     list: async () => [...demoData.products],
     byId: async (id) => demoData.products.find(p=>p.id===id),
     byBarcode: async (bc) => demoData.products.find(p=>p.barcode===bc) || null,
-    insert: async (p) => { const id = Math.max(0,...demoData.products.map(x=>x.id))+1; demoData.products.push({...p,id,is_active:1}); return {lastInsertRowid:id}; },
+    smartLookup: async (code) => {
+      const c = String(code||'').trim();
+      if (!c) return null;
+      if (c.length <= 6 && /^\d+$/.test(c)) {
+        const byQC = demoData.products.find(p => p.quick_code === c && p.is_active !== 0);
+        if (byQC) return byQC;
+      }
+      return demoData.products.find(p => p.barcode === c && p.is_active !== 0) || null;
+    },
+    nextQuickCode: async () => {
+      const used = new Set(demoData.products.map(p => parseInt(p.quick_code,10)).filter(n => !isNaN(n)));
+      let i = 1;
+      while (used.has(i)) i++;
+      return String(i);
+    },
+    insert: async (p) => {
+      if (!p.quick_code) {
+        const used = new Set(demoData.products.map(x => parseInt(x.quick_code,10)).filter(n => !isNaN(n)));
+        let i = 1; while (used.has(i)) i++;
+        p.quick_code = String(i);
+      }
+      const id = Math.max(0,...demoData.products.map(x=>x.id))+1;
+      demoData.products.push({...p,id,is_active:1});
+      return {lastInsertRowid:id};
+    },
     update: async (p) => { const idx = demoData.products.findIndex(x=>x.id===p.id); if(idx>=0) Object.assign(demoData.products[idx],p); return {changes:1}; },
     remove: async (id) => { demoData.products = demoData.products.filter(x=>x.id!==id); return {changes:1}; },
     adjustStock: async (id, delta) => { const p = demoData.products.find(x=>x.id===id); if(p) p.stock = Math.max(0, p.stock+delta); return {}; },
@@ -1677,7 +1701,7 @@ async function loadQuickPick() {
     let items = [];
     if (quickPickMode === 'top') {
       // Dashboard topProducts returns product_name + qty_sold + revenue
-      const dash = await API.dashboard();
+      const dash = await API.reports.dashboard();
       const tops = (dash && dash.topProducts) ? dash.topProducts : [];
       // Match each top-selling name to full product data from allProds
       items = tops.map(t => {
