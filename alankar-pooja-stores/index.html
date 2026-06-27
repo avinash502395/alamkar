@@ -360,6 +360,15 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
                 </div>
               </div>
               <div id="scan-feedback" style="margin-top:8px;font-size:12.5px;font-weight:600;display:none;padding:6px 10px;border-radius:6px"></div>
+              <!-- Quick Add: for items NOT in product list (rarely-sold pooja items, brass, festival specials, etc.) -->
+              <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--gold-dark);text-align:right">
+                <button class="btn btn-gold" onclick="openQuickAddItem()" style="font-size:12.5px;padding:7px 14px" title="Add a one-time item directly to bill (not saved to products)">
+                  ➕ Quick Add Item (no code needed)
+                </button>
+                <div style="font-size:10.5px;color:var(--text2);margin-top:4px;line-height:1.3">
+                  Use for rare items, festival specials, or anything not in your product list
+                </div>
+              </div>
               <!-- Fast product search for when scan fails -->
               <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--gold-dark);position:relative">
                 <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -951,6 +960,49 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button class="btn" onclick="cm('m-crpay')">Cancel</button>
       <button class="btn btn-s" onclick="saveCreditPay()">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Add Item modal: add a one-time item to current bill without saving as a product -->
+<div id="m-quickadd" class="overlay">
+  <div class="modal" style="width:440px">
+    <div class="modal-hd"><span class="modal-title">➕ Quick Add Item to Bill</span><button class="close-btn" onclick="cm('m-quickadd')">×</button></div>
+    <div style="background:#FFF7DC;border:1px solid var(--gold);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;font-size:12px;color:#6B4423;line-height:1.5">
+      💡 Use this for items NOT in your product list — brass items, festival specials, custom orders, etc.<br/>
+      <b>This item will only appear in this bill</b> — it's not added to your inventory.
+    </div>
+    <div class="fg2">
+      <div class="fg" style="grid-column:1/-1">
+        <label class="fl">Item Name <span class="req">*</span></label>
+        <input id="qa-name" placeholder="e.g. Brass Bell, Custom Pooja Kit, etc." autocomplete="off" style="font-size:14.5px;font-weight:600"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Price (₹) <span class="req">*</span></label>
+        <input id="qa-price" type="number" step="0.01" min="0" placeholder="0.00" style="font-size:15px;font-weight:700"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Quantity</label>
+        <input id="qa-qty" type="number" min="1" value="1" style="font-size:15px;font-weight:700"/>
+      </div>
+      <div class="fg">
+        <label class="fl">GST %</label>
+        <select id="qa-gst" style="font-size:14px">
+          <option value="0">0% (No GST)</option>
+          <option value="5" selected>5%</option>
+          <option value="12">12%</option>
+          <option value="18">18%</option>
+          <option value="28">28%</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">HSN Code (optional)</label>
+        <input id="qa-hsn" placeholder="Leave empty if unknown" autocomplete="off" style="font-size:13px"/>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn" onclick="cm('m-quickadd')">Cancel</button>
+      <button class="btn btn-p" onclick="addQuickAddItem()">➕ Add to Bill</button>
     </div>
   </div>
 </div>
@@ -1883,6 +1935,54 @@ function addItem() {
     base_amount: c.base_amount, gst_amount: c.gst_amount, total_amount: c.total_amount,
   });
   cm('m-additem'); renderBill();
+}
+
+// === QUICK ADD ITEM === (one-time item to bill, not saved to products)
+function openQuickAddItem() {
+  document.getElementById('qa-name').value = '';
+  document.getElementById('qa-price').value = '';
+  document.getElementById('qa-qty').value = '1';
+  document.getElementById('qa-gst').value = '5';
+  document.getElementById('qa-hsn').value = '';
+  om('m-quickadd');
+  setTimeout(() => document.getElementById('qa-name').focus(), 150);
+}
+
+function addQuickAddItem() {
+  const name = document.getElementById('qa-name').value.trim();
+  const price = parseFloat(document.getElementById('qa-price').value);
+  const qty = parseInt(document.getElementById('qa-qty').value) || 1;
+  const gst = parseFloat(document.getElementById('qa-gst').value) || 0;
+  const hsn = document.getElementById('qa-hsn').value.trim();
+
+  if (!name) { showAlert('Item name is required','e'); return; }
+  if (!price || price <= 0) { showAlert('A valid price is required','e'); return; }
+  if (qty < 1) { showAlert('Quantity must be at least 1','e'); return; }
+
+  // Compute amounts (handles inclusive vs exclusive GST mode)
+  const c = computeItemAmounts(price, qty, gst);
+  // product_id is null (this isn't a real product in the DB)
+  billItems.push({
+    product_id: null,
+    product_name: name,
+    hsn: hsn,
+    qty: qty,
+    rate: price,
+    gst_rate: gst,
+    base_amount: c.base_amount,
+    gst_amount: c.gst_amount,
+    total_amount: c.total_amount,
+  });
+
+  cm('m-quickadd');
+  renderBill();
+  showAlert(`Added "${name}" to bill (₹${c.total_amount.toFixed(2)})`);
+
+  // Re-focus the scan box so cashier can continue scanning
+  setTimeout(() => {
+    const inp = document.getElementById('bill-scan');
+    if (inp) inp.focus();
+  }, 150);
 }
 
 // === BILL SCAN INPUT — AUTO-ADD ON ENTER ===
