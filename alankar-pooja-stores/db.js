@@ -507,4 +507,43 @@ const Backup = {
   getDbPath: () => dbPath,
 };
 
-module.exports = { Products, Customers, Bills, Stock, Credit, Reports, Settings, Backup };
+// === MAINTENANCE === (clear test data while preserving important records)
+const Maintenance = {
+  // Clears bills, bill_items, customers, credit_payments.
+  // PRESERVES: products, stock_entries, settings.
+  // Resets bill counter (next bill starts at #1).
+  clearTestData: () => {
+    // Get counts BEFORE deletion for the report
+    const billsCount      = db.prepare('SELECT COUNT(*) AS c FROM bills').get().c;
+    const billItemsCount  = db.prepare('SELECT COUNT(*) AS c FROM bill_items').get().c;
+    const customersCount  = db.prepare('SELECT COUNT(*) AS c FROM customers').get().c;
+    const creditCount     = db.prepare('SELECT COUNT(*) AS c FROM credit_payments').get().c;
+
+    // Run all deletes inside a transaction for safety (all-or-nothing)
+    const tx = db.transaction(() => {
+      db.exec('DELETE FROM bill_items');
+      db.exec('DELETE FROM bills');
+      db.exec('DELETE FROM credit_payments');
+      db.exec('DELETE FROM customers');
+      // Reset SQLite auto-increment counters for these tables
+      db.exec("DELETE FROM sqlite_sequence WHERE name IN ('bills','bill_items','customers','credit_payments')");
+    });
+    tx();
+
+    return {
+      ok: true,
+      deleted: {
+        bills:           billsCount,
+        bill_items:      billItemsCount,
+        customers:       customersCount,
+        credit_payments: creditCount,
+      },
+      preserved: {
+        products:      db.prepare('SELECT COUNT(*) AS c FROM products').get().c,
+        stock_entries: db.prepare('SELECT COUNT(*) AS c FROM stock_entries').get().c,
+      },
+    };
+  },
+};
+
+module.exports = { Products, Customers, Bills, Stock, Credit, Reports, Settings, Backup, Maintenance };

@@ -50,6 +50,9 @@ contextBridge.exposeInMainWorld('api', {
     auto:      (folder) => ipcRenderer.invoke('backup:auto', folder),
     pickFolder: ()   => ipcRenderer.invoke('backup:pickFolder'),
   },
+  maintenance: {
+    clearTestData: () => ipcRenderer.invoke('maintenance:clearTestData'),
+  },
   printHTML: (html, options) => ipcRenderer.invoke('print:html', html, options || {}),
   printerList: () => ipcRenderer.invoke('printer:list'),
   tscPrintRaw: (printerName, tspl) => ipcRenderer.invoke('tsc:printRaw', printerName, tspl),

@@ -124,7 +124,7 @@ function safeHandle(channel, fn) {
 // REGISTER ALL IPC HANDLERS BEFORE createWindow — eliminates race condition
 function registerHandlers() {
   if (!db) return;
-  const { Products, Customers, Bills, Stock, Credit, Reports, Settings, Backup } = db;
+  const { Products, Customers, Bills, Stock, Credit, Reports, Settings, Backup, Maintenance } = db;
 
   safeHandle('products:list',        ()           => Products.list());
   safeHandle('products:byId',        (_, id)      => Products.byId(id));
@@ -164,6 +164,8 @@ function registerHandlers() {
 
   safeHandle('backup:export',    () => handleBackup());
   safeHandle('backup:getDbPath', () => Backup.getDbPath());
+
+  safeHandle('maintenance:clearTestData', () => Maintenance.clearTestData());
 
   // Silent auto-backup to user-configured folder (or default to Documents/AlankarBackups)
   // Returns { ok, path, error } — used both manually and on app-close

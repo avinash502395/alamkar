@@ -775,6 +775,22 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
         </div>
         <div id="db-path-info" style="margin-top:12px;font-size:11px;color:var(--text3);font-family:'Courier New',monospace;display:none;padding:10px;background:var(--bg3);border-radius:var(--radius);word-break:break-all"></div>
       </div>
+      <div class="card" style="border:2px dashed #c66;background:#fff8f7">
+        <div class="ct" style="margin-bottom:10px;color:#c00">⚠️ Clean Test Data</div>
+        <p style="color:#7a3030;font-size:12.5px;margin-bottom:12px;line-height:1.6">
+          Delete all <b>bills, bill items, customers, and credit records</b> while keeping your <b>products</b> and <b>stock entries</b> safe.<br/>
+          Use this once after the test phase, before going live with real customers.
+        </p>
+        <div style="background:#fff;border:1px solid #f0c0c0;border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.7">
+          <b style="color:#080">✅ Will be KEPT:</b> Products, Stock entries, Settings (Auto-backup, label config, store info, etc.)<br/>
+          <b style="color:#c00">❌ Will be DELETED:</b> All bills, all bill items, all customers, all credit payments<br/>
+          <span style="color:#7a3030;font-size:11.5px">⚡ Bill counter resets — next bill will be BILL-000001</span>
+        </div>
+        <div class="action-bar">
+          <button class="btn btn-d" onclick="cleanTestData()">🗑️ Clean Test Data Now</button>
+        </div>
+        <div id="clean-result" style="margin-top:12px;font-size:12px;display:none;padding:10px 12px;border-radius:var(--radius)"></div>
+      </div>
       <div class="card">
         <div class="ct" style="margin-bottom:14px">💰 GST Pricing Mode</div>
         <p style="color:var(--text2);font-size:12.5px;margin-bottom:14px;line-height:1.6">
@@ -1324,6 +1340,28 @@ const DemoAPI = {
     export: async () => alert('Backup is only available in the real desktop app.'),
     getDbPath: async () => '(Demo mode - no real database)',
   },
+  maintenance: {
+    clearTestData: async () => {
+      const result = {
+        ok: true,
+        deleted: {
+          bills: demoData.bills.length,
+          bill_items: demoData.bills.reduce((sum, b) => sum + (b.items||[]).length, 0),
+          customers: demoData.customers.length,
+          credit_payments: (demoData.creditPayments||[]).length,
+        },
+        preserved: {
+          products: demoData.products.length,
+          stock_entries: 0,
+        },
+      };
+      demoData.bills = [];
+      demoData.customers = [];
+      demoData.creditPayments = [];
+      demoData.billCounter = 0;
+      return result;
+    },
+  },
   printHTML: async (html, opts) => { const w = window.open('','_blank','width=420,height=700'); if(w){w.document.write(html);w.document.close();} },
   printerList: async () => ([
     {name:'Microsoft Print to PDF', isDefault:true, description:'(demo)'},
@@ -1656,6 +1694,75 @@ async function showDbPath() {
   const el = document.getElementById('db-path-info');
   el.textContent = '📁 ' + p;
   el.style.display = 'block';
+}
+
+// === CLEAN TEST DATA ===
+// Deletes bills, bill_items, customers, credit_payments.
+// Preserves products, stock_entries, settings.
+// Double confirmation + type-to-confirm for safety.
+async function cleanTestData() {
+  // First confirmation
+  if (!confirm(
+    '⚠️ CLEAN TEST DATA — Are you sure?\n\n' +
+    'This will DELETE:\n' +
+    '  • All bills\n' +
+    '  • All bill items\n' +
+    '  • All customers\n' +
+    '  • All credit payments\n\n' +
+    'This will KEEP:\n' +
+    '  • All products (✅ your 60 items)\n' +
+    '  • All stock entries (✅ your purchase history)\n' +
+    '  • All settings (✅ printer, store info, etc.)\n\n' +
+    'Click OK to continue, Cancel to abort.'
+  )) return;
+
+  // Second confirmation — type CLEAN to confirm
+  const confirmation = await customPrompt(
+    'Final check — type "CLEAN" (uppercase) to confirm:',
+    ''
+  );
+  if (confirmation === null) return;
+  if (confirmation.trim() !== 'CLEAN') {
+    showAlert('Aborted — confirmation text did not match.','e');
+    return;
+  }
+
+  // Run the cleanup
+  const el = document.getElementById('clean-result');
+  el.style.display = 'block';
+  el.style.background = '#f0f7ff';
+  el.style.color = 'var(--text2)';
+  el.innerHTML = '⏳ Cleaning... please wait.';
+
+  try {
+    const result = await API.maintenance.clearTestData();
+    if (result && result.ok) {
+      el.style.background = '#e7f5ec';
+      el.style.color = '#1d6c3a';
+      el.innerHTML = `
+        ✅ <b>Test data cleaned successfully!</b><br/><br/>
+        <b>Deleted:</b><br/>
+        &nbsp;&nbsp;• ${result.deleted.bills} bills<br/>
+        &nbsp;&nbsp;• ${result.deleted.bill_items} bill items<br/>
+        &nbsp;&nbsp;• ${result.deleted.customers} customers<br/>
+        &nbsp;&nbsp;• ${result.deleted.credit_payments} credit payments<br/><br/>
+        <b>Preserved:</b><br/>
+        &nbsp;&nbsp;• ${result.preserved.products} products (intact ✅)<br/>
+        &nbsp;&nbsp;• ${result.preserved.stock_entries} stock entries (intact ✅)<br/><br/>
+        🪔 Next bill will start at <b>BILL-000001</b>. Ready for real customers!
+      `;
+      // Refresh the dashboard cards so the user sees the reset numbers
+      try { await loadDash(); } catch(e) {}
+    } else {
+      el.style.background = '#fee';
+      el.style.color = '#c00';
+      el.innerHTML = '❌ Cleanup failed. Please try again.';
+    }
+  } catch (e) {
+    el.style.background = '#fee';
+    el.style.color = '#c00';
+    el.innerHTML = '❌ Error: ' + (e.message || e);
+  }
 }
 
 async function loadDash() {
