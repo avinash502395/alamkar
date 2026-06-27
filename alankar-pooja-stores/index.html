@@ -1646,6 +1646,8 @@ async function loadDash() {
 async function loadBillPage() {
   // Always reload settings so any updates (cashier, store info) are picked up
   settings = await API.settings.getAll();
+  // Ensure label mode defaults to Quick Code (in case stored setting is missing/stale)
+  if (!settings.tsc_label_mode) settings.tsc_label_mode = 'qc';
   allProds = await API.products.list();
   allCusts = await API.customers.list();
   document.getElementById('cust-dl').innerHTML = allCusts.map(c => `<option value="${esc(c.name)}">${esc(c.phone)}</option>`).join('');
@@ -2486,13 +2488,53 @@ async function saveProd() {
   }
 }
 
+// Replacement for native prompt() which is blocked in Electron.
+// Returns a Promise that resolves to the string entered, or null if cancelled.
+function customPrompt(message, defaultValue) {
+  return new Promise((resolve) => {
+    // Build modal DOM
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = '99999';
+    overlay.innerHTML = `
+      <div class="modal" style="width:380px">
+        <div class="modal-hd"><span class="modal-title">Enter Value</span></div>
+        <div style="padding:6px 4px 14px;font-size:13.5px;color:var(--text2);white-space:pre-wrap">${esc(message)}</div>
+        <div class="fg" style="margin-bottom:14px">
+          <input id="__cp_input" type="text" value="${esc(String(defaultValue||''))}" style="width:100%;font-size:16px;font-weight:700;text-align:center" autofocus/>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <button class="btn" id="__cp_cancel">Cancel</button>
+          <button class="btn btn-p" id="__cp_ok">OK</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('#__cp_input');
+    const ok = overlay.querySelector('#__cp_ok');
+    const cancel = overlay.querySelector('#__cp_cancel');
+    setTimeout(() => { input.focus(); input.select(); }, 60);
+    function done(val) {
+      document.body.removeChild(overlay);
+      resolve(val);
+    }
+    ok.onclick = () => done(input.value);
+    cancel.onclick = () => done(null);
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); done(input.value); }
+      else if (e.key === 'Escape') { e.preventDefault(); done(null); }
+    };
+    overlay.onclick = (e) => { if (e.target === overlay) done(null); };
+  });
+}
+
 // Save the product AND immediately print labels for it
 async function saveAndPrintLabels() {
   const name = document.getElementById('p-name').value.trim();
   const price = parseFloat(document.getElementById('p-price').value);
   if (!name || !price || price <= 0) { showAlert('Name and a valid price are required','e'); return; }
 
-  const qtyStr = prompt(`How many labels to print for "${name}"?`, '10');
+  const qtyStr = await customPrompt(`How many labels to print for "${name}"?`, '10');
   if (qtyStr === null) return;
   const qty = parseInt(qtyStr);
   if (!qty || qty < 1 || qty > 500) { showAlert('Enter a valid quantity (1-500)','e'); return; }
@@ -2562,34 +2604,20 @@ async function saveAndPrintLabels() {
 function quickTSCLabel(pid) {
   const p = allProds.find(x => x.id === pid);
   if (!p) return;
-  // Warn if Quick Code mode is selected but product has no Quick Code
-  const mode = settings.tsc_label_mode || 'qc';
-  if (mode === 'qc' && !p.quick_code) {
-    const choice = confirm(
-      `"${p.name}" has NO Quick Code assigned.\n\n` +
-      `Click OK → Edit product first to assign a Quick Code (recommended).\n` +
-      `Click Cancel → Print barcode-style label instead.`
-    );
-    if (choice) {
-      // User wants to add Quick Code first
-      showProdModal(pid);
-      return;
-    }
-    // else: continue and let smart fallback print barcode style
-  }
   // Pre-select the product in the barcode page selector and open modal
   const sel = document.getElementById('bc-sel');
   if (sel) {
     const opt = [...sel.options].find(o => parseInt(o.value) === pid);
     if (opt) sel.value = String(pid);
     else {
-      // Add option if it's not loaded yet
       const newOpt = document.createElement('option');
       newOpt.value = pid; newOpt.textContent = p.name;
       sel.appendChild(newOpt); sel.value = String(pid);
     }
   }
-  document.getElementById('ls-product-info').innerHTML = `<strong>${esc(p.name)}</strong>${p.quick_code?`<br/>Quick Code: <code style="background:#FFF7DC;padding:2px 8px;border-radius:3px;font-weight:900;color:#6B4423">#${esc(p.quick_code)}</code>`:''}<br/>Barcode: <code style="background:#fff;padding:2px 6px;border-radius:3px">${esc(p.barcode)}</code> · MRP: ₹${p.selling_price}`;
+  // Show product info — Quick Code if set, fallback to product ID
+  const displayCode = p.quick_code || p.id;
+  document.getElementById('ls-product-info').innerHTML = `<strong>${esc(p.name)}</strong><br/>Quick Code: <code style="background:#FFF7DC;padding:3px 10px;border-radius:4px;font-weight:900;color:#6B4423;font-size:14px">#${esc(String(displayCode))}</code> · MRP: ₹${p.selling_price}`;
   const w = settings.tsc_label_width || '38';
   const h = settings.tsc_label_height || '25';
   const cols = settings.tsc_columns || '2';
@@ -2889,9 +2917,11 @@ async function buildAndPrintTSCLabels(product, qty, opts) {
   const bc = String(product.barcode || '').replace(/"/g, '');
   const name = String(product.name || '').replace(/"/g, '').substring(0, 14).toUpperCase();
   const price = `Rs.${Number(product.selling_price).toFixed(0)}`;
-  // Quick Code is the BIG number on the label — cashier types this to add product to bill
-  const quickCode = String(product.quick_code || '').replace(/"/g, '').trim();
-  // Setting: 'qc' = Quick Code only (default), 'bc' = barcode only, 'both' = both
+  // Quick Code is the BIG number on the label.
+  // If user didn't assign one yet, use the product's auto-incremented ID as the displayed number.
+  // This way, the label ALWAYS shows a number (never empty, never barcode unless explicitly requested).
+  const quickCode = (String(product.quick_code || '').trim() || String(product.id || '')).replace(/"/g, '');
+  // Label style — 'qc' (default), 'bc' (barcode), 'both'
   const labelMode = (settings.tsc_label_mode || 'qc');
 
   // Build TSPL — SIZE matches FULL ROW so the printer treats each row as one page
@@ -2904,49 +2934,31 @@ async function buildAndPrintTSCLabels(product, qty, opts) {
   tspl += `REFERENCE 0,0\r\n`;
   tspl += `CLS\r\n`;
 
-  // Helper to render one label's content at a given x-offset (dots)
-  // Layout when mode=qc (default): NAME (top) → BIG QUICK CODE (middle, x4 size) → Rs.PRICE (bottom)
-  // Layout when mode=bc: NAME → BARCODE → Rs.PRICE (old style)
-  // 200 dots = 25mm label height; safe area 25-180
+  // SIMPLE RULES — no smart fallbacks, do exactly what the user selected.
+  //   labelMode 'qc'    → BIG number only (uses quick_code, falls back to product.id)
+  //   labelMode 'bc'    → barcode style (requires barcode to exist)
+  //   labelMode 'both'  → both barcode and number
   function emitLabel(xOffset) {
     const cx = xOffset + Math.round(labelWdots / 2);
     const bcX = xOffset + 12;
     let out = '';
 
-    // SMART FALLBACK: if Quick Code mode selected but product has no Quick Code,
-    // auto-fall-back to barcode style (if barcode exists) so we never print "#?" labels.
-    let actualMode = labelMode;
-    if (actualMode === 'qc' && !quickCode && bc) {
-      actualMode = 'bc';  // use barcode instead
-    } else if (actualMode === 'both' && !quickCode && bc) {
-      actualMode = 'bc';  // use barcode only
-    }
-
-    if (actualMode === 'bc' && bc) {
+    if (labelMode === 'bc' && bc) {
       // Barcode style: name + barcode + price
       out += `TEXT ${cx},28,"3",0,1,1,2,"${name}"\r\n`;
       out += `BARCODE ${bcX},60,"128",60,1,0,3,6,"${bc}"\r\n`;
       out += `TEXT ${cx},165,"3",0,1,1,2,"${price}"\r\n`;
-    } else if (actualMode === 'both' && bc && quickCode) {
+    } else if (labelMode === 'both' && bc) {
       // Both: smaller name + tiny barcode + qc + price
       out += `TEXT ${cx},20,"2",0,1,1,2,"${name}"\r\n`;
       out += `BARCODE ${bcX},45,"128",40,1,0,2,4,"${bc}"\r\n`;
       out += `TEXT ${cx},105,"4",0,2,2,2,"#${quickCode}"\r\n`;
       out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
-    } else if (quickCode) {
-      // Quick Code mode: BIG number, no barcode
+    } else {
+      // DEFAULT — Quick Code mode (ALWAYS print BIG number, NEVER barcode)
+      // Layout: NAME (top, y=25) → BIG #CODE (middle, y=75, x3 size) → Rs.PRICE (bottom, y=170)
       out += `TEXT ${cx},25,"3",0,1,1,2,"${name}"\r\n`;
       out += `TEXT ${cx},75,"4",0,3,3,2,"#${quickCode}"\r\n`;
-      out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
-    } else if (bc) {
-      // No Quick Code and Quick Code mode requested but no barcode either — final fallback
-      out += `TEXT ${cx},28,"3",0,1,1,2,"${name}"\r\n`;
-      out += `BARCODE ${bcX},60,"128",60,1,0,3,6,"${bc}"\r\n`;
-      out += `TEXT ${cx},165,"3",0,1,1,2,"${price}"\r\n`;
-    } else {
-      // Last resort: no code, no barcode — print name + price only with warning
-      out += `TEXT ${cx},25,"3",0,1,1,2,"${name}"\r\n`;
-      out += `TEXT ${cx},90,"3",0,1,1,2,"NO CODE"\r\n`;
       out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
     }
     return out;
@@ -2999,18 +3011,14 @@ function buildAndPrintTSCLabelsHTML(product, qty, opts) {
   const pageH = labelH;
   const rows = Math.ceil(qty / cols);
 
-  const bcCanvas = document.createElement('canvas');
-  bcCanvas.width = 400;
-  bcCanvas.height = 90;
-  drawBarcode(product.barcode || '', bcCanvas, {showText:false, margin:14});
-  const bcImg = bcCanvas.toDataURL();
+  // Quick Code is what cashier types. Fallback to product ID if no quick_code assigned.
+  const displayCode = String(product.quick_code || product.id || '').trim();
 
   function makeLabel() {
     return `<div class="lbl">
-      <img src="${bcImg}" class="lbl-bc" alt="bc"/>
-      <div class="lbl-num">${esc(product.barcode||'')}</div>
       ${showName  ? `<div class="lbl-name">${esc(truncate(product.name, 22))}</div>` : ''}
-      ${showPrice ? `<div class="lbl-price">MRP: ₹${Number(product.selling_price).toFixed(2)}</div>` : ''}
+      <div class="lbl-code">#${esc(displayCode)}</div>
+      ${showPrice ? `<div class="lbl-price">₹${Number(product.selling_price).toFixed(0)}</div>` : ''}
       ${showStore ? `<div class="lbl-store">${esc((s.store_name||'STORE').toUpperCase())}</div>` : ''}
     </div>`;
   }
@@ -3035,13 +3043,12 @@ function buildAndPrintTSCLabelsHTML(product, qty, opts) {
     .page{width:${pageW}mm;height:${pageH}mm;page-break-after:always;page-break-inside:avoid;overflow:hidden;margin:0;padding:0}
     .page:last-child{page-break-after:auto}
     .row{display:flex;gap:${cGap}mm;width:${pageW}mm;height:${labelH}mm;margin:0;padding:0}
-    .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.4mm 1mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;text-align:center;background:#fff;color:#000;line-height:1}
+    .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.5mm 1mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;text-align:center;background:#fff;color:#000;line-height:1}
     .lbl-blank{visibility:hidden}
-    .lbl-bc{width:${Math.min(labelW-3,35)}mm;height:9mm;display:block;margin-bottom:0.3mm;image-rendering:crisp-edges}
-    .lbl-num{font-size:5.5pt;font-family:'Courier New',monospace;font-weight:700;color:#000;line-height:1;margin-bottom:0.5mm}
-    .lbl-name{font-size:7pt;font-weight:700;line-height:1;color:#000;margin-bottom:0.3mm;max-height:2.8mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
-    .lbl-price{font-size:8.5pt;font-weight:900;color:#000;line-height:1}
-    .lbl-store{font-size:5pt;font-weight:700;color:#000;line-height:1;margin-top:0.3mm}
+    .lbl-name{font-size:7pt;font-weight:700;line-height:1;color:#000;max-height:3mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+    .lbl-code{font-size:36pt;font-weight:900;color:#000;line-height:1;font-family:Arial Black,Arial,sans-serif}
+    .lbl-price{font-size:10pt;font-weight:900;color:#000;line-height:1}
+    .lbl-store{font-size:5pt;font-weight:700;color:#000;line-height:1}
   </style></head><body>${pagesHTML}
   <script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>
   </body></html>`;
@@ -3068,18 +3075,15 @@ function buildAndPrintA4Sheet(product, qty, opts) {
   const rowsPerPage  = Math.floor((usableH + rGap) / (labelH + rGap));
   const perPage = labelsPerRow * rowsPerPage;
 
-  const bcCanvas = document.createElement('canvas');
-  bcCanvas.width = 400; bcCanvas.height = 90;
-  drawBarcode(product.barcode || '', bcCanvas, {showText:false, margin:16});
-  const bcImg = bcCanvas.toDataURL();
+  // Quick Code is the BIG number on the label. Fallback to product ID if not assigned.
+  const displayCode = String(product.quick_code || product.id || '').trim();
 
   function makeLabel() {
     return `<div class="lbl">
-      ${showStore ? `<div class="lbl-store">${esc((s.store_name||'STORE').toUpperCase())}</div>` : ''}
       ${showName  ? `<div class="lbl-name">${esc(truncate(product.name, 24))}</div>` : ''}
-      <img src="${bcImg}" class="lbl-bc"/>
-      <div class="lbl-num">${esc(product.barcode||'')}</div>
-      ${showPrice ? `<div class="lbl-price">Rs.${Number(product.selling_price).toFixed(2)}</div>` : ''}
+      <div class="lbl-code">#${esc(displayCode)}</div>
+      ${showPrice ? `<div class="lbl-price">₹${Number(product.selling_price).toFixed(0)}</div>` : ''}
+      ${showStore ? `<div class="lbl-store">${esc((s.store_name||'STORE').toUpperCase())}</div>` : ''}
     </div>`;
   }
 
@@ -3100,12 +3104,11 @@ function buildAndPrintA4Sheet(product, qty, opts) {
     .a4page{width:${usableW}mm;page-break-after:always}
     .a4page:last-child{page-break-after:auto}
     .grid{display:grid;grid-template-columns:repeat(${labelsPerRow},${labelW}mm);column-gap:${cGap}mm;row-gap:${rGap}mm}
-    .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.8mm 1.2mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;text-align:center;border:0.3pt dashed #888}
-    .lbl-store{font-size:6pt;font-weight:900;line-height:1;color:#000;margin-bottom:0.3mm}
-    .lbl-name{font-size:6.5pt;font-weight:700;line-height:1.05;color:#000;margin-bottom:0.4mm;max-height:3mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
-    .lbl-bc{width:${Math.min(labelW-4,34)}mm;height:${Math.min(labelH*0.4,9)}mm;display:block;image-rendering:crisp-edges}
-    .lbl-num{font-size:5.5pt;font-family:'Courier New',monospace;font-weight:700;color:#000;margin-top:0.3mm}
-    .lbl-price{font-size:8pt;font-weight:900;color:#000;margin-top:0.3mm}
+    .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.5mm 1mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;text-align:center;border:0.3pt dashed #888}
+    .lbl-name{font-size:7pt;font-weight:700;line-height:1;color:#000;max-height:3mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+    .lbl-code{font-size:36pt;font-weight:900;color:#000;line-height:1;font-family:Arial Black,Arial,sans-serif}
+    .lbl-price{font-size:10pt;font-weight:900;color:#000;line-height:1}
+    .lbl-store{font-size:5pt;font-weight:700;color:#000;line-height:1}
     @media print{.lbl{border:none}}
   </style></head><body>
     ${pagesHTML}
