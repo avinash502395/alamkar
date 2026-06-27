@@ -2529,15 +2529,19 @@ async function saveAndPrintLabels() {
     if (editProdId) {
       payload.id = editProdId;
       await API.products.update(payload);
-      savedProduct = payload;
+      // Refresh from DB to get latest data (including any auto-assigned quick_code)
+      const refreshed = await API.products.byId(editProdId);
+      savedProduct = refreshed || payload;
       showAlert('Product updated! Sending labels to printer...');
     } else {
       const result = await API.products.insert(payload);
-      savedProduct = { ...payload, id: result && result.id };
-      // If quick_code was auto-assigned by DB, refresh it
-      if (!savedProduct.quick_code) {
-        const refreshed = await API.products.byId(savedProduct.id);
-        if (refreshed) savedProduct = refreshed;
+      // better-sqlite3 returns { changes, lastInsertRowid } — use lastInsertRowid for id
+      const newId = result && (result.lastInsertRowid || result.id);
+      if (newId) {
+        const refreshed = await API.products.byId(newId);
+        savedProduct = refreshed || { ...payload, id: newId };
+      } else {
+        savedProduct = { ...payload };
       }
       showAlert('Product saved! Sending labels to printer...');
     }
@@ -2546,6 +2550,7 @@ async function saveAndPrintLabels() {
     await loadProds();
     editProdId = null;
 
+    // Print labels with the refreshed product data (which definitely has quick_code if assigned)
     await buildAndPrintTSCLabels(savedProduct, qty);
 
   } catch (e) {
@@ -2557,6 +2562,21 @@ async function saveAndPrintLabels() {
 function quickTSCLabel(pid) {
   const p = allProds.find(x => x.id === pid);
   if (!p) return;
+  // Warn if Quick Code mode is selected but product has no Quick Code
+  const mode = settings.tsc_label_mode || 'qc';
+  if (mode === 'qc' && !p.quick_code) {
+    const choice = confirm(
+      `"${p.name}" has NO Quick Code assigned.\n\n` +
+      `Click OK → Edit product first to assign a Quick Code (recommended).\n` +
+      `Click Cancel → Print barcode-style label instead.`
+    );
+    if (choice) {
+      // User wants to add Quick Code first
+      showProdModal(pid);
+      return;
+    }
+    // else: continue and let smart fallback print barcode style
+  }
   // Pre-select the product in the barcode page selector and open modal
   const sel = document.getElementById('bc-sel');
   if (sel) {
@@ -2569,7 +2589,7 @@ function quickTSCLabel(pid) {
       sel.appendChild(newOpt); sel.value = String(pid);
     }
   }
-  document.getElementById('ls-product-info').innerHTML = `<strong>${esc(p.name)}</strong><br/>Barcode: <code style="background:#fff;padding:2px 6px;border-radius:3px">${esc(p.barcode)}</code> · MRP: ₹${p.selling_price}`;
+  document.getElementById('ls-product-info').innerHTML = `<strong>${esc(p.name)}</strong>${p.quick_code?`<br/>Quick Code: <code style="background:#FFF7DC;padding:2px 8px;border-radius:3px;font-weight:900;color:#6B4423">#${esc(p.quick_code)}</code>`:''}<br/>Barcode: <code style="background:#fff;padding:2px 6px;border-radius:3px">${esc(p.barcode)}</code> · MRP: ₹${p.selling_price}`;
   const w = settings.tsc_label_width || '38';
   const h = settings.tsc_label_height || '25';
   const cols = settings.tsc_columns || '2';

@@ -32,7 +32,7 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_products_barcode ON products(barcode);
   CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
-  CREATE INDEX IF NOT EXISTS idx_products_quickcode ON products(quick_code);
+  -- idx_products_quickcode is created in the migration block below, AFTER the column is guaranteed to exist
 
   CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -125,11 +125,12 @@ try {
   const cols = db.prepare("PRAGMA table_info(products)").all();
   if (!cols.find(c => c.name === 'quick_code')) {
     db.exec("ALTER TABLE products ADD COLUMN quick_code TEXT");
-    db.exec("CREATE INDEX IF NOT EXISTS idx_products_quickcode ON products(quick_code)");
     console.log('[Migration] Added quick_code column to products table');
   }
+  // Always ensure index exists (safe for both old and new databases)
+  db.exec("CREATE INDEX IF NOT EXISTS idx_products_quickcode ON products(quick_code)");
 } catch (e) {
-  console.warn('[Migration] quick_code migration skipped:', e.message);
+  console.warn('[Migration] quick_code migration error:', e.message);
 }
 
 const defaultSettings = {
