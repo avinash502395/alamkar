@@ -782,9 +782,10 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
           Use this once after the test phase, before going live with real customers.
         </p>
         <div style="background:#fff;border:1px solid #f0c0c0;border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.7">
-          <b style="color:#080">✅ Will be KEPT:</b> Products, Stock entries, Settings (Auto-backup, label config, store info, etc.)<br/>
+          <b style="color:#080">✅ Will be KEPT:</b> All products (with Quick Codes), Stock entries, Settings<br/>
           <b style="color:#c00">❌ Will be DELETED:</b> All bills, all bill items, all customers, all credit payments<br/>
-          <span style="color:#7a3030;font-size:11.5px">⚡ Bill counter resets — next bill will be BILL-000001</span>
+          <span style="color:#7a3030;font-size:11.5px">⚡ Bill counter resets — next bill will be BILL-000001</span><br/>
+          <span style="color:#666;font-size:11.5px">🛡️ Tip: Click "Run Backup Now" above first as a safety net.</span>
         </div>
         <div class="action-bar">
           <button class="btn btn-d" onclick="cleanTestData()">🗑️ Clean Test Data Now</button>
@@ -1699,33 +1700,30 @@ async function showDbPath() {
 // === CLEAN TEST DATA ===
 // Deletes bills, bill_items, customers, credit_payments.
 // Preserves products, stock_entries, settings.
-// Double confirmation + type-to-confirm for safety.
+// Two-step confirmation for safety (no typing required).
 async function cleanTestData() {
-  // First confirmation
+  // First confirmation — explain what's happening
   if (!confirm(
-    '⚠️ CLEAN TEST DATA — Are you sure?\n\n' +
+    'CLEAN TEST DATA\n\n' +
     'This will DELETE:\n' +
-    '  • All bills\n' +
-    '  • All bill items\n' +
-    '  • All customers\n' +
-    '  • All credit payments\n\n' +
+    '  - All bills and bill items\n' +
+    '  - All customers\n' +
+    '  - All credit payments\n\n' +
     'This will KEEP:\n' +
-    '  • All products (✅ your 60 items)\n' +
-    '  • All stock entries (✅ your purchase history)\n' +
-    '  • All settings (✅ printer, store info, etc.)\n\n' +
+    '  - All your products (intact)\n' +
+    '  - All stock entries (intact)\n' +
+    '  - All settings (intact)\n\n' +
     'Click OK to continue, Cancel to abort.'
   )) return;
 
-  // Second confirmation — type CLEAN to confirm
-  const confirmation = await customPrompt(
-    'Final check — type "CLEAN" (uppercase) to confirm:',
-    ''
-  );
-  if (confirmation === null) return;
-  if (confirmation.trim() !== 'CLEAN') {
-    showAlert('Aborted — confirmation text did not match.','e');
-    return;
-  }
+  // Second confirmation — final check
+  if (!confirm(
+    'FINAL CONFIRMATION\n\n' +
+    'Are you absolutely sure?\n\n' +
+    'This action cannot be undone (unless you restore from backup).\n\n' +
+    'Click OK to delete test data.\n' +
+    'Click Cancel to abort.'
+  )) return;
 
   // Run the cleanup
   const el = document.getElementById('clean-result');
@@ -1751,7 +1749,7 @@ async function cleanTestData() {
         &nbsp;&nbsp;• ${result.preserved.stock_entries} stock entries (intact ✅)<br/><br/>
         🪔 Next bill will start at <b>BILL-000001</b>. Ready for real customers!
       `;
-      // Refresh the dashboard cards so the user sees the reset numbers
+      // Refresh the dashboard so the user sees the reset numbers
       try { await loadDash(); } catch(e) {}
     } else {
       el.style.background = '#fee';
