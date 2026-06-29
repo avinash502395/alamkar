@@ -3140,9 +3140,15 @@ async function buildAndPrintTSCLabels(product, qty, opts) {
   tspl += `CLS\r\n`;
 
   // SIMPLE RULES — no smart fallbacks, do exactly what the user selected.
-  //   labelMode 'qc'    → BIG number only (uses quick_code, falls back to product.id)
+  //   labelMode 'qc'    → MEDIUM number with name & price (uses quick_code, falls back to product.id)
   //   labelMode 'bc'    → barcode style (requires barcode to exist)
   //   labelMode 'both'  → both barcode and number
+  //
+  // Label canvas (38×25mm @ 8 dots/mm) ≈ 304 × 200 dots. Usable: y=10 to y=190.
+  // Layout target:
+  //   y=15-50  → NAME (font 3 size 2 = clear, bold)
+  //   y=60-130 → #CODE (font 4 size 2 — medium, fits 1-4 digits)
+  //   y=145-185 → Rs.PRICE (font 3 size 2)
   function emitLabel(xOffset) {
     const cx = xOffset + Math.round(labelWdots / 2);
     const bcX = xOffset + 12;
@@ -3160,11 +3166,13 @@ async function buildAndPrintTSCLabels(product, qty, opts) {
       out += `TEXT ${cx},105,"4",0,2,2,2,"#${quickCode}"\r\n`;
       out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
     } else {
-      // DEFAULT — Quick Code mode (ALWAYS print BIG number, NEVER barcode)
-      // Layout: NAME (top, y=25) → BIG #CODE (middle, y=75, x3 size) → Rs.PRICE (bottom, y=170)
-      out += `TEXT ${cx},25,"3",0,1,1,2,"${name}"\r\n`;
-      out += `TEXT ${cx},75,"4",0,3,3,2,"#${quickCode}"\r\n`;
-      out += `TEXT ${cx},170,"3",0,1,1,2,"${price}"\r\n`;
+      // DEFAULT — Quick Code mode (MEDIUM number, clear name & price)
+      // NAME — font "3" at x2 size = nice & readable, sits at top
+      out += `TEXT ${cx},20,"3",0,2,2,2,"${name}"\r\n`;
+      // #CODE — font "4" at x2 size = medium, fits up to 4-digit codes comfortably
+      out += `TEXT ${cx},80,"4",0,2,2,2,"#${quickCode}"\r\n`;
+      // Rs.PRICE — font "3" at x2 size = matches name in size, bold visibility
+      out += `TEXT ${cx},155,"3",0,2,2,2,"${price}"\r\n`;
     }
     return out;
   }
@@ -3250,9 +3258,9 @@ function buildAndPrintTSCLabelsHTML(product, qty, opts) {
     .row{display:flex;gap:${cGap}mm;width:${pageW}mm;height:${labelH}mm;margin:0;padding:0}
     .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.5mm 1mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;text-align:center;background:#fff;color:#000;line-height:1}
     .lbl-blank{visibility:hidden}
-    .lbl-name{font-size:7pt;font-weight:700;line-height:1;color:#000;max-height:3mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
-    .lbl-code{font-size:36pt;font-weight:900;color:#000;line-height:1;font-family:Arial Black,Arial,sans-serif}
-    .lbl-price{font-size:10pt;font-weight:900;color:#000;line-height:1}
+    .lbl-name{font-size:8.5pt;font-weight:900;line-height:1.1;color:#000;max-height:3.5mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+    .lbl-code{font-size:24pt;font-weight:900;color:#000;line-height:1;font-family:Arial Black,Arial,sans-serif}
+    .lbl-price{font-size:11pt;font-weight:900;color:#000;line-height:1}
     .lbl-store{font-size:5pt;font-weight:700;color:#000;line-height:1}
   </style></head><body>${pagesHTML}
   <script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>
@@ -3310,9 +3318,9 @@ function buildAndPrintA4Sheet(product, qty, opts) {
     .a4page:last-child{page-break-after:auto}
     .grid{display:grid;grid-template-columns:repeat(${labelsPerRow},${labelW}mm);column-gap:${cGap}mm;row-gap:${rGap}mm}
     .lbl{width:${labelW}mm;height:${labelH}mm;padding:0.5mm 1mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;text-align:center;border:0.3pt dashed #888}
-    .lbl-name{font-size:7pt;font-weight:700;line-height:1;color:#000;max-height:3mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
-    .lbl-code{font-size:36pt;font-weight:900;color:#000;line-height:1;font-family:Arial Black,Arial,sans-serif}
-    .lbl-price{font-size:10pt;font-weight:900;color:#000;line-height:1}
+    .lbl-name{font-size:8.5pt;font-weight:900;line-height:1.1;color:#000;max-height:3.5mm;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+    .lbl-code{font-size:24pt;font-weight:900;color:#000;line-height:1;font-family:Arial Black,Arial,sans-serif}
+    .lbl-price{font-size:11pt;font-weight:900;color:#000;line-height:1}
     .lbl-store{font-size:5pt;font-weight:700;color:#000;line-height:1}
     @media print{.lbl{border:none}}
   </style></head><body>
