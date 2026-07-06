@@ -253,8 +253,10 @@ const Customers = {
 
 const Bills = {
   save: db.transaction((bill, items) => {
-    // Insert with placeholder bill_number, then update with sequential number based on id
-    const placeholder = 'TEMP-' + Date.now();
+    // If user provided a custom bill number (backdated bill), use it directly.
+    // Otherwise auto-assign BILL-XXXXXX based on the row id.
+    const customNum = (bill.custom_bill_number || '').trim();
+    const placeholder = customNum || ('TEMP-' + Date.now());
     const res = db.prepare(`
       INSERT INTO bills (bill_number,customer_name,customer_phone,buyer_gstin,cashier,subtotal,cgst,sgst,discount,total,payment_mode,bill_date,bill_time)
       VALUES (?,@customer_name,@customer_phone,@buyer_gstin,@cashier,@subtotal,@cgst,@sgst,@discount,@total,@payment_mode,@bill_date,@bill_time)
@@ -273,8 +275,11 @@ const Bills = {
       bill_time: bill.bill_time,
     });
     const billId = res.lastInsertRowid;
-    const billNum = 'BILL-' + String(billId).padStart(6, '0');
-    db.prepare('UPDATE bills SET bill_number=? WHERE id=?').run(billNum, billId);
+    // If no custom number → auto-assign BILL-XXXXXX based on id
+    const billNum = customNum || ('BILL-' + String(billId).padStart(6, '0'));
+    if (!customNum) {
+      db.prepare('UPDATE bills SET bill_number=? WHERE id=?').run(billNum, billId);
+    }
 
     const itemStmt = db.prepare(`
       INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount)
@@ -309,14 +314,19 @@ const Bills = {
 
 const Stock = {
   add: (entry) => db.transaction(() => {
-    db.prepare(`
-      INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_gstin,invoice_no,notes)
-      VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_gstin,@invoice_no,@notes)
-    `).run({
+    // Use custom entry_date if provided (for backdated entries), else SQLite default (today)
+    const hasCustomDate = entry.entry_date && entry.entry_date.trim();
+    const insertSQL = hasCustomDate
+      ? `INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_gstin,invoice_no,notes,entry_date)
+         VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_gstin,@invoice_no,@notes,@entry_date)`
+      : `INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_gstin,invoice_no,notes)
+         VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_gstin,@invoice_no,@notes)`;
+    db.prepare(insertSQL).run({
       product_id: entry.product_id, product_name: entry.product_name,
       qty_added: entry.qty_added, cost_price: entry.cost_price,
       supplier: entry.supplier || '', supplier_gstin: entry.supplier_gstin || '',
       invoice_no: entry.invoice_no || '', notes: entry.notes || '',
+      ...(hasCustomDate ? { entry_date: entry.entry_date } : {}),
     });
     Products.adjustStock(entry.product_id, entry.qty_added);
     if (entry.cost_price > 0) {

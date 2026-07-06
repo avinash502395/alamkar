@@ -344,6 +344,28 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
                 <label class="fl">Cashier</label>
                 <input id="b-cashier" placeholder="Cashier name"/>
               </div>
+              <div class="fg" style="grid-column:1/-1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                  <label class="fl" style="margin:0">📅 Backdated Bill?</label>
+                  <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer">
+                    <input type="checkbox" id="b-backdate-toggle" onchange="toggleBackdate()" style="width:auto"/>
+                    Enable custom date / bill number
+                  </label>
+                </div>
+                <div id="b-backdate-fields" style="display:none;background:#FFF7DC;border:1.5px solid var(--gold);border-radius:var(--radius);padding:10px 12px;gap:10px" class="fg2">
+                  <div class="fg">
+                    <label class="fl">Bill Date</label>
+                    <input type="date" id="b-custom-date" style="font-size:14px;font-weight:700"/>
+                  </div>
+                  <div class="fg">
+                    <label class="fl">Bill Number (optional)</label>
+                    <input id="b-custom-billno" placeholder="e.g. BILL-000031 or leave empty to auto" style="font-family:monospace;font-size:13px"/>
+                  </div>
+                  <div style="grid-column:1/-1;font-size:11px;color:#6B4423;line-height:1.5">
+                    💡 Use this for missed bills. Leave Bill Number empty to auto-assign the next available number.
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- BARCODE SCAN INPUT (always-on, auto-add items) -->
@@ -498,6 +520,11 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
           <div class="fg">
             <label class="fl">Notes (optional)</label>
             <input id="st-notes" placeholder="Any notes about this stock entry"/>
+          </div>
+          <div class="fg">
+            <label class="fl">📅 Entry Date (change for backdated entries)</label>
+            <input type="date" id="st-date" style="font-size:14px;font-weight:700"/>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px">Default is today. Change only if you missed entering stock on a previous date.</div>
           </div>
         </div>
         <button class="btn btn-p" onclick="saveStock()">+ Save Stock Entry</button>
@@ -2091,6 +2118,23 @@ function addQuickAddItem() {
 }
 
 // === BILL SCAN INPUT — AUTO-ADD ON ENTER ===
+// Toggle backdated bill fields
+function toggleBackdate() {
+  const on = document.getElementById('b-backdate-toggle').checked;
+  const fields = document.getElementById('b-backdate-fields');
+  fields.style.display = on ? 'grid' : 'none';
+  if (on) {
+    // Pre-fill with yesterday's date as a sensible default
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const y = yesterday.toISOString().split('T')[0];
+    if (!document.getElementById('b-custom-date').value) {
+      document.getElementById('b-custom-date').value = y;
+    }
+    document.getElementById('b-custom-date').focus();
+  }
+}
+
 function setupBillScanner() {
   const inp = document.getElementById('bill-scan');
   if (!inp) return;
@@ -2291,6 +2335,16 @@ async function saveBill() {
   billItems.forEach(it => { sub += it.base_amount; gstT += it.gst_amount; });
   const disc = parseFloat(document.getElementById('b-disc').value) || 0;
   const total = Math.max(0, sub + gstT - disc);
+
+  // Backdated bill support
+  const isBackdated = document.getElementById('b-backdate-toggle').checked;
+  const billDate = isBackdated && document.getElementById('b-custom-date').value
+    ? document.getElementById('b-custom-date').value
+    : todayStr;
+  const customBillNo = isBackdated
+    ? (document.getElementById('b-custom-billno').value.trim() || null)
+    : null;
+
   const bill = {
     customer_name: document.getElementById('b-cust').value.trim() || 'Walk-in',
     customer_phone: document.getElementById('b-phone').value.trim() || '',
@@ -2298,8 +2352,9 @@ async function saveBill() {
     cashier: document.getElementById('b-cashier').value.trim() || settings.cashier_name || 'Admin',
     subtotal: sub, cgst: gstT/2, sgst: gstT/2, discount: disc, total,
     payment_mode: getSelectedPay(),
-    bill_date: todayStr,
+    bill_date: billDate,
     bill_time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
+    custom_bill_number: customBillNo,  // null = auto-assign
   };
   try {
     const result = await API.bills.save(bill, billItems);
@@ -2310,20 +2365,17 @@ async function saveBill() {
       printOpts.deviceName = settings.bill_printer_name;
     }
     await API.printHTML(billHtml, printOpts);
-    showAlert(`Bill ${result.billNum} saved & sent to printer!`);
-    // Offer WhatsApp share if customer phone is provided
-    // IMPORTANT: snapshot items + bill BEFORE clearBill() wipes them
+    const dateNote = isBackdated ? ` (backdated: ${billDate})` : '';
+    showAlert(`Bill ${result.billNum} saved & sent to printer!${dateNote}`);
     const fullBill = {...bill, id:result.billId, bill_number:result.billNum};
-    const itemsSnapshot = billItems.map(it => ({...it}));  // deep copy each item
+    const itemsSnapshot = billItems.map(it => ({...it}));
     const phoneCheck = (bill.customer_phone || '').replace(/[^0-9]/g, '');
     if (phoneCheck.length >= 10) {
       setTimeout(() => offerWhatsAppShare(fullBill, itemsSnapshot), 600);
     }
     clearBill();
     allProds = await API.products.list();
-    // Refresh quick pick — top sellers might have changed
     loadQuickPick();
-    // Refresh today's summary — sales numbers just changed!
     loadTodaySummary();
   } catch (e) { showError(e); }
 }
@@ -2436,6 +2488,11 @@ function clearBill() {
   document.getElementById('b-disc').value = 0;
   document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('sel'));
   document.querySelector('.pay-btn[data-mode="Cash"]').classList.add('sel');
+  // Reset backdated bill fields
+  document.getElementById('b-backdate-toggle').checked = false;
+  document.getElementById('b-backdate-fields').style.display = 'none';
+  document.getElementById('b-custom-date').value = '';
+  document.getElementById('b-custom-billno').value = '';
   renderBill();
 }
 
@@ -2863,6 +2920,9 @@ async function loadStock() {
   const s = document.getElementById('st-prod');
   s.innerHTML = '<option value="">-- Select Product --</option>' +
     allProds.map(p => `<option value="${p.id}">${esc(p.name)} (Current: ${p.stock})</option>`).join('');
+  // Pre-fill today's date in stock entry date field
+  const stDate = document.getElementById('st-date');
+  if (stDate && !stDate.value) stDate.value = todayStr;
   const h = await API.stock.history();
   const t = document.getElementById('stock-hist');
   t.innerHTML = h.length ? h.map(e => `
@@ -2905,6 +2965,8 @@ async function saveStock() {
   const qty = parseInt(document.getElementById('st-qty').value) || 0;
   if (!pid || qty < 1) { showAlert('Select a product and enter quantity','e'); return; }
   const p = allProds.find(x => x.id === pid);
+  // Custom entry date (for backdated stock entries)
+  const customDate = document.getElementById('st-date').value || todayStr;
   await API.stock.add({
     product_id: pid, product_name: p.name, qty_added: qty,
     cost_price: parseFloat(document.getElementById('st-cost').value) || 0,
@@ -2912,9 +2974,13 @@ async function saveStock() {
     supplier_gstin: (document.getElementById('st-gstin').value || '').trim().toUpperCase(),
     invoice_no: document.getElementById('st-inv').value || '',
     notes: document.getElementById('st-notes').value || '',
+    entry_date: customDate,
   });
-  showAlert(`+${qty} units added to ${p.name}`);
+  const dateNote = customDate !== todayStr ? ` (dated: ${customDate})` : '';
+  showAlert(`+${qty} units added to ${p.name}${dateNote}`);
   ['st-qty','st-sup','st-gstin','st-inv','st-notes'].forEach(i => document.getElementById(i).value = '');
+  // Reset date back to today after save
+  document.getElementById('st-date').value = todayStr;
   loadStock();
 }
 
