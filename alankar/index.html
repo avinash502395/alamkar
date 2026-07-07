@@ -143,7 +143,7 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
 .qp-card{padding:10px;border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;background:#fff;transition:all .15s;user-select:none;display:flex;flex-direction:column;justify-content:space-between;min-height:74px}
 .qp-card:hover{border-color:var(--gold);background:#FFF8E1;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,0.08)}
 .qp-card:active{transform:translateY(0);background:#FAEFD4}
-.qp-card .qp-name{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.qp-card .qp-name{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:5px;display:-webkit-box;display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .qp-card .qp-foot{display:flex;justify-content:space-between;align-items:center;gap:6px}
 .qp-card .qp-price{font-size:13.5px;font-weight:900;color:var(--accent)}
 .qp-card .qp-stock{font-size:10.5px;color:var(--text2);font-weight:600}
@@ -450,7 +450,7 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
               <div class="sum-row grand"><span>Grand Total</span><span id="bs-total">₹0.00</span></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:7px;margin-top:12px">
-              <button class="btn btn-s btn-block" onclick="saveBill()">✓ Generate Bill & Print</button>
+              <button id="save-bill-btn" class="btn btn-s btn-block" onclick="saveBill()">✓ Generate Bill & Print</button>
               <button class="btn btn-block" onclick="clearBill()">↺ Clear Bill</button>
             </div>
           </div>
@@ -484,61 +484,66 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
     <section id="sec-stock" class="sec">
       <div class="card">
         <div class="ct" style="margin-bottom:14px">Add Stock In (Goods Received)</div>
-        <div class="fg3">
-          <div class="fg">
-            <label class="fl">Product <span class="req">*</span></label>
-            <select id="st-prod" onchange="fillStockInfo()"><option value="">-- Select Product --</option></select>
-          </div>
-          <div class="fg">
-            <label class="fl">Scan / Type Barcode</label>
-            <input id="st-bc" placeholder="Quick Code or barcode" oninput="bcToStock()"/>
-          </div>
-          <div class="fg">
-            <label class="fl">Supplier Name</label>
-            <input id="st-sup" placeholder="Supplier name"/>
-          </div>
+        <div style="font-size:12.5px;color:var(--text2);margin-bottom:12px;line-height:1.5">
+          Enter one supplier once and add multiple products under that supplier in the same receipt.
+          Way bill and truck number are optional.
         </div>
         <div class="fg3">
           <div class="fg">
-            <label class="fl">Quantity to Add <span class="req">*</span></label>
-            <input id="st-qty" type="number" placeholder="0" min="1"/>
+            <label class="fl">Supplier Name</label>
+            <input id="st-sup" list="st-sup-list" placeholder="Type supplier name" oninput="searchSuppliers(this.value); prefillSupplierDetails(this.value)" onchange="prefillSupplierDetails(this.value)"/>
+            <datalist id="st-sup-list"></datalist>
           </div>
           <div class="fg">
-            <label class="fl">Cost Price per Unit (₹, excl. GST)</label>
-            <input id="st-cost" type="number" placeholder="0.00" step="0.01"/>
+            <label class="fl">Supplier GSTIN (optional)</label>
+            <input id="st-gstin" placeholder="Supplier's GSTIN" maxlength="15"/>
           </div>
           <div class="fg">
             <label class="fl">Supplier Invoice #</label>
             <input id="st-inv" placeholder="Invoice no."/>
           </div>
         </div>
-        <div class="fg2" style="margin-bottom:11px">
+        <div class="fg3">
           <div class="fg">
-            <label class="fl">Supplier GSTIN (for ITC tracking)</label>
-            <input id="st-gstin" placeholder="Supplier's GSTIN" maxlength="15"/>
+            <label class="fl">Way Bill # (optional)</label>
+            <input id="st-waybill" placeholder="Way bill number"/>
           </div>
           <div class="fg">
-            <label class="fl">Notes (optional)</label>
-            <input id="st-notes" placeholder="Any notes about this stock entry"/>
+            <label class="fl">Truck / Vehicle # (optional)</label>
+            <input id="st-truck" placeholder="Truck / vehicle number"/>
           </div>
           <div class="fg">
-            <label class="fl">📅 Entry Date (change for backdated entries)</label>
+            <label class="fl">📅 Entry Date</label>
             <input type="date" id="st-date" style="font-size:14px;font-weight:700"/>
-            <div style="font-size:11px;color:var(--text2);margin-top:3px">Default is today. Change only if you missed entering stock on a previous date.</div>
           </div>
         </div>
-        <button class="btn btn-p" onclick="saveStock()">+ Save Stock Entry</button>
+        <div class="fg" style="margin-bottom:12px">
+          <label class="fl">Notes (optional)</label>
+          <input id="st-notes" placeholder="Any notes about this stock entry"/>
+        </div>
+        <div class="card" style="margin-bottom:14px;padding:16px 18px;background:#FFFDF7;border-color:#E5D3A1">
+          <div class="ch" style="margin-bottom:10px">
+            <span class="ct" style="font-size:15px">Products in this receipt</span>
+            <button class="btn btn-gold btn-sm" onclick="addStockRow()">+ Add Product</button>
+          </div>
+          <div id="stock-rows"></div>
+        </div>
+        <div class="action-bar">
+          <button class="btn btn-p" onclick="saveStock()">+ Save Stock Entry</button>
+          <button class="btn" onclick="resetStockForm()">↺ Clear</button>
+        </div>
       </div>
       <div class="card">
         <div class="ct" style="margin-bottom:12px">Stock In History (last 200)</div>
         <div class="tbl-wrap"><table>
           <thead><tr>
-            <th style="width:10%">Date</th><th style="width:26%">Product</th>
-            <th style="width:14%">Supplier</th><th style="width:13%">GSTIN</th>
+            <th style="width:9%">Date</th><th style="width:22%">Product</th>
+            <th style="width:12%">Supplier</th><th style="width:10%">GSTIN</th>
             <th style="width:7%">Qty +</th>
-            <th style="width:12%">Cost / Unit</th><th style="width:18%">Invoice #</th>
+            <th style="width:10%">Cost / Unit</th>
+            <th style="width:10%">Total</th><th style="width:12%">Invoice #</th><th style="width:8%">Action</th>
           </tr></thead>
-          <tbody id="stock-hist"><tr class="empty-row"><td colspan="7">No entries yet</td></tr></tbody>
+          <tbody id="stock-hist"><tr class="empty-row"><td colspan="9">No entries yet</td></tr></tbody>
         </table></div>
       </div>
     </section>
@@ -613,7 +618,10 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
             <input type="month" id="gst-month"/>
           </div>
           <button class="btn btn-p" onclick="runGST()">Generate Report</button>
-          <button class="btn btn-o" onclick="printGST()">🖨 Print GST Returns Report</button>
+          <div class="action-bar">
+            <button class="btn btn-o" onclick="printGST()">🖨 Print GST Returns Report</button>
+            <button class="btn" onclick="downloadGSTAsPDF()">⬇ Download GST PDF</button>
+          </div>
         </div>
       </div>
 
@@ -686,7 +694,10 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
             <select id="sr-pay"><option value="">All Modes</option><option>Cash</option><option>UPI</option><option>Card</option><option>Credit</option></select>
           </div>
           <button class="btn btn-p" onclick="runSales()">Apply Filter</button>
-          <button class="btn btn-o" onclick="printSalesReport()">🖨 Print Report</button>
+          <div class="action-bar">
+            <button class="btn btn-o" onclick="printSalesReport()">🖨 Print Report</button>
+            <button class="btn" onclick="downloadSalesAsPDF()">⬇ Download PDF</button>
+          </div>
         </div>
       </div>
       <div class="metrics m4">
@@ -1215,6 +1226,14 @@ const DemoAPI = {
       }
       return {billId:id, billNum};
     },
+    update: async (bill, items) => {
+      const id = Number(bill.id);
+      const idx = demoData.bills.findIndex(x=>x.id===id);
+      if (idx < 0) throw new Error('Bill not found');
+      const existing = demoData.bills[idx];
+      demoData.bills[idx] = { ...existing, ...bill, id, bill_number: bill.bill_number || existing.bill_number, items:[...items] };
+      return { ok: true, billId: id, billNum: bill.bill_number || existing.bill_number };
+    },
     list: async (from, to, mode) => {
       let f = demoData.bills.filter(b=>b.bill_date>=from && b.bill_date<=to);
       if (mode) f = f.filter(b=>b.payment_mode===mode);
@@ -1226,6 +1245,16 @@ const DemoAPI = {
   stock: {
     add: async (e) => { demoData.stockHistory.unshift({id:Date.now(),...e,entry_date:new Date().toISOString().split('T')[0]}); const p = demoData.products.find(x=>x.id===e.product_id); if(p){p.stock+=e.qty_added; if(e.cost_price>0) p.cost_price=e.cost_price;} return {ok:true}; },
     history: async () => [...demoData.stockHistory].slice(0,200),
+  },
+  suppliers: {
+    search: async (q) => {
+      const term = String(q || '').trim().toLowerCase();
+      if (!term) return [];
+      const existing = demoData.stockHistory
+        .map(x => ({ name: x.supplier, gstin: x.supplier_gstin || '', phone: '', address: '', notes: x.notes || '' }))
+        .filter(x => x.name && x.name.toLowerCase().includes(term));
+      return existing.filter((item, idx, arr) => arr.findIndex(x => x.name.toLowerCase() === item.name.toLowerCase()) === idx);
+    },
   },
   credit: {
     recordPayment: async (p) => { demoData.creditPayments.unshift({id:Date.now(),...p,payment_date:new Date().toISOString().split('T')[0]}); const c = demoData.customers.find(x=>x.phone===p.customer_phone); if(c) c.credit_balance = Math.max(0, c.credit_balance-p.amount); return {ok:true}; },
@@ -1391,6 +1420,7 @@ const DemoAPI = {
     },
   },
   printHTML: async (html, opts) => { const w = window.open('','_blank','width=420,height=700'); if(w){w.document.write(html);w.document.close();} },
+  printPDF: async (html, fileName) => ({ ok: true, path: '(demo) ' + fileName }),
   printerList: async () => ([
     {name:'Microsoft Print to PDF', isDefault:true, description:'(demo)'},
     {name:'TSC TE244', isDefault:false, description:'(demo)'},
@@ -1412,6 +1442,8 @@ document.getElementById('sr-to').value = todayStr;
 
 let allProds = [], allCusts = [], billItems = [], editProdId = null, scanProdId = null;
 let settings = {};
+let editingBillId = null;
+let pendingEditBillId = null;
 
 const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtS = n => '₹' + Math.round(n||0).toLocaleString('en-IN');
@@ -1807,7 +1839,8 @@ async function loadDash() {
       <td>${fmtS(b.total)}</td>
       <td><span class="badge bb">${esc(b.payment_mode)}</span></td>
       <td><span class="badge ${b.payment_mode==='Credit'?'ba':'bg'}">${b.payment_mode==='Credit'?'Due':'Paid'}</span></td>
-    </tr>`).join('') : '<tr class="empty-row"><td colspan="5">No bills yet — create your first bill</td></tr>';
+      <td><button class="btn btn-sm btn-icon" onclick="editBillFromList(${b.id})" title="Edit bill">✎</button></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="6">No bills yet — create your first bill</td></tr>';
   const tot = s.payMix.reduce((a,x) => a + x.total, 0) || 1;
   document.getElementById('pay-mix').innerHTML = s.payMix.length ? s.payMix.map(x => `
     <div class="mix-row">
@@ -1838,11 +1871,16 @@ async function loadBillPage() {
   // Pre-fill cashier from current settings (unless user already typed something for this bill)
   const bCashier = document.getElementById('b-cashier');
   if (bCashier && !bCashier.value) bCashier.value = settings.cashier_name || 'Admin';
-  // Auto-focus scanner input
-  setTimeout(() => {
-    const inp = document.getElementById('bill-scan');
-    if (inp) inp.focus();
-  }, 150);
+  if (pendingEditBillId) {
+    const billId = pendingEditBillId;
+    pendingEditBillId = null;
+    await loadBillForEditing(billId);
+  } else {
+    setTimeout(() => {
+      const inp = document.getElementById('bill-scan');
+      if (inp) inp.focus();
+    }, 150);
+  }
   // Load Quick Pick (top sellers / recent items)
   loadQuickPick();
   // Load Today's Summary cards
@@ -2329,6 +2367,37 @@ function calcBill() {
   document.getElementById('bs-total').textContent = fmt(Math.max(0, sub + gstT - disc));
 }
 
+async function loadBillForEditing(billId) {
+  try {
+    const bill = await API.bills.byId(billId);
+    const items = await API.bills.items(billId);
+    if (!bill) throw new Error('Bill not found');
+    editingBillId = billId;
+    document.getElementById('b-cust').value = bill.customer_name || '';
+    document.getElementById('b-phone').value = bill.customer_phone || '';
+    document.getElementById('b-gstin').value = bill.buyer_gstin || '';
+    document.getElementById('b-cashier').value = bill.cashier || settings.cashier_name || 'Admin';
+    document.getElementById('b-disc').value = Number(bill.discount || 0);
+    document.querySelectorAll('.pay-btn').forEach(b => b.classList.toggle('sel', b.dataset.mode === (bill.payment_mode || 'Cash')));
+    const isBackdated = Boolean(bill.bill_date && bill.bill_date !== todayStr) || Boolean(bill.bill_number);
+    const backToggle = document.getElementById('b-backdate-toggle');
+    const backFields = document.getElementById('b-backdate-fields');
+    backToggle.checked = isBackdated;
+    backFields.style.display = isBackdated ? 'grid' : 'none';
+    document.getElementById('b-custom-date').value = bill.bill_date || '';
+    document.getElementById('b-custom-billno').value = bill.bill_number || '';
+    billItems = (items || []).map(it => ({ ...it }));
+    renderBill();
+    const saveBtn = document.getElementById('save-bill-btn');
+    if (saveBtn) saveBtn.textContent = '✓ Update Bill & Print';
+    showAlert(`Editing bill ${bill.bill_number || bill.id}. Update it when ready.`, 'i');
+    setTimeout(() => document.getElementById('b-cust').focus(), 100);
+  } catch (e) {
+    editingBillId = null;
+    showError(e);
+  }
+}
+
 async function saveBill() {
   if (!billItems.length) { showAlert('Add at least one item to the bill','e'); return; }
   let sub=0, gstT=0;
@@ -2345,6 +2414,10 @@ async function saveBill() {
     ? (document.getElementById('b-custom-billno').value.trim() || null)
     : null;
 
+  const existingBill = editingBillId ? await API.bills.byId(editingBillId).catch(() => null) : null;
+  const existingBillNo = existingBill ? String(existingBill.bill_number || '').trim() : '';
+  const explicitBillNo = document.getElementById('b-custom-billno').value.trim();
+  const updateBillNo = customBillNo || (editingBillId && !explicitBillNo ? existingBillNo : explicitBillNo) || null;
   const bill = {
     customer_name: document.getElementById('b-cust').value.trim() || 'Walk-in',
     customer_phone: document.getElementById('b-phone').value.trim() || '',
@@ -2353,12 +2426,17 @@ async function saveBill() {
     subtotal: sub, cgst: gstT/2, sgst: gstT/2, discount: disc, total,
     payment_mode: getSelectedPay(),
     bill_date: billDate,
-    bill_time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
+    bill_time: editingBillId ? (existingBill && existingBill.bill_time) || new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
     custom_bill_number: customBillNo,  // null = auto-assign
   };
   try {
-    const result = await API.bills.save(bill, billItems);
-    const billHtml = buildBillHTML({...bill, id:result.billId, bill_number:result.billNum}, billItems);
+    let result;
+    if (editingBillId) {
+      result = await API.bills.update({ ...bill, id: editingBillId, bill_number: updateBillNo }, billItems);
+    } else {
+      result = await API.bills.save(bill, billItems);
+    }
+    const billHtml = buildBillHTML({...bill, id: editingBillId || result.billId, bill_number: result.billNum || result.bill_number || updateBillNo || ''}, billItems);
     const printOpts = {};
     if (settings.bill_silent_print === '1' && settings.bill_printer_name) {
       printOpts.silent = true;
@@ -2366,8 +2444,8 @@ async function saveBill() {
     }
     await API.printHTML(billHtml, printOpts);
     const dateNote = isBackdated ? ` (backdated: ${billDate})` : '';
-    showAlert(`Bill ${result.billNum} saved & sent to printer!${dateNote}`);
-    const fullBill = {...bill, id:result.billId, bill_number:result.billNum};
+    showAlert(`Bill ${result.billNum || result.bill_number || updateBillNo || editingBillId} ${editingBillId ? 'updated' : 'saved'} & sent to printer!${dateNote}`);
+    const fullBill = {...bill, id: editingBillId || result.billId, bill_number: result.billNum || result.bill_number || updateBillNo || ''};
     const itemsSnapshot = billItems.map(it => ({...it}));
     const phoneCheck = (bill.customer_phone || '').replace(/[^0-9]/g, '');
     if (phoneCheck.length >= 10) {
@@ -2481,6 +2559,7 @@ function skipWhatsApp() {
 
 function clearBill() {
   billItems = [];
+  editingBillId = null;
   document.getElementById('b-cust').value = '';
   document.getElementById('b-phone').value = '';
   document.getElementById('b-gstin').value = '';
@@ -2493,6 +2572,8 @@ function clearBill() {
   document.getElementById('b-backdate-fields').style.display = 'none';
   document.getElementById('b-custom-date').value = '';
   document.getElementById('b-custom-billno').value = '';
+  const saveBtn = document.getElementById('save-bill-btn');
+  if (saveBtn) saveBtn.textContent = '✓ Generate Bill & Print';
   renderBill();
 }
 
@@ -2917,71 +2998,198 @@ async function saveQuickStock() {
 
 async function loadStock() {
   allProds = await API.products.list();
-  const s = document.getElementById('st-prod');
-  s.innerHTML = '<option value="">-- Select Product --</option>' +
-    allProds.map(p => `<option value="${p.id}">${esc(p.name)} (Current: ${p.stock})</option>`).join('');
-  // Pre-fill today's date in stock entry date field
   const stDate = document.getElementById('st-date');
   if (stDate && !stDate.value) stDate.value = todayStr;
+  renderStockRows();
   const h = await API.stock.history();
   const t = document.getElementById('stock-hist');
-  t.innerHTML = h.length ? h.map(e => `
-    <tr>
-      <td>${esc(e.entry_date)}</td>
-      <td>${esc(e.product_name)}</td>
-      <td>${esc(e.supplier||'-')}</td>
-      <td style="font-family:monospace;font-size:10px">${esc(e.supplier_gstin||'-')}</td>
-      <td class="good">+${e.qty_added}</td>
-      <td>${fmt(e.cost_price)}</td>
-      <td>${esc(e.invoice_no||'-')}</td>
-    </tr>`).join('') : '<tr class="empty-row"><td colspan="7">No stock entries yet</td></tr>';
+  t.innerHTML = h.length ? h.map(e => {
+    const qty = Number(e.qty_added || 0);
+    const cost = Number(e.cost_price || 0);
+    const product = (allProds || []).find(p => p.id === e.product_id);
+    const gst = Number(product && product.gst_rate != null ? product.gst_rate : 0);
+    const taxable = qty * cost;
+    const gstAmount = taxable * (gst / 100);
+    const total = taxable + gstAmount;
+    return `
+      <tr>
+        <td>${esc(e.entry_date)}</td>
+        <td>${esc(e.product_name)}</td>
+        <td>${esc(e.supplier||'-')}</td>
+        <td style="font-family:monospace;font-size:10px">${esc(e.supplier_gstin||'-')}</td>
+        <td class="good">+${qty}</td>
+        <td>${fmt(cost)}</td>
+        <td>${fmt(total)}</td>
+        <td>${esc(e.invoice_no||'-')}</td>
+        <td><button class="btn btn-sm btn-d" onclick="deleteStockEntry(${e.id})" title="Delete entry">×</button></td>
+      </tr>`;
+  }).join('') : '<tr class="empty-row"><td colspan="9">No stock entries yet</td></tr>';
 }
 
-function fillStockInfo() {
-  const p = allProds.find(x => x.id === parseInt(document.getElementById('st-prod').value));
-  if (p) {
-    document.getElementById('st-bc').value = p.barcode || '';
-    document.getElementById('st-cost').value = p.cost_price || '';
+async function deleteStockEntry(id) {
+  if (!confirm('Delete this stock entry and revert its stock impact?')) return;
+  try {
+    const result = await API.stock.remove(id);
+    if (result && result.ok) {
+      showAlert('Stock entry deleted.');
+      await loadProds();
+      await loadStock();
+    } else {
+      showAlert('Could not delete stock entry','e');
+    }
+  } catch (e) {
+    showError(e);
   }
 }
 
-function bcToStock() {
-  const code = document.getElementById('st-bc').value.trim();
-  if (code.length < 1) return;
-  // Try Quick Code first for short numeric input, then barcode
-  let p = null;
-  if (code.length <= 6 && /^\d+$/.test(code)) {
-    p = allProds.find(x => x.quick_code === code);
+function renderStockRows() {
+  const container = document.getElementById('stock-rows');
+  if (!container) return;
+  if (!allProds.length) {
+    container.innerHTML = '<div style="font-size:13px;color:var(--text2)">No products available yet. Add products first.</div>';
+    return;
   }
-  if (!p) p = allProds.find(x => x.barcode === code);
-  if (p) {
-    document.getElementById('st-prod').value = p.id;
-    document.getElementById('st-cost').value = p.cost_price || '';
+  const rows = [
+    { id: Date.now(), productId: '', qty: '', cost: '' }
+  ];
+  container.innerHTML = rows.map((row, idx) => `
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px">
+      <div class="fg">
+        <label class="fl">Product ${idx + 1}</label>
+        <select class="stock-row-product" data-row="${row.id}" onchange="fillStockRowInfo(this)">
+          <option value="">-- Select Product --</option>
+          ${allProds.map(p => `<option value="${p.id}" ${row.productId === String(p.id) ? 'selected' : ''}>${esc(p.name)} (Current: ${p.stock})</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Qty</label>
+        <input class="stock-row-qty" data-row="${row.id}" type="number" min="1" placeholder="0" value="${row.qty}"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Cost / Unit</label>
+        <input class="stock-row-cost" data-row="${row.id}" type="number" step="0.01" placeholder="0.00" value="${row.cost}"/>
+      </div>
+      <button class="btn btn-sm btn-d" onclick="removeStockRow('${row.id}')" title="Remove">✕</button>
+    </div>`).join('');
+}
+
+function addStockRow() {
+  const container = document.getElementById('stock-rows');
+  if (!container) return;
+  const rowId = Date.now() + Math.floor(Math.random() * 1000);
+  const options = allProds.map(p => `<option value="${p.id}">${esc(p.name)} (Current: ${p.stock})</option>`).join('');
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px';
+  row.innerHTML = `
+    <div class="fg">
+      <label class="fl">Product</label>
+      <select class="stock-row-product" data-row="${rowId}">
+        <option value="">-- Select Product --</option>
+        ${options}
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Qty</label>
+      <input class="stock-row-qty" data-row="${rowId}" type="number" min="1" placeholder="0"/>
+    </div>
+    <div class="fg">
+      <label class="fl">Cost / Unit</label>
+      <input class="stock-row-cost" data-row="${rowId}" type="number" step="0.01" placeholder="0.00"/>
+    </div>
+    <button class="btn btn-sm btn-d" onclick="removeStockRow('${rowId}')" title="Remove">✕</button>`;
+  container.appendChild(row);
+}
+
+function removeStockRow(rowId) {
+  const row = document.querySelector(`[data-row="${rowId}"]`);
+  if (row && row.closest('div[style*="grid-template-columns:2fr 1fr 1fr auto"]')) {
+    row.closest('div[style*="grid-template-columns:2fr 1fr 1fr auto"]').remove();
   }
+}
+
+function fillStockRowInfo(selectEl) {
+  const p = allProds.find(x => x.id === parseInt(selectEl.value));
+  const rowId = selectEl.dataset.row;
+  const costInput = document.querySelector(`.stock-row-cost[data-row="${rowId}"]`);
+  if (p && costInput && !costInput.value) costInput.value = p.cost_price || '';
+}
+
+function searchSuppliers(q) {
+  const list = document.getElementById('st-sup-list');
+  if (!list) return;
+  const term = String(q || '').trim();
+  if (!term) { list.innerHTML = ''; return; }
+  API.suppliers.search(term).then(results => {
+    list.innerHTML = results.map(s => `<option value="${esc(s.name)}"></option>`).join('');
+  }).catch(() => { list.innerHTML = ''; });
+}
+
+function prefillSupplierDetails(q) {
+  const term = String(q || '').trim();
+  if (!term) return;
+  const gstinInput = document.getElementById('st-gstin');
+  if (!gstinInput || gstinInput.value.trim()) return;
+  API.suppliers.search(term).then(results => {
+    const exact = results.find(s => String(s.name || '').toLowerCase() === term.toLowerCase());
+    if (exact && gstinInput.value.trim() === '') {
+      gstinInput.value = exact.gstin || '';
+    }
+  }).catch(() => {});
 }
 
 async function saveStock() {
-  const pid = parseInt(document.getElementById('st-prod').value);
-  const qty = parseInt(document.getElementById('st-qty').value) || 0;
-  if (!pid || qty < 1) { showAlert('Select a product and enter quantity','e'); return; }
-  const p = allProds.find(x => x.id === pid);
-  // Custom entry date (for backdated stock entries)
+  const supplier = document.getElementById('st-sup').value || '';
+  const rows = Array.from(document.querySelectorAll('#stock-rows .stock-row-product'));
+  const entries = rows.map(select => {
+    const rowId = select.dataset.row;
+    const qtyInput = document.querySelector(`.stock-row-qty[data-row="${rowId}"]`);
+    const costInput = document.querySelector(`.stock-row-cost[data-row="${rowId}"]`);
+    const pid = parseInt(select.value);
+    const qty = parseInt(qtyInput ? qtyInput.value : '') || 0;
+    const cost = parseFloat(costInput ? costInput.value : '') || 0;
+    return { pid, qty, cost };
+  }).filter(x => x.pid && x.qty > 0);
+
+  if (!supplier) { showAlert('Enter a supplier name','e'); return; }
+  if (!entries.length) { showAlert('Add at least one product','e'); return; }
+
   const customDate = document.getElementById('st-date').value || todayStr;
-  await API.stock.add({
-    product_id: pid, product_name: p.name, qty_added: qty,
-    cost_price: parseFloat(document.getElementById('st-cost').value) || 0,
-    supplier: document.getElementById('st-sup').value || '',
-    supplier_gstin: (document.getElementById('st-gstin').value || '').trim().toUpperCase(),
-    invoice_no: document.getElementById('st-inv').value || '',
-    notes: document.getElementById('st-notes').value || '',
-    entry_date: customDate,
-  });
+  const supplierGstin = (document.getElementById('st-gstin').value || '').trim().toUpperCase();
+  const invoiceNo = document.getElementById('st-inv').value || '';
+  const wayBillNo = document.getElementById('st-waybill').value || '';
+  const truckNo = document.getElementById('st-truck').value || '';
+  const notes = document.getElementById('st-notes').value || '';
+
+  for (const entry of entries) {
+    const p = allProds.find(x => x.id === entry.pid);
+    if (!p) continue;
+    await API.stock.add({
+      product_id: entry.pid, product_name: p.name, qty_added: entry.qty,
+      cost_price: entry.cost,
+      supplier,
+      supplier_gstin: supplierGstin,
+      invoice_no: invoiceNo,
+      way_bill_no: wayBillNo,
+      truck_no: truckNo,
+      notes,
+      entry_date: customDate,
+    });
+  }
+
   const dateNote = customDate !== todayStr ? ` (dated: ${customDate})` : '';
-  showAlert(`+${qty} units added to ${p.name}${dateNote}`);
-  ['st-qty','st-sup','st-gstin','st-inv','st-notes'].forEach(i => document.getElementById(i).value = '');
-  // Reset date back to today after save
-  document.getElementById('st-date').value = todayStr;
+  showAlert(`Saved ${entries.length} product(s) for ${supplier}${dateNote}`);
+  resetStockForm();
   loadStock();
+}
+
+function resetStockForm() {
+  ['st-sup','st-gstin','st-inv','st-waybill','st-truck','st-notes','st-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = (id === 'st-date' ? todayStr : '');
+  });
+  document.getElementById('st-date').value = todayStr;
+  document.getElementById('stock-rows').innerHTML = '';
+  addStockRow();
 }
 
 async function loadBarcodes() {
@@ -3528,9 +3736,7 @@ async function runGST() {
   `).join('') : '<tr class="empty-row"><td colspan="5">No purchases this month</td></tr>';
 }
 
-async function printGST() {
-  const month = document.getElementById('gst-month').value;
-  if (!month) { showAlert('Generate report first','e'); return; }
+async function buildGSTReportHTML(month) {
   const d = await API.reports.gstFull(month);
   const s = settings;
 
@@ -3541,7 +3747,6 @@ async function printGST() {
   const salesMap = Object.fromEntries(d.salesByRate.map(r => [r.gst_rate, r]));
   const purMap = Object.fromEntries(d.purchasesByRate.map(r => [r.gst_rate, r]));
 
-  // Period start/end
   const [yr, mo] = month.split('-');
   const firstDay = `01-${mo}-${yr}`;
   const lastDayNum = new Date(parseInt(yr), parseInt(mo), 0).getDate();
@@ -3554,7 +3759,7 @@ async function printGST() {
 
   const F = n => 'Rs.' + Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
 
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GST Returns Report ${month}</title>
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GST Returns Report ${month}</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
     body{font-family:Arial,sans-serif;font-size:12px;padding:28px;color:#000;background:#fff;line-height:1.55;font-weight:600}
@@ -3581,10 +3786,7 @@ async function printGST() {
     .net-refund{background:#c8e6c9 !important;border-color:#000}
     .disclaimer{margin-top:28px;padding:14px;background:#fff8d6 !important;border:2px solid #000;font-size:10.5px;color:#000;line-height:1.7;font-weight:600}
     .disclaimer b{font-weight:900}
-    @media print{
-      body{padding:16px}
-      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
-    }
+    @media print{body{padding:16px}*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}}
   </style></head><body>
 
   <div class="pg-head">
@@ -3665,10 +3867,36 @@ async function printGST() {
     <b>Disclaimer:</b> This report is generated from POS billing data for internal GST compliance review. Verify all figures before filing GSTR-1/GSTR-3B on the GST portal.<br/>
     Amounts are in Indian Rupees (INR). CGST and SGST are calculated at half the applicable GST rate each.
   </div>
-
-  <script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
   </body></html>`;
+}
+
+async function printGST() {
+  const month = document.getElementById('gst-month').value;
+  if (!month) { showAlert('Generate report first','e'); return; }
+  const html = await buildGSTReportHTML(month);
   await API.printHTML(html);
+}
+
+async function downloadGSTAsPDF() {
+  const month = document.getElementById('gst-month').value;
+  if (!month) { showAlert('Generate report first','e'); return; }
+  try {
+    const html = await buildGSTReportHTML(month);
+    const fileName = `gst-report-${month}.pdf`;
+    const result = await API.printPDF(html, fileName);
+    if (result && result.ok) {
+      showAlert(`✅ Downloaded ${fileName}`);
+    } else {
+      showAlert('Could not download PDF','e');
+    }
+  } catch (e) {
+    showAlert('Could not download PDF: ' + (e.message || e), 'e');
+  }
+}
+
+async function editBillFromList(billId) {
+  pendingEditBillId = billId;
+  go('bill');
 }
 
 async function runSales() {
@@ -3700,8 +3928,10 @@ async function runSales() {
       <td>${fmt((b.cgst||0)+(b.sgst||0))}</td>
       <td><strong>${fmt(b.total)}</strong></td>
       <td>
-        <button class="btn btn-sm btn-icon" onclick="reprintBill(${b.id})" title="Reprint">🖨</button>
+        <button class="btn btn-sm btn-icon" onclick="editBillFromList(${b.id})" title="Edit bill">✎</button>
+        <button class="btn btn-sm btn-icon" onclick="reprintBill(${b.id})" title="Reprint" style="margin-left:4px">🖨</button>
         ${b.customer_phone ? `<button class="btn btn-sm btn-icon" onclick="resendWhatsAppBill(${b.id})" title="Resend on WhatsApp" style="margin-left:4px;background:#25D366;border-color:#1DA851;color:#fff">📱</button>` : ''}
+        <button class="btn btn-sm btn-icon btn-d" onclick="deleteBill(${b.id})" title="Delete bill" style="margin-left:4px">×</button>
       </td>
     </tr>`;
   }));
@@ -3721,6 +3951,21 @@ async function reprintBill(billId) {
   await API.printHTML(buildBillHTML(bill, items), printOpts);
 }
 
+async function deleteBill(billId) {
+  if (!confirm('Delete this bill and its items?')) return;
+  try {
+    const result = await API.bills.remove(billId);
+    if (result && result.ok) {
+      showAlert('Bill deleted.');
+      await runSales();
+    } else {
+      showAlert('Could not delete bill','e');
+    }
+  } catch (e) {
+    showError(e);
+  }
+}
+
 // Resend an existing bill via WhatsApp from Bills/Reports page
 async function resendWhatsAppBill(billId) {
   try {
@@ -3735,10 +3980,31 @@ async function resendWhatsAppBill(billId) {
   } catch (e) { showError(e); }
 }
 
-async function printSalesReport() {
+async function buildSalesReportHTML() {
   const s = settings;
-  const rowsHTML = document.getElementById('sr-tbl').innerHTML;
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Sales Report</title>
+  const sourceTable = document.getElementById('sr-tbl');
+  const exportTable = sourceTable.cloneNode(true);
+
+  exportTable.querySelectorAll('thead th').forEach((th, index, ths) => {
+    if (index === ths.length - 1) th.remove();
+  });
+
+  exportTable.querySelectorAll('tbody tr').forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if (cells.length > 0) {
+      const lastCell = cells[cells.length - 1];
+      if (lastCell && lastCell.querySelector('button')) {
+        lastCell.remove();
+      }
+    }
+    const emptyCell = row.querySelector('td');
+    if (row.classList.contains('empty-row') && emptyCell && emptyCell.getAttribute('colspan') === '9') {
+      emptyCell.setAttribute('colspan', '8');
+    }
+  });
+
+  const rowsHTML = exportTable.innerHTML;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Sales Report</title>
   <style>
     body{font-family:Arial,sans-serif;font-size:11px;padding:24px;color:#000;margin:0}
     h1{font-size:17px;margin:0 0 4px}
@@ -3768,12 +4034,29 @@ async function printSalesReport() {
     <div><strong>GST:</strong> ${document.getElementById('sr-gst').textContent}</div>
   </div>
   <table>
-    <thead><tr><th>Bill #</th><th>Date</th><th>Customer</th><th>Items</th><th>Pay</th><th>Taxable</th><th>GST</th><th>Total</th><th></th></tr></thead>
-    <tbody>${rowsHTML}</tbody>
+    ${rowsHTML}
   </table>
-  <script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
   </body></html>`;
-  await API.printHTML(html);
+}
+
+async function printSalesReport() {
+  const html = await buildSalesReportHTML();
+  await API.printHTML(html + `<script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>`);
+}
+
+async function downloadSalesAsPDF() {
+  try {
+    const html = await buildSalesReportHTML();
+    const fileName = `sales-report-${document.getElementById('sr-from').value}-${document.getElementById('sr-to').value}.pdf`;
+    const result = await API.printPDF(html, fileName);
+    if (result && result.ok) {
+      showAlert(`✅ Downloaded ${fileName}`);
+    } else {
+      showAlert('Could not download PDF','e');
+    }
+  } catch (e) {
+    showAlert('Could not download PDF: ' + (e.message || e), 'e');
+  }
 }
 
 async function runMonthly() {

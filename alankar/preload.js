@@ -17,15 +17,21 @@ contextBridge.exposeInMainWorld('api', {
     byPhone: (p) => ipcRenderer.invoke('customers:byPhone', p),
     insert:  (c) => ipcRenderer.invoke('customers:insert', c),
   },
+  suppliers: {
+    search: (q) => ipcRenderer.invoke('suppliers:search', q),
+  },
   bills: {
     save:  (bill, items) => ipcRenderer.invoke('bills:save', bill, items),
+    update: (bill, items) => ipcRenderer.invoke('bills:update', bill, items),
     list:  (from, to, mode) => ipcRenderer.invoke('bills:list', from, to, mode),
     byId:  (id) => ipcRenderer.invoke('bills:byId', id),
     items: (id) => ipcRenderer.invoke('bills:items', id),
+    remove: (id) => ipcRenderer.invoke('bills:remove', id),
   },
   stock: {
     add:     (entry) => ipcRenderer.invoke('stock:add', entry),
     history: ()      => ipcRenderer.invoke('stock:history'),
+    remove:  (id)    => ipcRenderer.invoke('stock:remove', id),
   },
   credit: {
     recordPayment: (p)  => ipcRenderer.invoke('credit:recordPayment', p),
@@ -54,6 +60,7 @@ contextBridge.exposeInMainWorld('api', {
     clearTestData: () => ipcRenderer.invoke('maintenance:clearTestData'),
   },
   printHTML: (html, options) => ipcRenderer.invoke('print:html', html, options || {}),
+  printPDF: (html, fileName, options) => ipcRenderer.invoke('print:pdf', html, fileName, options || {}),
   printerList: () => ipcRenderer.invoke('printer:list'),
   tscPrintRaw: (printerName, tspl) => ipcRenderer.invoke('tsc:printRaw', printerName, tspl),
   openExternal: (url) => ipcRenderer.invoke('shell:openExternal', url),

@@ -2,6 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
+const { buildAutoBillNumber } = require('./bill-utils');
 
 const userDataPath = app.getPath('userData');
 if (!fs.existsSync(userDataPath)) fs.mkdirSync(userDataPath, { recursive: true });
@@ -33,6 +34,19 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_products_barcode ON products(barcode);
   CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
   -- idx_products_quickcode is created in the migration block below, AFTER the column is guaranteed to exist
+
+  CREATE TABLE IF NOT EXISTS suppliers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    gstin TEXT DEFAULT '',
+    phone TEXT DEFAULT '',
+    address TEXT DEFAULT '',
+    notes TEXT DEFAULT '',
+    last_used_at TEXT DEFAULT (datetime('now','localtime')),
+    created_at TEXT DEFAULT (datetime('now','localtime'))
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_suppliers_name ON suppliers(name);
 
   CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,8 +107,11 @@ db.exec(`
     qty_added REAL DEFAULT 0,
     cost_price REAL DEFAULT 0,
     supplier TEXT DEFAULT '',
+    supplier_id INTEGER REFERENCES suppliers(id),
     supplier_gstin TEXT DEFAULT '',
     invoice_no TEXT DEFAULT '',
+    way_bill_no TEXT DEFAULT '',
+    truck_no TEXT DEFAULT '',
     notes TEXT DEFAULT '',
     entry_date TEXT DEFAULT (date('now','localtime')),
     created_at TEXT DEFAULT (datetime('now','localtime'))
@@ -131,6 +148,16 @@ try {
   db.exec("CREATE INDEX IF NOT EXISTS idx_products_quickcode ON products(quick_code)");
 } catch (e) {
   console.warn('[Migration] quick_code migration error:', e.message);
+}
+
+try {
+  const stockCols = db.prepare("PRAGMA table_info(stock_entries)").all();
+  if (!stockCols.find(c => c.name === 'supplier_id')) db.exec("ALTER TABLE stock_entries ADD COLUMN supplier_id INTEGER REFERENCES suppliers(id)");
+  if (!stockCols.find(c => c.name === 'way_bill_no')) db.exec("ALTER TABLE stock_entries ADD COLUMN way_bill_no TEXT DEFAULT ''");
+  if (!stockCols.find(c => c.name === 'truck_no')) db.exec("ALTER TABLE stock_entries ADD COLUMN truck_no TEXT DEFAULT ''");
+  db.exec("CREATE INDEX IF NOT EXISTS idx_suppliers_name ON suppliers(name)");
+} catch (e) {
+  console.warn('[Migration] stock entry columns migration error:', e.message);
 }
 
 const defaultSettings = {
@@ -208,7 +235,7 @@ const Products = {
   update:      (p) => db.prepare(`
     UPDATE products SET name=@name, category=@category, unit=@unit, hsn=@hsn,
     gst_rate=@gst_rate, selling_price=@selling_price, cost_price=@cost_price,
-    min_stock=@min_stock, barcode=@barcode, quick_code=@quick_code,
+    stock=@stock, min_stock=@min_stock, barcode=@barcode, quick_code=@quick_code,
     updated_at=datetime('now','localtime')
     WHERE id=@id
   `).run(p),
@@ -216,6 +243,43 @@ const Products = {
   adjustStock: (id, delta) => db.prepare(
     "UPDATE products SET stock = MAX(0, stock + ?), updated_at=datetime('now','localtime') WHERE id=?"
   ).run(delta, id),
+};
+
+const Suppliers = {
+  upsert: (data) => {
+    const name = String(data.name || '').trim();
+    if (!name) return null;
+    const payload = {
+      name,
+      gstin: String(data.gstin || '').trim().toUpperCase(),
+      phone: String(data.phone || '').trim(),
+      address: String(data.address || '').trim(),
+      notes: String(data.notes || '').trim(),
+    };
+    const existing = db.prepare('SELECT id FROM suppliers WHERE name=?').get(name);
+    if (existing) {
+      db.prepare(`
+        UPDATE suppliers SET
+          gstin=@gstin,
+          phone=@phone,
+          address=@address,
+          notes=@notes,
+          last_used_at=datetime('now','localtime')
+        WHERE id=@id
+      `).run({ ...payload, id: existing.id });
+      return existing.id;
+    }
+    const res = db.prepare(`
+      INSERT INTO suppliers (name, gstin, phone, address, notes, last_used_at)
+      VALUES (@name, @gstin, @phone, @address, @notes, datetime('now','localtime'))
+    `).run(payload);
+    return res.lastInsertRowid;
+  },
+  search: (q = '') => {
+    const term = String(q || '').trim();
+    if (!term) return [];
+    return db.prepare('SELECT id, name, gstin, phone, address, notes FROM suppliers WHERE name LIKE ? ORDER BY name LIMIT 20').all('%' + term + '%');
+  },
 };
 
 const Customers = {
@@ -253,10 +317,20 @@ const Customers = {
 
 const Bills = {
   save: db.transaction((bill, items) => {
-    // If user provided a custom bill number (backdated bill), use it directly.
-    // Otherwise auto-assign BILL-XXXXXX based on the row id.
     const customNum = (bill.custom_bill_number || '').trim();
-    const placeholder = customNum || ('TEMP-' + Date.now());
+
+    const ensureUniqueBillNumber = (base) => {
+      const candidate = String(base || '').trim();
+      if (!candidate) return null;
+      let finalCandidate = candidate;
+      let counter = 2;
+      while (db.prepare('SELECT 1 FROM bills WHERE bill_number=?').get(finalCandidate)) {
+        finalCandidate = `${candidate}-${counter++}`;
+      }
+      return finalCandidate;
+    };
+
+    const placeholder = 'TMP-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
     const res = db.prepare(`
       INSERT INTO bills (bill_number,customer_name,customer_phone,buyer_gstin,cashier,subtotal,cgst,sgst,discount,total,payment_mode,bill_date,bill_time)
       VALUES (?,@customer_name,@customer_phone,@buyer_gstin,@cashier,@subtotal,@cgst,@sgst,@discount,@total,@payment_mode,@bill_date,@bill_time)
@@ -275,11 +349,9 @@ const Bills = {
       bill_time: bill.bill_time,
     });
     const billId = res.lastInsertRowid;
-    // If no custom number → auto-assign BILL-XXXXXX based on id
-    const billNum = customNum || ('BILL-' + String(billId).padStart(6, '0'));
-    if (!customNum) {
-      db.prepare('UPDATE bills SET bill_number=? WHERE id=?').run(billNum, billId);
-    }
+    const existingBillNumbers = db.prepare('SELECT bill_number FROM bills').all().map(r => r.bill_number);
+    const billNum = customNum ? ensureUniqueBillNumber(customNum) : buildAutoBillNumber(existingBillNumbers);
+    db.prepare('UPDATE bills SET bill_number=? WHERE id=?').run(billNum, billId);
 
     const itemStmt = db.prepare(`
       INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount)
@@ -301,6 +373,63 @@ const Bills = {
     return { billId, billNum };
   }),
 
+  update: db.transaction((bill, items) => {
+    const billId = Number(bill.id);
+    const existing = db.prepare('SELECT * FROM bills WHERE id=?').get(billId);
+    if (!existing) throw new Error('Bill not found');
+
+    const existingItems = db.prepare('SELECT * FROM bill_items WHERE bill_id=?').all(billId);
+    for (const item of existingItems) {
+      if (item.product_id) Products.adjustStock(item.product_id, Number(item.qty || 0));
+    }
+    db.prepare('DELETE FROM bill_items WHERE bill_id=?').run(billId);
+
+    const billNum = (bill.bill_number || '').trim() || existing.bill_number;
+    db.prepare(`
+      UPDATE bills SET
+        bill_number=@bill_number,
+        customer_name=@customer_name,
+        customer_phone=@customer_phone,
+        buyer_gstin=@buyer_gstin,
+        cashier=@cashier,
+        subtotal=@subtotal,
+        cgst=@cgst,
+        sgst=@sgst,
+        discount=@discount,
+        total=@total,
+        payment_mode=@payment_mode,
+        bill_date=@bill_date,
+        bill_time=@bill_time
+      WHERE id=@id
+    `).run({
+      bill_number: billNum,
+      id: billId,
+      customer_name: bill.customer_name,
+      customer_phone: bill.customer_phone,
+      buyer_gstin: bill.buyer_gstin || '',
+      cashier: bill.cashier || 'Admin',
+      subtotal: bill.subtotal,
+      cgst: bill.cgst,
+      sgst: bill.sgst,
+      discount: bill.discount,
+      total: bill.total,
+      payment_mode: bill.payment_mode,
+      bill_date: bill.bill_date,
+      bill_time: bill.bill_time,
+    });
+
+    const itemStmt = db.prepare(`
+      INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount)
+      VALUES (@bill_id,@product_id,@product_name,@hsn,@qty,@rate,@gst_rate,@base_amount,@gst_amount,@total_amount)
+    `);
+    for (const item of items) {
+      itemStmt.run({ bill_id: billId, ...item });
+      if (item.product_id) Products.adjustStock(item.product_id, -item.qty);
+    }
+
+    return { ok: true, billId, billNum };
+  }),
+
   list: (from, to, mode) => {
     let q = 'SELECT * FROM bills WHERE bill_date BETWEEN ? AND ?';
     const params = [from, to];
@@ -310,22 +439,45 @@ const Bills = {
 
   byId:  (id) => db.prepare('SELECT * FROM bills WHERE id=?').get(id),
   items: (billId) => db.prepare('SELECT * FROM bill_items WHERE bill_id=?').all(billId),
+
+  remove: (id) => db.transaction(() => {
+    const bill = db.prepare('SELECT * FROM bills WHERE id=?').get(id);
+    if (!bill) return { ok: false, error: 'Bill not found' };
+    const items = db.prepare('SELECT * FROM bill_items WHERE bill_id=?').all(id);
+    for (const item of items) {
+      if (item.product_id) {
+        Products.adjustStock(item.product_id, Number(item.qty || 0));
+      }
+    }
+    db.prepare('DELETE FROM bill_items WHERE bill_id=?').run(id);
+    db.prepare('DELETE FROM bills WHERE id=?').run(id);
+    return { ok: true };
+  })(),
 };
 
 const Stock = {
   add: (entry) => db.transaction(() => {
+    const supplierName = String(entry.supplier || '').trim();
+    const supplierId = supplierName ? Suppliers.upsert({
+      name: supplierName,
+      gstin: entry.supplier_gstin || '',
+      phone: entry.supplier_phone || '',
+      address: entry.supplier_address || '',
+      notes: entry.notes || '',
+    }) : null;
+
     // Use custom entry_date if provided (for backdated entries), else SQLite default (today)
     const hasCustomDate = entry.entry_date && entry.entry_date.trim();
     const insertSQL = hasCustomDate
-      ? `INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_gstin,invoice_no,notes,entry_date)
-         VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_gstin,@invoice_no,@notes,@entry_date)`
-      : `INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_gstin,invoice_no,notes)
-         VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_gstin,@invoice_no,@notes)`;
+      ? `INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_id,supplier_gstin,invoice_no,way_bill_no,truck_no,notes,entry_date)
+         VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_id,@supplier_gstin,@invoice_no,@way_bill_no,@truck_no,@notes,@entry_date)`
+      : `INSERT INTO stock_entries (product_id,product_name,qty_added,cost_price,supplier,supplier_id,supplier_gstin,invoice_no,way_bill_no,truck_no,notes)
+         VALUES (@product_id,@product_name,@qty_added,@cost_price,@supplier,@supplier_id,@supplier_gstin,@invoice_no,@way_bill_no,@truck_no,@notes)`;
     db.prepare(insertSQL).run({
       product_id: entry.product_id, product_name: entry.product_name,
       qty_added: entry.qty_added, cost_price: entry.cost_price,
-      supplier: entry.supplier || '', supplier_gstin: entry.supplier_gstin || '',
-      invoice_no: entry.invoice_no || '', notes: entry.notes || '',
+      supplier: supplierName, supplier_id: supplierId, supplier_gstin: entry.supplier_gstin || '',
+      invoice_no: entry.invoice_no || '', way_bill_no: entry.way_bill_no || '', truck_no: entry.truck_no || '', notes: entry.notes || '',
       ...(hasCustomDate ? { entry_date: entry.entry_date } : {}),
     });
     Products.adjustStock(entry.product_id, entry.qty_added);
@@ -337,6 +489,16 @@ const Stock = {
   })(),
 
   history: (limit = 200) => db.prepare('SELECT * FROM stock_entries ORDER BY id DESC LIMIT ?').all(limit),
+
+  remove: (id) => db.transaction(() => {
+    const entry = db.prepare('SELECT * FROM stock_entries WHERE id=?').get(id);
+    if (!entry) return { ok: false, error: 'Entry not found' };
+    const deleted = db.prepare('DELETE FROM stock_entries WHERE id=?').run(id);
+    if (deleted.changes > 0) {
+      Products.adjustStock(entry.product_id, -Number(entry.qty_added || 0));
+    }
+    return { ok: true, changes: deleted.changes };
+  })(),
 };
 
 const Credit = {
@@ -556,4 +718,4 @@ const Maintenance = {
   },
 };
 
-module.exports = { Products, Customers, Bills, Stock, Credit, Reports, Settings, Backup, Maintenance };
+module.exports = { Products, Suppliers, Customers, Bills, Stock, Credit, Reports, Settings, Backup, Maintenance };

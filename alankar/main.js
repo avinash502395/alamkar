@@ -124,7 +124,7 @@ function safeHandle(channel, fn) {
 // REGISTER ALL IPC HANDLERS BEFORE createWindow — eliminates race condition
 function registerHandlers() {
   if (!db) return;
-  const { Products, Customers, Bills, Stock, Credit, Reports, Settings, Backup, Maintenance } = db;
+  const { Products, Suppliers, Customers, Bills, Stock, Credit, Reports, Settings, Backup, Maintenance } = db;
 
   safeHandle('products:list',        ()           => Products.list());
   safeHandle('products:byId',        (_, id)      => Products.byId(id));
@@ -140,13 +140,18 @@ function registerHandlers() {
   safeHandle('customers:byPhone', (_, ph)  => Customers.byPhone(ph));
   safeHandle('customers:insert',  (_, c)   => Customers.insert(c));
 
+  safeHandle('suppliers:search', (_, q) => Suppliers.search(q));
+
   safeHandle('bills:save',  (_, b, items) => Bills.save(b, items));
+  safeHandle('bills:update', (_, b, items) => Bills.update(b, items));
   safeHandle('bills:list',  (_, f, t, m)  => Bills.list(f, t, m));
   safeHandle('bills:byId',  (_, id)       => Bills.byId(id));
   safeHandle('bills:items', (_, id)       => Bills.items(id));
+  safeHandle('bills:remove', (_, id)      => Bills.remove(id));
 
   safeHandle('stock:add',     (_, e) => Stock.add(e));
   safeHandle('stock:history', ()     => Stock.history());
+  safeHandle('stock:remove',  (_, id) => Stock.remove(id));
 
   safeHandle('credit:recordPayment', (_, p) => Credit.recordPayment(p));
   safeHandle('credit:entries',       ()    => Credit.entries());
@@ -246,6 +251,43 @@ function registerHandlers() {
         }, 400);
       });
     });
+  });
+
+  safeHandle('print:pdf', async (_, htmlContent, fileName, options) => {
+    options = options || {};
+    const safeName = String(fileName || 'report.pdf').trim() || 'report.pdf';
+    const downloadsFolder = options.folder || app.getPath('downloads');
+    const targetPath = path.join(downloadsFolder, safeName);
+
+    if (!fs.existsSync(downloadsFolder)) {
+      fs.mkdirSync(downloadsFolder, { recursive: true });
+    }
+
+    const pdfWindow = new BrowserWindow({
+      show: false,
+      width: 1200,
+      height: 1600,
+      webPreferences: { nodeIntegration: false, sandbox: true, offscreen: true },
+    });
+
+    try {
+      await new Promise((resolve, reject) => {
+        pdfWindow.webContents.once('did-finish-load', resolve);
+        pdfWindow.webContents.once('did-fail-load', (_, code, desc) => reject(new Error(desc || 'Failed to load report for PDF export')));
+        pdfWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent));
+      });
+
+      const pdfBuffer = await pdfWindow.webContents.printToPDF({
+        printBackground: true,
+        marginsType: 0,
+      });
+      fs.writeFileSync(targetPath, pdfBuffer);
+      pdfWindow.close();
+      return { ok: true, path: targetPath };
+    } catch (err) {
+      try { pdfWindow.close(); } catch (e) {}
+      throw err;
+    }
   });
 
   // List all installed printers on this system
