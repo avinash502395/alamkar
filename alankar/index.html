@@ -2577,8 +2577,28 @@ function clearBill() {
   renderBill();
 }
 
+function buildBillItemSummary(items = []) {
+  const rows = (items || []).map((it, index) => ({
+    serial: index + 1,
+    productName: String(it.product_name || it.name || 'Item'),
+    hsn: String(it.hsn || '-'),
+    gstRate: Number(it.gst_rate || 0),
+    rate: Number(it.rate || 0),
+    totalQty: Number(it.qty || it.quantity || 1),
+    totalAmount: Number(it.total_amount || it.total || 0),
+    gstAmount: Number(it.gst_amount || 0),
+  }));
+
+  return {
+    rows,
+    totalItems: rows.reduce((sum, row) => sum + row.totalQty, 0),
+    totalGstAmount: (items || []).reduce((sum, it) => sum + Number(it.gst_amount || 0), 0),
+  };
+}
+
 function buildBillHTML(bill, items) {
   const s = settings;
+  const summary = buildBillItemSummary(items);
   // GST breakup by rate slab
   const breakupMap = {};
   items.forEach(it => {
@@ -2594,13 +2614,14 @@ function buildBillHTML(bill, items) {
   const totCgst = breakup.reduce((s,b) => s + b.cgst, 0);
   const totSgst = breakup.reduce((s,b) => s + b.sgst, 0);
 
-  const rows = items.map(it => `
-    <tr><td colspan="4" style="padding-top:6px;font-weight:900;font-size:12.5px;color:#000"><b>${esc(it.product_name)}</b></td></tr>
+  const rows = summary.rows.map((it) => `
     <tr>
-      <td style="font-size:10.5px;font-weight:700;color:#000;padding-left:0">HSN:${esc(it.hsn||'-')} GST:${it.gst_rate}%</td>
-      <td class="right" style="font-weight:700;color:#000">${it.qty}</td>
-      <td class="right" style="font-weight:700;color:#000">${Number(it.rate).toFixed(2)}</td>
-      <td class="right" style="font-weight:900;color:#000">${Number(it.total_amount).toFixed(2)}</td>
+      <td style="padding-top:6px;font-weight:900;font-size:12.5px;color:#000;width:8%">${it.serial}</td>
+      <td style="padding-top:6px;font-weight:900;font-size:12.5px;color:#000;width:42%"><b>${esc(it.productName)}</b></td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:10%">${it.totalQty}</td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:13%">${Number(it.rate || 0).toFixed(2)}</td>
+      <td class="right" style="padding-top:6px;font-weight:900;color:#000;width:13%">${Number(it.totalAmount).toFixed(2)}</td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:14%">${it.gstRate}%</td>
     </tr>`).join('');
 
   const breakupRows = breakup.map(b => `
@@ -2647,6 +2668,7 @@ function buildBillHTML(bill, items) {
   <hr class="solid"/>
   <div class="row"><span>Inv No: <span class="bold">${esc(bill.bill_number)}</span></span><span>${esc(bill.bill_date)}</span></div>
   <div class="row"><span>Cashier: ${esc(bill.cashier||'Admin')}</span><span>${esc(bill.bill_time||'')}</span></div>
+  <div class="row"><span>Items: ${summary.totalItems}</span><span>GST: ₹${Number(summary.totalGstAmount).toFixed(2)}</span></div>
   <div class="row"><span class="pay-mode">PAYMENT: ${esc((bill.payment_mode||'').toUpperCase())}</span></div>
   <hr class="solid"/>
   <div style="font-size:12px;line-height:1.6;font-weight:700;color:#000">
@@ -2657,14 +2679,17 @@ function buildBillHTML(bill, items) {
   <hr class="solid"/>
   <table>
     <thead><tr>
-      <th style="width:45%">Item Name / HSN</th>
-      <th class="right" style="width:12%">Qty</th>
-      <th class="right" style="width:20%">Rate</th>
-      <th class="right" style="width:23%">Amt</th>
+      <th style="width:8%">S.No</th>
+      <th style="width:42%">Item Name</th>
+      <th class="right" style="width:10%">Qty</th>
+      <th class="right" style="width:13%">Rate</th>
+      <th class="right" style="width:13%">Amt</th>
+      <th class="right" style="width:14%">GST %</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>
   <hr class="solid"/>
+  <div class="row" style="font-size:12px;margin-top:4px"><span>Total Items:</span><span>${summary.totalItems}</span></div>
   <div class="row grand"><span style="padding-left:6px">GRAND TOTAL:</span><span style="padding-right:6px">₹${Number(bill.total).toFixed(2)}</span></div>
   ${bill.discount>0?`<div class="row" style="font-size:11px;font-weight:700"><span>(Discount applied: -₹${Number(bill.discount).toFixed(2)})</span></div>`:''}
 

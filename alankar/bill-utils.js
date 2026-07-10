@@ -20,4 +20,24 @@ function buildAutoBillNumber(existingNumbers = []) {
   return `${max + 1}-GST`;
 }
 
-module.exports = { buildAutoBillNumber, parseBillSequence };
+function buildBillItemSummary(items = []) {
+  const rows = (items || []).map((it, index) => ({
+    serial: index + 1,
+    productName: String(it.product_name || it.name || 'Item'),
+    hsn: String(it.hsn || '-'),
+    gstRate: Number(it.gst_rate || 0),
+    rate: Number(it.rate || 0),
+    qty: Number(it.qty || it.quantity || 1),
+    totalQty: Number(it.qty || it.quantity || 1),
+    totalAmount: Number(it.total_amount || it.total || 0),
+    gstAmount: Number(it.gst_amount || 0),
+  }));
+
+  return {
+    rows,
+    totalItems: rows.reduce((sum, row) => sum + row.qty, 0),
+    totalGstAmount: rows.reduce((sum, row) => sum + row.gstAmount, 0),
+  };
+}
+
+module.exports = { buildAutoBillNumber, buildBillItemSummary, parseBillSequence };
