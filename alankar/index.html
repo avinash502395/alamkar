@@ -68,6 +68,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 /* METRIC CARDS */
 .metrics{display:grid;gap:16px;margin-bottom:20px}
 .m4{grid-template-columns:repeat(4,1fr)}
+.m5{grid-template-columns:repeat(5,1fr)}
 .m3{grid-template-columns:repeat(3,1fr)}
 .m2{grid-template-columns:repeat(2,1fr)}
 .mc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:all .2s}
@@ -421,12 +422,12 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
             </div>
             <div class="tbl-wrap"><table id="bill-tbl">
               <thead><tr>
-                <th style="width:30%">Item</th><th style="width:10%">HSN</th>
-                <th style="width:8%">Qty</th><th style="width:12%">Rate</th>
-                <th style="width:9%">GST%</th><th style="width:14%">Amount</th>
-                <th style="width:7%"></th>
+                <th style="width:25%">Item</th><th style="width:8%">HSN</th>
+                <th style="width:7%">Qty</th><th style="width:11%">Rate</th>
+                <th style="width:8%">GST%</th><th style="width:12%">Disc.</th>
+                <th style="width:22%">Amount</th><th style="width:7%"></th>
               </tr></thead>
-              <tbody id="bill-body"><tr class="empty-row"><td colspan="7">No items added. Click "Add Item" or scan a barcode.</td></tr></tbody>
+              <tbody id="bill-body"><tr class="empty-row"><td colspan="8">No items added. Click "Add Item" or scan a barcode.</td></tr></tbody>
             </table></div>
           </div>
         </div>
@@ -440,12 +441,12 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
               <div class="pay-btn" data-mode="Credit" onclick="selPay(this)"><span class="pay-icon">⏳</span>Credit (Due)</div>
             </div>
             <div class="bill-sum">
-              <div class="sum-row"><span style="color:var(--text2)">Subtotal (excl. GST)</span><span id="bs-sub">₹0.00</span></div>
+              <div class="sum-row"><span style="color:var(--text2)">Taxable subtotal</span><span id="bs-sub">₹0.00</span></div>
               <div class="sum-row"><span style="color:var(--text2)">CGST</span><span id="bs-cgst">₹0.00</span></div>
               <div class="sum-row"><span style="color:var(--text2)">SGST</span><span id="bs-sgst">₹0.00</span></div>
               <div class="sum-row">
-                <span style="color:var(--text2)">Discount (₹)</span>
-                <input type="number" id="b-disc" value="0" min="0" style="width:80px;text-align:right;padding:3px 8px;font-size:12px" oninput="calcBill()"/>
+                <label for="b-disc" style="color:var(--text2)">Discount (optional, ₹)</label>
+                <input type="number" id="b-disc" value="0" min="0" step="0.01" style="width:100px;text-align:right;padding:3px 8px;font-size:12px" oninput="renderBill()"/>
               </div>
               <div class="sum-row grand"><span>Grand Total</span><span id="bs-total">₹0.00</span></div>
             </div>
@@ -650,9 +651,9 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
         <div class="ct" style="margin-bottom:10px">Sales GST Summary (Output)</div>
         <div class="tbl-wrap"><table>
           <thead><tr>
-            <th>GST Rate</th><th>Sales Amount</th><th>Taxable Amount</th><th>CGST</th><th>SGST</th>
+            <th>GST Rate</th><th>Sales After Discount</th><th>Discount</th><th>Taxable Amount</th><th>CGST</th><th>SGST</th>
           </tr></thead>
-          <tbody id="gst-sales-tbl"><tr class="empty-row"><td colspan="5">Select month and click Generate</td></tr></tbody>
+          <tbody id="gst-sales-tbl"><tr class="empty-row"><td colspan="6">Select month and click Generate</td></tr></tbody>
         </table></div>
       </div>
 
@@ -670,8 +671,8 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
         <div class="card">
           <div class="ct" style="margin-bottom:10px">Detailed Sales Items Log</div>
           <div class="tbl-wrap"><table>
-            <thead><tr><th>Item</th><th>HSN</th><th>Qty</th><th>GST</th><th>Total</th></tr></thead>
-            <tbody id="gst-sitems"><tr class="empty-row"><td colspan="5">No data</td></tr></tbody>
+            <thead><tr><th>Item</th><th>HSN</th><th>Qty</th><th>GST</th><th>Discount</th><th>Total</th></tr></thead>
+            <tbody id="gst-sitems"><tr class="empty-row"><td colspan="6">No data</td></tr></tbody>
           </table></div>
         </div>
         <div class="card">
@@ -700,22 +701,23 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
           </div>
         </div>
       </div>
-      <div class="metrics m4">
+      <div class="metrics m5">
         <div class="mc success"><div class="mc-lbl">Revenue</div><div class="mc-val" id="sr-rev">₹0</div></div>
         <div class="mc"><div class="mc-lbl">Total Bills</div><div class="mc-val" id="sr-cnt">0</div></div>
         <div class="mc"><div class="mc-lbl">Avg Bill Value</div><div class="mc-val" id="sr-avg">₹0</div></div>
         <div class="mc info"><div class="mc-lbl">GST Collected</div><div class="mc-val" id="sr-gst">₹0</div></div>
+        <div class="mc warning"><div class="mc-lbl">Discounts</div><div class="mc-val" id="sr-discount">₹0</div></div>
       </div>
       <div class="card">
         <div class="tbl-wrap"><table>
           <thead><tr>
-            <th style="width:11%">Bill #</th><th style="width:11%">Date</th>
-            <th style="width:18%">Customer</th><th style="width:7%">Items</th>
-            <th style="width:9%">Payment</th><th style="width:12%">Taxable</th>
-            <th style="width:10%">GST</th><th style="width:12%">Total</th>
-            <th style="width:10%">Action</th>
+            <th style="width:10%">Bill #</th><th style="width:10%">Date</th>
+            <th style="width:16%">Customer</th><th style="width:6%">Items</th>
+            <th style="width:8%">Payment</th><th style="width:10%">Taxable</th>
+            <th style="width:8%">GST</th><th style="width:9%">Discount</th>
+            <th style="width:10%">Total</th><th style="width:13%">Action</th>
           </tr></thead>
-          <tbody id="sr-tbl"><tr class="empty-row"><td colspan="9">No bills found</td></tr></tbody>
+          <tbody id="sr-tbl"><tr class="empty-row"><td colspan="10">No bills found</td></tr></tbody>
         </table></div>
       </div>
     </section>
@@ -728,17 +730,18 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
           <button class="btn btn-o" onclick="printMonthly()">🖨 Print Full Report</button>
         </div>
       </div>
-      <div class="metrics m4">
-        <div class="mc success"><div class="mc-lbl">Gross Sales</div><div class="mc-val" id="mr-gross">₹0</div></div>
+      <div class="metrics m5">
+        <div class="mc success"><div class="mc-lbl">Sales After Discount</div><div class="mc-val" id="mr-gross">₹0</div></div>
         <div class="mc info"><div class="mc-lbl">GST Collected</div><div class="mc-val" id="mr-gst">₹0</div></div>
         <div class="mc"><div class="mc-lbl">Net Revenue</div><div class="mc-val" id="mr-net">₹0</div></div>
         <div class="mc"><div class="mc-lbl">Total Bills</div><div class="mc-val" id="mr-cnt">0</div></div>
+        <div class="mc warning"><div class="mc-lbl">Discounts</div><div class="mc-val" id="mr-discount">₹0</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="card">
           <div class="ct" style="margin-bottom:10px">Daily Breakdown</div>
           <div class="tbl-wrap"><table>
-            <thead><tr><th>Date</th><th>Bills</th><th>Revenue</th><th>GST</th></tr></thead>
+            <thead><tr><th>Date</th><th>Bills</th><th>Revenue</th><th>Discount</th><th>GST</th></tr></thead>
             <tbody id="mr-daily"><tr class="empty-row"><td colspan="4">No data</td></tr></tbody>
           </table></div>
         </div>
@@ -753,7 +756,7 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
       <div class="card">
         <div class="ct" style="margin-bottom:10px">Top Products</div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th style="width:40%">Product</th><th>Qty</th><th>Revenue</th><th>GST</th></tr></thead>
+          <thead><tr><th style="width:35%">Product</th><th>Qty</th><th>Revenue</th><th>Discount</th><th>GST</th></tr></thead>
           <tbody id="mr-prod"><tr class="empty-row"><td colspan="4">No data</td></tr></tbody>
         </table></div>
       </div>
@@ -1143,7 +1146,9 @@ input[readonly]{background:var(--bg3);color:var(--text2)}
   </div>
 </div>
 
+<script src="bill-utils.js"></script>
 <script>
+const { distributeBillDiscount } = window.AlankarBillUtils;
 const IS_DEMO = !window.api;
 if (IS_DEMO) document.body.classList.add('demo-mode');
 
@@ -1211,7 +1216,8 @@ const DemoAPI = {
     save: async (bill, items) => {
       const id = ++demoData.billCounter;
       const billNum = 'INV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-      const savedBill = {id, bill_number:billNum, ...bill, items:[...items], created_at:new Date().toISOString()};
+      const totals = distributeBillDiscount(items, bill.discount);
+      const savedBill = {id, bill_number:billNum, ...bill, ...totals, items:totals.items, created_at:new Date().toISOString()};
       demoData.bills.push(savedBill);
       items.forEach(it => { if(it.product_id){ const p = demoData.products.find(x=>x.id===it.product_id); if(p) p.stock = Math.max(0, p.stock-it.qty);}});
       if (bill.customer_phone) {
@@ -1231,7 +1237,8 @@ const DemoAPI = {
       const idx = demoData.bills.findIndex(x=>x.id===id);
       if (idx < 0) throw new Error('Bill not found');
       const existing = demoData.bills[idx];
-      demoData.bills[idx] = { ...existing, ...bill, id, bill_number: bill.bill_number || existing.bill_number, items:[...items] };
+      const totals = distributeBillDiscount(items, bill.discount);
+      demoData.bills[idx] = { ...existing, ...bill, ...totals, id, bill_number: bill.bill_number || existing.bill_number, items:totals.items };
       return { ok: true, billId: id, billNum: bill.bill_number || existing.bill_number };
     },
     list: async (from, to, mode) => {
@@ -1313,8 +1320,9 @@ const DemoAPI = {
       // Sales by rate
       const sByRate = {};
       monBills.forEach(b => b.items.forEach(it => {
-        if (!sByRate[it.gst_rate]) sByRate[it.gst_rate] = {gst_rate:it.gst_rate, sales_amount:0, taxable:0, cgst:0, sgst:0, total_gst:0};
+        if (!sByRate[it.gst_rate]) sByRate[it.gst_rate] = {gst_rate:it.gst_rate, sales_amount:0, discount:0, taxable:0, cgst:0, sgst:0, total_gst:0};
         sByRate[it.gst_rate].sales_amount += it.total_amount;
+        sByRate[it.gst_rate].discount += it.discount_amount || 0;
         sByRate[it.gst_rate].taxable += it.base_amount;
         sByRate[it.gst_rate].cgst += it.gst_amount/2;
         sByRate[it.gst_rate].sgst += it.gst_amount/2;
@@ -1341,8 +1349,9 @@ const DemoAPI = {
       const sItemMap = {};
       monBills.forEach(b => b.items.forEach(it => {
         const k = it.product_name + '|' + (it.hsn||'') + '|' + it.gst_rate;
-        if (!sItemMap[k]) sItemMap[k] = {product_name:it.product_name, hsn:it.hsn||'', gst_rate:it.gst_rate, qty:0, taxable:0, cgst:0, sgst:0, total:0};
+        if (!sItemMap[k]) sItemMap[k] = {product_name:it.product_name, hsn:it.hsn||'', gst_rate:it.gst_rate, qty:0, discount:0, taxable:0, cgst:0, sgst:0, total:0};
         sItemMap[k].qty += it.qty;
+        sItemMap[k].discount += it.discount_amount || 0;
         sItemMap[k].taxable += it.base_amount;
         sItemMap[k].cgst += it.gst_amount/2;
         sItemMap[k].sgst += it.gst_amount/2;
@@ -1375,13 +1384,14 @@ const DemoAPI = {
     monthly: async (month) => {
       const monBills = demoData.bills.filter(b=>b.bill_date.startsWith(month));
       const daily = {};
-      monBills.forEach(b => { if(!daily[b.bill_date]) daily[b.bill_date] = {bill_date:b.bill_date,cnt:0,revenue:0,gst:0}; daily[b.bill_date].cnt++; daily[b.bill_date].revenue += b.total; daily[b.bill_date].gst += (b.cgst+b.sgst);});
+      monBills.forEach(b => { if(!daily[b.bill_date]) daily[b.bill_date] = {bill_date:b.bill_date,cnt:0,revenue:0,discount:0,gst:0}; daily[b.bill_date].cnt++; daily[b.bill_date].revenue += b.total; daily[b.bill_date].discount += b.discount || 0; daily[b.bill_date].gst += (b.cgst+b.sgst);});
       const payMix = {};
       monBills.forEach(b => { if(!payMix[b.payment_mode]) payMix[b.payment_mode]={payment_mode:b.payment_mode,cnt:0,amount:0}; payMix[b.payment_mode].cnt++; payMix[b.payment_mode].amount += b.total;});
       const prodMap = {};
       monBills.forEach(b => b.items.forEach(it => {
-        if(!prodMap[it.product_name]) prodMap[it.product_name] = {product_name:it.product_name,qty:0,revenue:0,gst:0};
+        if(!prodMap[it.product_name]) prodMap[it.product_name] = {product_name:it.product_name,qty:0,discount:0,revenue:0,gst:0};
         prodMap[it.product_name].qty += it.qty;
+        prodMap[it.product_name].discount += it.discount_amount || 0;
         prodMap[it.product_name].revenue += it.total_amount;
         prodMap[it.product_name].gst += it.gst_amount;
       }));
@@ -2343,28 +2353,29 @@ function remItem(i) { billItems.splice(i,1); renderBill(); }
 
 function renderBill() {
   const t = document.getElementById('bill-body');
-  t.innerHTML = billItems.length ? billItems.map((it,i) => `
+  const totals = distributeBillDiscount(billItems, document.getElementById('b-disc').value);
+  t.innerHTML = totals.items.length ? totals.items.map((it,i) => `
     <tr>
       <td>${esc(it.product_name)}</td>
       <td>${esc(it.hsn)}</td>
       <td>${it.qty}</td>
       <td>${fmt(it.rate)}</td>
       <td>${it.gst_rate}%</td>
+      <td>${fmt(it.discount_amount)}</td>
       <td>${fmt(it.total_amount)}</td>
       <td><button class="btn btn-d btn-sm btn-icon" onclick="remItem(${i})" title="Remove">×</button></td>
-    </tr>`).join('') : '<tr class="empty-row"><td colspan="7">No items added. Click "Add Item" or scan a barcode.</td></tr>';
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="8">No items added. Click "Add Item" or scan a barcode.</td></tr>';
   calcBill();
 }
 
 function calcBill() {
-  let sub=0, gstT=0;
-  billItems.forEach(it => { sub += it.base_amount; gstT += it.gst_amount; });
-  const half = gstT/2;
-  const disc = parseFloat(document.getElementById('b-disc').value) || 0;
-  document.getElementById('bs-sub').textContent = fmt(sub);
-  document.getElementById('bs-cgst').textContent = fmt(half);
-  document.getElementById('bs-sgst').textContent = fmt(half);
-  document.getElementById('bs-total').textContent = fmt(Math.max(0, sub + gstT - disc));
+  const discountInput = document.getElementById('b-disc');
+  const totals = distributeBillDiscount(billItems, discountInput.value);
+  if (Number(discountInput.value) > totals.discount) discountInput.value = totals.discount;
+  document.getElementById('bs-sub').textContent = fmt(totals.subtotal);
+  document.getElementById('bs-cgst').textContent = fmt(totals.cgst);
+  document.getElementById('bs-sgst').textContent = fmt(totals.sgst);
+  document.getElementById('bs-total').textContent = fmt(totals.total);
 }
 
 async function loadBillForEditing(billId) {
@@ -2386,7 +2397,7 @@ async function loadBillForEditing(billId) {
     backFields.style.display = isBackdated ? 'grid' : 'none';
     document.getElementById('b-custom-date').value = bill.bill_date || '';
     document.getElementById('b-custom-billno').value = bill.bill_number || '';
-    billItems = (items || []).map(it => ({ ...it }));
+    billItems = (items || []).map(it => ({ ...it, ...computeItemAmounts(it.rate, it.qty, it.gst_rate), discount_amount: 0 }));
     renderBill();
     const saveBtn = document.getElementById('save-bill-btn');
     if (saveBtn) saveBtn.textContent = '✓ Update Bill & Print';
@@ -2400,10 +2411,8 @@ async function loadBillForEditing(billId) {
 
 async function saveBill() {
   if (!billItems.length) { showAlert('Add at least one item to the bill','e'); return; }
-  let sub=0, gstT=0;
-  billItems.forEach(it => { sub += it.base_amount; gstT += it.gst_amount; });
-  const disc = parseFloat(document.getElementById('b-disc').value) || 0;
-  const total = Math.max(0, sub + gstT - disc);
+  const totals = distributeBillDiscount(billItems, document.getElementById('b-disc').value);
+  const { subtotal: sub, cgst, sgst, discount: disc, total } = totals;
 
   // Backdated bill support
   const isBackdated = document.getElementById('b-backdate-toggle').checked;
@@ -2423,7 +2432,7 @@ async function saveBill() {
     customer_phone: document.getElementById('b-phone').value.trim() || '',
     buyer_gstin: document.getElementById('b-gstin').value.trim().toUpperCase() || '',
     cashier: document.getElementById('b-cashier').value.trim() || settings.cashier_name || 'Admin',
-    subtotal: sub, cgst: gstT/2, sgst: gstT/2, discount: disc, total,
+    subtotal: sub, cgst, sgst, discount: disc, total,
     payment_mode: getSelectedPay(),
     bill_date: billDate,
     bill_time: editingBillId ? (existingBill && existingBill.bill_time) || new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
@@ -2436,7 +2445,7 @@ async function saveBill() {
     } else {
       result = await API.bills.save(bill, billItems);
     }
-    const billHtml = buildBillHTML({...bill, id: editingBillId || result.billId, bill_number: result.billNum || result.bill_number || updateBillNo || ''}, billItems);
+    const billHtml = buildBillHTML({...bill, id: editingBillId || result.billId, bill_number: result.billNum || result.bill_number || updateBillNo || ''}, totals.items);
     const printOpts = {};
     if (settings.bill_silent_print === '1' && settings.bill_printer_name) {
       printOpts.silent = true;
@@ -2446,7 +2455,7 @@ async function saveBill() {
     const dateNote = isBackdated ? ` (backdated: ${billDate})` : '';
     showAlert(`Bill ${result.billNum || result.bill_number || updateBillNo || editingBillId} ${editingBillId ? 'updated' : 'saved'} & sent to printer!${dateNote}`);
     const fullBill = {...bill, id: editingBillId || result.billId, bill_number: result.billNum || result.bill_number || updateBillNo || ''};
-    const itemsSnapshot = billItems.map(it => ({...it}));
+    const itemsSnapshot = totals.items.map(it => ({...it}));
     const phoneCheck = (bill.customer_phone || '').replace(/[^0-9]/g, '');
     if (phoneCheck.length >= 10) {
       setTimeout(() => offerWhatsAppShare(fullBill, itemsSnapshot), 600);
@@ -2585,6 +2594,7 @@ function buildBillItemSummary(items = []) {
     gstRate: Number(it.gst_rate || 0),
     rate: Number(it.rate || 0),
     totalQty: Number(it.qty || it.quantity || 1),
+    discountAmount: Number(it.discount_amount || 0),
     totalAmount: Number(it.total_amount || it.total || 0),
     gstAmount: Number(it.gst_amount || 0),
   }));
@@ -2616,12 +2626,13 @@ function buildBillHTML(bill, items) {
 
   const rows = summary.rows.map((it) => `
     <tr>
-      <td style="padding-top:6px;font-weight:900;font-size:12.5px;color:#000;width:8%">${it.serial}</td>
-      <td style="padding-top:6px;font-weight:900;font-size:12.5px;color:#000;width:42%"><b>${esc(it.productName)}</b></td>
-      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:10%">${it.totalQty}</td>
-      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:13%">${Number(it.rate || 0).toFixed(2)}</td>
+      <td style="padding-top:6px;font-weight:900;font-size:12px;color:#000;width:7%">${it.serial}</td>
+      <td style="padding-top:6px;font-weight:900;font-size:12px;color:#000;width:37%"><b>${esc(it.productName)}</b></td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:8%">${it.totalQty}</td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:12%">${Number(it.rate || 0).toFixed(2)}</td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:11%">${it.gstRate}%</td>
+      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:12%">${Number(it.discountAmount).toFixed(2)}</td>
       <td class="right" style="padding-top:6px;font-weight:900;color:#000;width:13%">${Number(it.totalAmount).toFixed(2)}</td>
-      <td class="right" style="padding-top:6px;font-weight:700;color:#000;width:14%">${it.gstRate}%</td>
     </tr>`).join('');
 
   const breakupRows = breakup.map(b => `
@@ -2679,12 +2690,13 @@ function buildBillHTML(bill, items) {
   <hr class="solid"/>
   <table>
     <thead><tr>
-      <th style="width:8%">S.No</th>
-      <th style="width:42%">Item Name</th>
-      <th class="right" style="width:10%">Qty</th>
-      <th class="right" style="width:13%">Rate</th>
+      <th style="width:7%">No</th>
+      <th style="width:37%">Item Name</th>
+      <th class="right" style="width:8%">Qty</th>
+      <th class="right" style="width:12%">Rate</th>
+      <th class="right" style="width:11%">GST %</th>
+      <th class="right" style="width:12%">Disc.</th>
       <th class="right" style="width:13%">Amt</th>
-      <th class="right" style="width:14%">GST %</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>
@@ -3711,13 +3723,14 @@ async function runGST() {
   const salesMap = Object.fromEntries(d.salesByRate.map(r => [r.gst_rate, r]));
   const purMap = Object.fromEntries(d.purchasesByRate.map(r => [r.gst_rate, r]));
 
-  let totSalesAmt = 0, totSalesTax = 0, totSalesCgst = 0, totSalesSgst = 0;
+  let totSalesAmt = 0, totSalesDiscount = 0, totSalesTax = 0, totSalesCgst = 0, totSalesSgst = 0;
   const salesRows = slabs.map(rate => {
-    const r = salesMap[rate] || {sales_amount:0, taxable:0, cgst:0, sgst:0};
-    totSalesAmt += r.sales_amount; totSalesTax += r.taxable; totSalesCgst += r.cgst; totSalesSgst += r.sgst;
+    const r = salesMap[rate] || {sales_amount:0, discount:0, taxable:0, cgst:0, sgst:0};
+    totSalesAmt += r.sales_amount; totSalesDiscount += r.discount || 0; totSalesTax += r.taxable; totSalesCgst += r.cgst; totSalesSgst += r.sgst;
     return `<tr>
       <td><b>${rate}% GST</b></td>
       <td>${fmt(r.sales_amount)}</td>
+      <td>${fmt(r.discount || 0)}</td>
       <td>${fmt(r.taxable)}</td>
       <td>${fmt(r.cgst)}</td>
       <td>${fmt(r.sgst)}</td>
@@ -3725,6 +3738,7 @@ async function runGST() {
   }).join('') + `<tr style="font-weight:bold;background:var(--bg3)">
     <td>Total</td>
     <td>${fmt(totSalesAmt)}</td>
+    <td>${fmt(totSalesDiscount)}</td>
     <td>${fmt(totSalesTax)}</td>
     <td>${fmt(totSalesCgst)}</td>
     <td>${fmt(totSalesSgst)}</td>
@@ -3753,8 +3767,8 @@ async function runGST() {
 
   // Items logs
   document.getElementById('gst-sitems').innerHTML = d.salesItems.length ? d.salesItems.map(it => `
-    <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td>${it.qty}</td><td>${it.gst_rate}%</td><td>${fmt(it.total)}</td></tr>
-  `).join('') : '<tr class="empty-row"><td colspan="5">No sales this month</td></tr>';
+    <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td>${it.qty}</td><td>${it.gst_rate}%</td><td>${fmt(it.discount || 0)}</td><td>${fmt(it.total)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="6">No sales this month</td></tr>';
 
   document.getElementById('gst-pitems').innerHTML = d.purchaseItems.length ? d.purchaseItems.map(it => `
     <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td>${it.qty}</td><td>${it.gst_rate}%</td><td>${fmt(it.total)}</td></tr>
@@ -3777,8 +3791,8 @@ async function buildGSTReportHTML(month) {
   const lastDayNum = new Date(parseInt(yr), parseInt(mo), 0).getDate();
   const lastDay = `${lastDayNum}-${mo}-${yr}`;
 
-  let totSAmt=0,totSTax=0,totSCgst=0,totSSgst=0;
-  slabs.forEach(rate => { const r = salesMap[rate]||{}; totSAmt+=r.sales_amount||0; totSTax+=r.taxable||0; totSCgst+=r.cgst||0; totSSgst+=r.sgst||0; });
+  let totSAmt=0,totSDiscount=0,totSTax=0,totSCgst=0,totSSgst=0;
+  slabs.forEach(rate => { const r = salesMap[rate]||{}; totSAmt+=r.sales_amount||0; totSDiscount+=r.discount||0; totSTax+=r.taxable||0; totSCgst+=r.cgst||0; totSSgst+=r.sgst||0; });
   let totPAmt=0,totPTax=0,totPCgst=0,totPSgst=0;
   slabs.forEach(rate => { const r = purMap[rate]||{}; totPAmt+=r.purchase_amount||0; totPTax+=r.taxable||0; totPCgst+=r.cgst||0; totPSgst+=r.sgst||0; });
 
@@ -3848,12 +3862,12 @@ async function buildGSTReportHTML(month) {
 
   <h3>Sales GST summaries (Output)</h3>
   <table>
-    <thead><tr><th>GST Rate</th><th class="right">Sales Amount</th><th class="right">Taxable Amount</th><th class="right">CGST</th><th class="right">SGST</th></tr></thead>
+    <thead><tr><th>GST Rate</th><th class="right">Sales After Discount</th><th class="right">Discount</th><th class="right">Taxable Amount</th><th class="right">CGST</th><th class="right">SGST</th></tr></thead>
     <tbody>
-      ${slabs.map(rate => { const r = salesMap[rate] || {sales_amount:0,taxable:0,cgst:0,sgst:0};
-        return `<tr><td><b>${rate}% GST</b></td><td class="right">${F(r.sales_amount)}</td><td class="right">${F(r.taxable)}</td><td class="right">${F(r.cgst)}</td><td class="right">${F(r.sgst)}</td></tr>`;
+      ${slabs.map(rate => { const r = salesMap[rate] || {sales_amount:0,discount:0,taxable:0,cgst:0,sgst:0};
+        return `<tr><td><b>${rate}% GST</b></td><td class="right">${F(r.sales_amount)}</td><td class="right">${F(r.discount||0)}</td><td class="right">${F(r.taxable)}</td><td class="right">${F(r.cgst)}</td><td class="right">${F(r.sgst)}</td></tr>`;
       }).join('')}
-      <tr class="total-row"><td>Total</td><td class="right">${F(totSAmt)}</td><td class="right">${F(totSTax)}</td><td class="right">${F(totSCgst)}</td><td class="right">${F(totSSgst)}</td></tr>
+      <tr class="total-row"><td>Total</td><td class="right">${F(totSAmt)}</td><td class="right">${F(totSDiscount)}</td><td class="right">${F(totSTax)}</td><td class="right">${F(totSCgst)}</td><td class="right">${F(totSSgst)}</td></tr>
     </tbody>
   </table>
 
@@ -3870,11 +3884,11 @@ async function buildGSTReportHTML(month) {
 
   <h3>Detailed Sales Items Log</h3>
   <table>
-    <thead><tr><th>Item Name</th><th>HSN</th><th class="right">Qty</th><th class="right">GST</th><th class="right">Taxable</th><th class="right">CGST</th><th class="right">SGST</th><th class="right">Total</th></tr></thead>
+    <thead><tr><th>Item Name</th><th>HSN</th><th class="right">Qty</th><th class="right">GST</th><th class="right">Discount</th><th class="right">Taxable</th><th class="right">CGST</th><th class="right">SGST</th><th class="right">Total</th></tr></thead>
     <tbody>
       ${d.salesItems.length ? d.salesItems.map(it => `
-        <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td class="right">${it.qty}</td><td class="right">${it.gst_rate}%</td><td class="right">${F(it.taxable)}</td><td class="right">${F(it.cgst)}</td><td class="right">${F(it.sgst)}</td><td class="right">${F(it.total)}</td></tr>
-      `).join('') : '<tr><td colspan="8" style="text-align:center;color:#888;padding:14px;font-style:italic">No sales this period</td></tr>'}
+        <tr><td>${esc(it.product_name)}</td><td>${esc(it.hsn||'-')}</td><td class="right">${it.qty}</td><td class="right">${it.gst_rate}%</td><td class="right">${F(it.discount||0)}</td><td class="right">${F(it.taxable)}</td><td class="right">${F(it.cgst)}</td><td class="right">${F(it.sgst)}</td><td class="right">${F(it.total)}</td></tr>
+      `).join('') : '<tr><td colspan="9" style="text-align:center;color:#888;padding:14px;font-style:italic">No sales this period</td></tr>'}
     </tbody>
   </table>
 
@@ -3931,10 +3945,12 @@ async function runSales() {
   const bills = await API.bills.list(from, to, mode || null);
   const rev = bills.reduce((s,b) => s + b.total, 0);
   const gst = bills.reduce((s,b) => s + (b.cgst||0) + (b.sgst||0), 0);
+  const discount = bills.reduce((s,b) => s + (b.discount||0), 0);
   document.getElementById('sr-rev').textContent = fmtS(rev);
   document.getElementById('sr-cnt').textContent = bills.length;
   document.getElementById('sr-avg').textContent = fmtS(bills.length ? rev/bills.length : 0);
   document.getElementById('sr-gst').textContent = fmtS(gst);
+  document.getElementById('sr-discount').textContent = fmtS(discount);
   const itemCount = async (b) => {
     if (b.items) return b.items.length;
     if (IS_DEMO) return 0;
@@ -3951,6 +3967,7 @@ async function runSales() {
       <td><span class="badge bb">${esc(b.payment_mode)}</span></td>
       <td>${fmt(b.subtotal)}</td>
       <td>${fmt((b.cgst||0)+(b.sgst||0))}</td>
+      <td>${fmt(b.discount||0)}</td>
       <td><strong>${fmt(b.total)}</strong></td>
       <td>
         <button class="btn btn-sm btn-icon" onclick="editBillFromList(${b.id})" title="Edit bill">✎</button>
@@ -3961,7 +3978,7 @@ async function runSales() {
     </tr>`;
   }));
   const t = document.getElementById('sr-tbl');
-  t.innerHTML = bills.length ? rowsHTML.join('') : '<tr class="empty-row"><td colspan="9">No bills found in this date range</td></tr>';
+  t.innerHTML = bills.length ? rowsHTML.join('') : '<tr class="empty-row"><td colspan="10">No bills found in this date range</td></tr>';
 }
 
 async function reprintBill(billId) {
@@ -4023,8 +4040,8 @@ async function buildSalesReportHTML() {
       }
     }
     const emptyCell = row.querySelector('td');
-    if (row.classList.contains('empty-row') && emptyCell && emptyCell.getAttribute('colspan') === '9') {
-      emptyCell.setAttribute('colspan', '8');
+    if (row.classList.contains('empty-row') && emptyCell && emptyCell.getAttribute('colspan') === '10') {
+      emptyCell.setAttribute('colspan', '9');
     }
   });
 
@@ -4057,6 +4074,7 @@ async function buildSalesReportHTML() {
     <div><strong>Bills:</strong> ${document.getElementById('sr-cnt').textContent}</div>
     <div><strong>Avg Bill:</strong> ${document.getElementById('sr-avg').textContent}</div>
     <div><strong>GST:</strong> ${document.getElementById('sr-gst').textContent}</div>
+    <div><strong>Discounts:</strong> ${document.getElementById('sr-discount').textContent}</div>
   </div>
   <table>
     ${rowsHTML}
@@ -4088,20 +4106,22 @@ async function runMonthly() {
   const month = document.getElementById('mr-month').value;
   const d = await API.reports.monthly(month);
   const gross = d.bills.reduce((s,b) => s + b.total, 0);
+  const discount = d.bills.reduce((s,b) => s + (b.discount || 0), 0);
   const gst = d.bills.reduce((s,b) => s + (b.cgst||0) + (b.sgst||0), 0);
   document.getElementById('mr-gross').textContent = fmtS(gross);
+  document.getElementById('mr-discount').textContent = fmtS(discount);
   document.getElementById('mr-gst').textContent = fmtS(gst);
   document.getElementById('mr-net').textContent = fmtS(gross-gst);
   document.getElementById('mr-cnt').textContent = d.bills.length;
   document.getElementById('mr-daily').innerHTML = d.daily.length ? d.daily.map(r => `
-    <tr><td>${esc(r.bill_date)}</td><td>${r.cnt}</td><td>${fmtS(r.revenue)}</td><td>${fmtS(r.gst)}</td></tr>
-  `).join('') : '<tr class="empty-row"><td colspan="4">No data</td></tr>';
+    <tr><td>${esc(r.bill_date)}</td><td>${r.cnt}</td><td>${fmtS(r.revenue)}</td><td>${fmtS(r.discount || 0)}</td><td>${fmtS(r.gst)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="5">No data</td></tr>';
   document.getElementById('mr-pay').innerHTML = d.payMix.length ? d.payMix.map(r => `
     <tr><td>${esc(r.payment_mode)}</td><td>${r.cnt}</td><td>${fmtS(r.amount)}</td></tr>
   `).join('') : '<tr class="empty-row"><td colspan="3">No data</td></tr>';
   document.getElementById('mr-prod').innerHTML = d.topProds.length ? d.topProds.map(r => `
-    <tr><td>${esc(r.product_name)}</td><td>${r.qty}</td><td>${fmtS(r.revenue)}</td><td>${fmtS(r.gst)}</td></tr>
-  `).join('') : '<tr class="empty-row"><td colspan="4">No data</td></tr>';
+    <tr><td>${esc(r.product_name)}</td><td>${r.qty}</td><td>${fmtS(r.revenue)}</td><td>${fmtS(r.discount || 0)}</td><td>${fmtS(r.gst)}</td></tr>
+  `).join('') : '<tr class="empty-row"><td colspan="5">No data</td></tr>';
 }
 
 async function printMonthly() {
@@ -4114,7 +4134,7 @@ async function printMonthly() {
     h3{font-size:13px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #999}
     .head{border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:14px}
     .meta{margin:10px 0;line-height:1.7;font-size:11px}
-    .summary{margin:12px 0;padding:12px;background:#f5f5f5;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;border:1px solid #ccc}
+    .summary{margin:12px 0;padding:12px;background:#f5f5f5;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;border:1px solid #ccc}
     table{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:14px}
     th,td{padding:6px 9px;border:1px solid #999}
     th{background:#f0f0f0;font-weight:bold}
@@ -4131,17 +4151,18 @@ async function printMonthly() {
     <strong>Generated:</strong> ${new Date().toLocaleString('en-IN')}
   </div>
   <div class="summary">
-    <div><strong>Gross Sales:</strong><br/>${document.getElementById('mr-gross').textContent}</div>
+    <div><strong>Sales After Discount:</strong><br/>${document.getElementById('mr-gross').textContent}</div>
+    <div><strong>Discounts:</strong><br/>${document.getElementById('mr-discount').textContent}</div>
     <div><strong>GST Collected:</strong><br/>${document.getElementById('mr-gst').textContent}</div>
     <div><strong>Net Revenue:</strong><br/>${document.getElementById('mr-net').textContent}</div>
     <div><strong>Total Bills:</strong><br/>${document.getElementById('mr-cnt').textContent}</div>
   </div>
   <h3>Daily Breakdown</h3>
-  <table><thead><tr><th>Date</th><th>Bills</th><th>Revenue</th><th>GST</th></tr></thead><tbody>${document.getElementById('mr-daily').innerHTML}</tbody></table>
+  <table><thead><tr><th>Date</th><th>Bills</th><th>Revenue</th><th>Discount</th><th>GST</th></tr></thead><tbody>${document.getElementById('mr-daily').innerHTML}</tbody></table>
   <h3>Payment Mode Summary</h3>
   <table><thead><tr><th>Mode</th><th>Count</th><th>Amount</th></tr></thead><tbody>${document.getElementById('mr-pay').innerHTML}</tbody></table>
   <h3>Top Products</h3>
-  <table><thead><tr><th>Product</th><th>Qty</th><th>Revenue</th><th>GST</th></tr></thead><tbody>${document.getElementById('mr-prod').innerHTML}</tbody></table>
+  <table><thead><tr><th>Product</th><th>Qty</th><th>Revenue</th><th>Discount</th><th>GST</th></tr></thead><tbody>${document.getElementById('mr-prod').innerHTML}</tbody></table>
   <script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
   </body></html>`;
   await API.printHTML(html);

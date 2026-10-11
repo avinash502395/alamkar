@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
-const { buildAutoBillNumber } = require('./bill-utils');
+const { buildAutoBillNumber, distributeBillDiscount } = require('./bill-utils');
 
 const userDataPath = app.getPath('userData');
 if (!fs.existsSync(userDataPath)) fs.mkdirSync(userDataPath, { recursive: true });
@@ -95,7 +95,8 @@ db.exec(`
     gst_rate REAL DEFAULT 0,
     base_amount REAL DEFAULT 0,
     gst_amount REAL DEFAULT 0,
-    total_amount REAL DEFAULT 0
+    total_amount REAL DEFAULT 0,
+    discount_amount REAL DEFAULT 0
   );
 
   CREATE INDEX IF NOT EXISTS idx_bill_items_bill ON bill_items(bill_id);
@@ -160,6 +161,15 @@ try {
   console.warn('[Migration] stock entry columns migration error:', e.message);
 }
 
+try {
+  const billItemCols = db.prepare("PRAGMA table_info(bill_items)").all();
+  if (!billItemCols.find(c => c.name === 'discount_amount')) {
+    db.exec('ALTER TABLE bill_items ADD COLUMN discount_amount REAL DEFAULT 0');
+  }
+} catch (e) {
+  console.warn('[Migration] bill item discount migration error:', e.message);
+}
+
 const defaultSettings = {
   store_name:    'Alankar Pooja Stores',
   store_address: 'Hyderabad, Telangana',
@@ -192,6 +202,26 @@ const defaultSettings = {
 };
 for (const [k, v] of Object.entries(defaultSettings)) {
   db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)').run(k, v);
+}
+
+try {
+  db.transaction(() => {
+    const bills = db.prepare('SELECT * FROM bills WHERE discount > 0').all();
+    const itemStmt = db.prepare('UPDATE bill_items SET base_amount=?, gst_amount=?, total_amount=?, discount_amount=? WHERE id=?');
+    const billStmt = db.prepare('UPDATE bills SET subtotal=?, cgst=?, sgst=?, discount=?, total=? WHERE id=?');
+    for (const bill of bills) {
+      const items = db.prepare('SELECT * FROM bill_items WHERE bill_id=? ORDER BY id').all(bill.id);
+      const itemsTotal = Math.round(items.reduce((sum, item) => sum + Number(item.total_amount || 0), 0) * 100) / 100;
+      const recordedDiscount = Math.round(Number(bill.discount || 0) * 100) / 100;
+      const alreadyAllocated = items.some(item => Number(item.discount_amount || 0) > 0);
+      if (!items.length || alreadyAllocated || itemsTotal <= Number(bill.total || 0)) continue;
+      const totals = distributeBillDiscount(items, recordedDiscount);
+      totals.items.forEach((item, index) => itemStmt.run(item.base_amount, item.gst_amount, item.total_amount, item.discount_amount, items[index].id));
+      billStmt.run(totals.subtotal, totals.cgst, totals.sgst, totals.discount, totals.total, bill.id);
+    }
+  })();
+} catch (e) {
+  console.warn('[Migration] bill discount allocation migration error:', e.message);
 }
 
 // NO automatic seed data — production app starts with empty product list.
@@ -317,6 +347,7 @@ const Customers = {
 
 const Bills = {
   save: db.transaction((bill, items) => {
+    const totals = distributeBillDiscount(items, bill.discount);
     const customNum = (bill.custom_bill_number || '').trim();
 
     const ensureUniqueBillNumber = (base) => {
@@ -339,11 +370,11 @@ const Bills = {
       customer_phone: bill.customer_phone,
       buyer_gstin: bill.buyer_gstin || '',
       cashier: bill.cashier || 'Admin',
-      subtotal: bill.subtotal,
-      cgst: bill.cgst,
-      sgst: bill.sgst,
-      discount: bill.discount,
-      total: bill.total,
+      subtotal: totals.subtotal,
+      cgst: totals.cgst,
+      sgst: totals.sgst,
+      discount: totals.discount,
+      total: totals.total,
       payment_mode: bill.payment_mode,
       bill_date: bill.bill_date,
       bill_time: bill.bill_time,
@@ -354,10 +385,10 @@ const Bills = {
     db.prepare('UPDATE bills SET bill_number=? WHERE id=?').run(billNum, billId);
 
     const itemStmt = db.prepare(`
-      INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount)
-      VALUES (@bill_id,@product_id,@product_name,@hsn,@qty,@rate,@gst_rate,@base_amount,@gst_amount,@total_amount)
+      INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount,discount_amount)
+      VALUES (@bill_id,@product_id,@product_name,@hsn,@qty,@rate,@gst_rate,@base_amount,@gst_amount,@total_amount,@discount_amount)
     `);
-    for (const item of items) {
+    for (const item of totals.items) {
       itemStmt.run({ bill_id: billId, ...item });
       if (item.product_id) Products.adjustStock(item.product_id, -item.qty);
     }
@@ -366,14 +397,15 @@ const Bills = {
       Customers.upsert({
         name: bill.customer_name,
         phone: bill.customer_phone,
-        creditDelta: bill.payment_mode === 'Credit' ? bill.total : 0,
-        totalDelta: bill.total,
+        creditDelta: bill.payment_mode === 'Credit' ? totals.total : 0,
+        totalDelta: totals.total,
       });
     }
     return { billId, billNum };
   }),
 
   update: db.transaction((bill, items) => {
+    const totals = distributeBillDiscount(items, bill.discount);
     const billId = Number(bill.id);
     const existing = db.prepare('SELECT * FROM bills WHERE id=?').get(billId);
     if (!existing) throw new Error('Bill not found');
@@ -408,21 +440,21 @@ const Bills = {
       customer_phone: bill.customer_phone,
       buyer_gstin: bill.buyer_gstin || '',
       cashier: bill.cashier || 'Admin',
-      subtotal: bill.subtotal,
-      cgst: bill.cgst,
-      sgst: bill.sgst,
-      discount: bill.discount,
-      total: bill.total,
+      subtotal: totals.subtotal,
+      cgst: totals.cgst,
+      sgst: totals.sgst,
+      discount: totals.discount,
+      total: totals.total,
       payment_mode: bill.payment_mode,
       bill_date: bill.bill_date,
       bill_time: bill.bill_time,
     });
 
     const itemStmt = db.prepare(`
-      INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount)
-      VALUES (@bill_id,@product_id,@product_name,@hsn,@qty,@rate,@gst_rate,@base_amount,@gst_amount,@total_amount)
+      INSERT INTO bill_items (bill_id,product_id,product_name,hsn,qty,rate,gst_rate,base_amount,gst_amount,total_amount,discount_amount)
+      VALUES (@bill_id,@product_id,@product_name,@hsn,@qty,@rate,@gst_rate,@base_amount,@gst_amount,@total_amount,@discount_amount)
     `);
-    for (const item of items) {
+    for (const item of totals.items) {
       itemStmt.run({ bill_id: billId, ...item });
       if (item.product_id) Products.adjustStock(item.product_id, -item.qty);
     }
@@ -560,6 +592,7 @@ const Reports = {
 
   gst: (month) => db.prepare(`
     SELECT bi.gst_rate,
+      COALESCE(SUM(bi.discount_amount),0) AS discount,
       COALESCE(SUM(bi.base_amount),0) AS taxable,
       COALESCE(SUM(bi.gst_amount/2),0) AS cgst,
       COALESCE(SUM(bi.gst_amount/2),0) AS sgst,
@@ -574,6 +607,7 @@ const Reports = {
     // Sales by GST rate (Output GST)
     const salesByRate = db.prepare(`
       SELECT bi.gst_rate,
+        COALESCE(SUM(bi.discount_amount),0) AS discount,
         COALESCE(SUM(bi.total_amount),0) AS sales_amount,
         COALESCE(SUM(bi.base_amount),0)  AS taxable,
         COALESCE(SUM(bi.gst_amount/2),0) AS cgst,
@@ -602,6 +636,7 @@ const Reports = {
     const salesItems = db.prepare(`
       SELECT bi.product_name, bi.hsn, SUM(bi.qty) AS qty,
         bi.gst_rate,
+        COALESCE(SUM(bi.discount_amount),0) AS discount,
         COALESCE(SUM(bi.base_amount),0) AS taxable,
         COALESCE(SUM(bi.gst_amount/2),0) AS cgst,
         COALESCE(SUM(bi.gst_amount/2),0) AS sgst,
@@ -633,6 +668,7 @@ const Reports = {
     daily: db.prepare(`
       SELECT bill_date, COUNT(*) AS cnt,
         COALESCE(SUM(total),0) AS revenue,
+        COALESCE(SUM(discount),0) AS discount,
         COALESCE(SUM(cgst+sgst),0) AS gst
       FROM bills WHERE strftime('%Y-%m',bill_date)=?
       GROUP BY bill_date ORDER BY bill_date
@@ -645,6 +681,7 @@ const Reports = {
     topProds: db.prepare(`
       SELECT bi.product_name,
         SUM(bi.qty) AS qty,
+        COALESCE(SUM(bi.discount_amount),0) AS discount,
         COALESCE(SUM(bi.total_amount),0) AS revenue,
         COALESCE(SUM(bi.gst_amount),0)   AS gst
       FROM bill_items bi JOIN bills b ON b.id=bi.bill_id
